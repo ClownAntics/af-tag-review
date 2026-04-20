@@ -552,15 +552,25 @@ function RightColumn({
   const raw = design.shopify_tags ?? [];
   const primary = design.vision_raw?.primary || null;
 
-  // Taxonomy (cached) — used to surface conflicts among approved_tags.
+  // Taxonomy (cached) — used to surface conflicts across approved + vision.
   const [taxonomy, setTaxonomy] = useState<TaxonomyEntry[]>([]);
   useEffect(() => {
     loadTaxonomy().then(setTaxonomy);
   }, []);
-  const conflictPairs = useMemo(
-    () => findConflicts(approved, taxonomy).pairs,
-    [approved, taxonomy],
-  );
+  // Conflicts considered across BOTH sections so conflicting vision
+  // suggestions (e.g., halloween + fall) warn before the user approves.
+  const conflictPairs = useMemo(() => {
+    const combined = Array.from(new Set([...approved, ...vision]));
+    return findConflicts(combined, taxonomy).pairs;
+  }, [approved, vision, taxonomy]);
+  const approvedSet = useMemo(() => new Set(approved), [approved]);
+
+  // Decide which removal action to fire for a conflicting term based on
+  // whether it's currently in approved or vision (or both).
+  const dismissTerm = (term: string) => {
+    if (approvedSet.has(term)) onRemoveApproved(term);
+    else onRejectVision(term);
+  };
 
   // Only exclude already-approved tags. Vision suggestions are allowed — if
   // the user picks one via typeahead, onAddApproved will promote it (same
@@ -576,30 +586,37 @@ function RightColumn({
         <div className="px-3 py-2 rounded-md bg-[#FAEEDA] border border-[#FAC775] text-[#633806] text-xs">
           <p className="font-medium mb-1">
             ⚠ Conflicting tag{conflictPairs.length === 1 ? "" : "s"}
+            <span className="font-normal text-[#a1671a] ml-2">
+              (taxonomy says these shouldn&apos;t coexist)
+            </span>
           </p>
           <ul className="space-y-0.5">
-            {conflictPairs.map(([a, b]) => (
-              <li key={`${a}-${b}`}>
-                <button
-                  type="button"
-                  onClick={() => onRemoveApproved(a)}
-                  className="underline decoration-dotted hover:text-[#A32D2D] lowercase"
-                  title={`Remove "${a}"`}
-                >
-                  {a}
-                </button>{" "}
-                conflicts with{" "}
-                <button
-                  type="button"
-                  onClick={() => onRemoveApproved(b)}
-                  className="underline decoration-dotted hover:text-[#A32D2D] lowercase"
-                  title={`Remove "${b}"`}
-                >
-                  {b}
-                </button>{" "}
-                — click one to remove.
-              </li>
-            ))}
+            {conflictPairs.map(([a, b]) => {
+              const aLoc = approvedSet.has(a) ? "approved" : "vision";
+              const bLoc = approvedSet.has(b) ? "approved" : "vision";
+              return (
+                <li key={`${a}-${b}`}>
+                  <button
+                    type="button"
+                    onClick={() => dismissTerm(a)}
+                    className="underline decoration-dotted hover:text-[#A32D2D] lowercase"
+                    title={`Remove "${a}" from ${aLoc}`}
+                  >
+                    {a}
+                  </button>{" "}
+                  <span className="text-[#a1671a]">({aLoc})</span> conflicts with{" "}
+                  <button
+                    type="button"
+                    onClick={() => dismissTerm(b)}
+                    className="underline decoration-dotted hover:text-[#A32D2D] lowercase"
+                    title={`Remove "${b}" from ${bLoc}`}
+                  >
+                    {b}
+                  </button>{" "}
+                  <span className="text-[#a1671a]">({bLoc})</span> — click one to remove.
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

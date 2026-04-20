@@ -31,6 +31,15 @@ RULES
 4. If two sibling sub-themes both seem to fit, you're hedging — pick the one
    you're more confident in, or pick neither and use the parent instead.
 5. Skip monogram letters (A/B/C…). For monogram flags, primary is "Monogrammed".
+6. Don't tag iconographic elements of a SYMBOL as decoration. On an American
+   flag, stars and stripes ARE the flag — don't add "Stars" or "Stripes"
+   (those are under Patterns, for actual pattern designs). Likewise on a
+   religious cross, "Cross" is the subject, not a decoration.
+7. Only apply holiday/seasonal tags when there is EXPLICIT holiday context in
+   the image — date text, fireworks, jack-o-lanterns, party imagery, etc. A
+   plain American flag is NOT a 4th of July design unless 4th-of-July imagery
+   is actually present. A Halloween scene is NOT a Fall design — once a
+   specific holiday applies, the season is redundant and conflicts.
 
 PROCESS
 First identify the primary using the ordered list above. Then inventory
