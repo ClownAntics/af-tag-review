@@ -23,9 +23,18 @@ export async function POST(req: NextRequest): Promise<Response> {
   const rawSkus = Array.isArray(body.skus) ? body.skus.filter((s): s is string => typeof s === "string") : [];
   if (rawSkus.length === 0) return errorResponse(400, "skus[] required");
 
+  // Accept either a variant SKU (AFGFWR0053, AFHFSP0006, AFGFMS0509WH …) or
+  // a bare design_family (AFWR0053). Family is what lives in the designs
+  // table PK; parseSku covers the variants.
   const families = new Set<string>();
   const unparsed: string[] = [];
+  const FAMILY_PATTERN = /^AF[A-Z]{2}\d+$/;
   for (const s of rawSkus) {
+    const up = s.trim().toUpperCase();
+    if (FAMILY_PATTERN.test(up)) {
+      families.add(up);
+      continue;
+    }
     const parsed = parseSku(s);
     if (!parsed) {
       unparsed.push(s);
