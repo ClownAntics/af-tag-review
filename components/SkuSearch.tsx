@@ -1,10 +1,15 @@
 "use client";
 
 /**
- * Header SKU lookup. Type a SKU (any variant: AFGFMS0278, AFHFMS0278, AFMS0278,
- * AFGFMS0278WH etc.) and Enter opens that design's detail modal.
+ * Header design lookup. Accepts any of:
+ *   - variant SKU:    AFGFMS0278, AFHFMS0278, AFGFMS0278WH, AFGFMS0278-CF
+ *   - bare family:    AFMS0278
+ *   - name fragment:  "forever loved", "camel", "shell"
+ *
+ * Single SKU match → opens the detail modal immediately.
+ * Multiple name matches → shows a dropdown, pick one to open its modal.
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Design } from "@/lib/types";
 
 interface Props {
@@ -13,24 +18,43 @@ interface Props {
 
 export function SkuSearch({ onFound }: Props) {
   const [value, setValue] = useState("");
+  const [matches, setMatches] = useState<Design[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (!containerRef.current?.contains(e.target as Node)) setMatches(null);
+    };
+    window.addEventListener("mousedown", onClick);
+    return () => window.removeEventListener("mousedown", onClick);
+  }, []);
 
   const submit = async () => {
-    const sku = value.trim();
-    if (!sku) return;
+    const q = value.trim();
+    if (!q) return;
     setLoading(true);
     setError(null);
+    setMatches(null);
     try {
-      const r = await fetch(`/api/review/lookup?sku=${encodeURIComponent(sku)}`);
+      const r = await fetch(`/api/review/lookup?q=${encodeURIComponent(q)}`);
       if (!r.ok) {
         const body = (await r.json().catch(() => ({}))) as { error?: string };
         setError(body.error || `Lookup failed (${r.status})`);
         return;
       }
-      const { design } = (await r.json()) as { design: Design };
-      onFound(design);
-      setValue("");
+      const { matches: ms, kind } = (await r.json()) as {
+        matches: Design[];
+        kind: "sku" | "name";
+      };
+      if (ms.length === 1 || kind === "sku") {
+        onFound(ms[0]);
+        setValue("");
+        setMatches(null);
+      } else {
+        setMatches(ms);
+      }
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -39,7 +63,7 @@ export function SkuSearch({ onFound }: Props) {
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex items-center" ref={containerRef}>
       <span className="absolute left-3 text-muted-2 pointer-events-none" aria-hidden>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="7" />
@@ -53,15 +77,23 @@ export function SkuSearch({ onFound }: Props) {
           setValue(e.target.value);
           if (error) setError(null);
         }}
+        onFocus={() => {
+          if (matches && matches.length > 0) {
+            // Reopen the dropdown if user refocuses after clicking outside
+            setMatches(matches);
+          }
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
             void submit();
+          } else if (e.key === "Escape") {
+            setMatches(null);
           }
         }}
         disabled={loading}
-        placeholder="Search SKU or design_family"
-        className="bg-card border border-border rounded-full pl-9 pr-9 py-2 text-sm w-64 focus:outline-none focus:border-foreground focus:ring-2 focus:ring-foreground/10 transition-all placeholder:text-muted-2 disabled:opacity-60"
+        placeholder="Search SKU or design name"
+        className="bg-card border border-border rounded-full pl-9 pr-9 py-2 text-sm w-72 focus:outline-none focus:border-foreground focus:ring-2 focus:ring-foreground/10 transition-all placeholder:text-muted-2 disabled:opacity-60"
       />
       {value && !loading && (
         <button
@@ -69,6 +101,7 @@ export function SkuSearch({ onFound }: Props) {
           onClick={() => {
             setValue("");
             setError(null);
+            setMatches(null);
           }}
           className="absolute right-3 text-muted-2 hover:text-foreground"
           aria-label="Clear search"
@@ -81,6 +114,36 @@ export function SkuSearch({ onFound }: Props) {
       )}
       {error && (
         <span className="ml-2 text-xs text-[#A32D2D] whitespace-nowrap">{error}</span>
+      )}
+
+      {matches && matches.length > 1 && (
+        <ul className="absolute z-30 top-full left-0 mt-1 bg-white border border-border rounded-md shadow-lg w-[360px] max-h-80 overflow-y-auto">
+          <li className="px-3 py-2 text-[11px] text-muted-2 border-b border-border">
+            {matches.length} matches — click to open
+          </li>
+          {matches.map((d) => (
+            <li key={d.design_family}>
+              <button
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onFound(d);
+                  setValue("");
+                  setMatches(null);
+                }}
+                className="w-full text-left px-3 py-2 hover:bg-zinc-50 flex justify-between items-center gap-3 border-b border-border/50 last:border-b-0"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm truncate">{d.design_name || d.design_family}</p>
+                  <p className="text-[11px] text-muted-2 font-mono truncate">{d.design_family}</p>
+                </div>
+                <span className="text-[11px] text-muted tabular-nums shrink-0">
+                  {d.units_total.toLocaleString()} units
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
