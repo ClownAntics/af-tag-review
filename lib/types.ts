@@ -40,6 +40,9 @@ export interface Design {
   vision_tags?: string[] | null;
   last_reviewed_at?: string | null;
   last_pushed_at?: string | null;
+  /** Raw Claude vision response captured at tag time. Most useful field is
+   *  `primary` — the Search Term Claude called out as the flag's main purpose. */
+  vision_raw?: { primary?: string | null; reasoning?: string; tags?: string[] } | null;
   // Multi-brand support (migration 003)
   manufacturer?: string | null;
 }

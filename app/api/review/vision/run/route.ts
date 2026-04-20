@@ -131,7 +131,8 @@ export async function POST(req: NextRequest): Promise<Response> {
             actor: "system",
             payload: {
               suggestion_count: result.value.tags.length,
-              confidence: result.value.confidence,
+              primary: result.value.primary,
+              reasoning: result.value.reasoning,
             },
           });
           completed++;

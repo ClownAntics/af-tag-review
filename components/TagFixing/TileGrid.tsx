@@ -414,14 +414,19 @@ export function TileGrid({
                       className="flex flex-wrap gap-1 mt-1"
                       title={chipTags.join(", ")}
                     >
-                      {chipTags.slice(0, 5).map((t) => (
-                        <span
-                          key={t}
-                          className={`text-[10px] px-1.5 py-0.5 rounded border ${chipColor} leading-none lowercase`}
-                        >
-                          {t}
-                        </span>
-                      ))}
+                      {chipTags.slice(0, 5).map((t) => {
+                        const isPrimary = t === d.vision_raw?.primary;
+                        return (
+                          <span
+                            key={t}
+                            className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border ${chipColor} leading-none lowercase`}
+                            title={isPrimary ? `${t} (primary)` : undefined}
+                          >
+                            {isPrimary && <span className="normal-case">⭐</span>}
+                            {t}
+                          </span>
+                        );
+                      })}
                       {chipTags.length > 5 && (
                         <span className="text-[10px] text-muted-2 leading-none py-0.5">
                           +{chipTags.length - 5}

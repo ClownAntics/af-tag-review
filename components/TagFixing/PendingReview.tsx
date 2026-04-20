@@ -550,6 +550,7 @@ function RightColumn({
   const approved = useMemo(() => design.approved_tags ?? [], [design.approved_tags]);
   const vision = useMemo(() => design.vision_tags ?? [], [design.vision_tags]);
   const raw = design.shopify_tags ?? [];
+  const primary = design.vision_raw?.primary || null;
 
   // Taxonomy (cached) — used to surface conflicts among approved_tags.
   const [taxonomy, setTaxonomy] = useState<TaxonomyEntry[]>([]);
@@ -618,6 +619,7 @@ function RightColumn({
                 key={t}
                 term={t}
                 variant="ok"
+                isPrimary={t === primary}
                 onRemove={() => onRemoveApproved(t)}
                 disabled={mutating}
               />
@@ -658,6 +660,7 @@ function RightColumn({
                 key={t}
                 term={t}
                 variant="sugg"
+                isPrimary={t === primary}
                 onAccept={() => onAcceptVision(t)}
                 onRemove={() => onRejectVision(t)}
                 disabled={mutating}
@@ -719,12 +722,14 @@ const PILL_CLASSES: Record<PillVariant, string> = {
 function Pill({
   term,
   variant,
+  isPrimary,
   onAccept,
   onRemove,
   disabled,
 }: {
   term: string;
   variant: PillVariant;
+  isPrimary?: boolean;
   onAccept?: () => void;
   onRemove?: () => void;
   disabled?: boolean;
@@ -733,7 +738,11 @@ function Pill({
     "inline-flex items-center gap-1.5 text-[13px] px-2.5 py-1 rounded-md border lowercase";
   const admin = variant === "admin" ? " text-[11px] px-1.5 py-0.5" : "";
   return (
-    <span className={`${base} ${PILL_CLASSES[variant]}${admin}`}>
+    <span
+      className={`${base} ${PILL_CLASSES[variant]}${admin}`}
+      title={isPrimary ? "Primary theme (Claude's pick)" : undefined}
+    >
+      {isPrimary && <span className="normal-case">⭐</span>}
       <span>{term}</span>
       {onAccept && (
         <button

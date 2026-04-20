@@ -95,9 +95,15 @@ export function buildSystemPrompt(template?: string): string {
 }
 
 export interface VisionResult {
+  /** Flat, deduplicated, hierarchy-expanded Search Term list — what gets
+   *  stored on `designs.vision_tags`. Includes primary + decoration + all
+   *  ancestor terms. */
   tags: string[];
-  confidence: "high" | "medium" | "low";
-  notes?: string;
+  /** The single "what is this flag FOR" Search Term Claude picked. Stored
+   *  inside vision_raw for auditability; the UI can highlight it separately. */
+  primary: string | null;
+  /** Claude's one-sentence justification for the primary pick. */
+  reasoning?: string;
 }
 
 function extractFirstJsonObject(s: string): string | null {
@@ -138,20 +144,49 @@ function parseResponse(raw: string): VisionResult | { error: string } {
     return { error: `invalid JSON: ${(e as Error).message}` };
   }
   const obj = parsed as Record<string, unknown>;
-  const tagsRaw = Array.isArray(obj.tags) ? obj.tags : [];
-  const validated = tagsRaw.filter((t): t is string => typeof t === "string" && validTerms().has(t));
-  const confidence = obj.confidence;
-  if (confidence !== "high" && confidence !== "medium" && confidence !== "low") {
-    return { error: `confidence must be high|medium|low, got ${String(confidence)}` };
+
+  // New schema: {primary: string, decoration: string[], reasoning: string}.
+  // Back-compat: if the old {tags, confidence, notes} comes in, convert it.
+  const valid = validTerms();
+
+  const hasNewShape = "primary" in obj || "decoration" in obj;
+  const hasOldShape = "tags" in obj;
+
+  let primary: string | null = null;
+  let decoration: string[] = [];
+  let reasoning: string | undefined;
+
+  if (hasNewShape) {
+    if (typeof obj.primary === "string" && valid.has(obj.primary)) {
+      primary = obj.primary;
+    } else if (typeof obj.primary === "string") {
+      return { error: `primary "${obj.primary}" is not in taxonomy` };
+    }
+    if (Array.isArray(obj.decoration)) {
+      decoration = obj.decoration.filter(
+        (t): t is string => typeof t === "string" && valid.has(t),
+      );
+    }
+    if (typeof obj.reasoning === "string") reasoning = obj.reasoning;
+  } else if (hasOldShape && Array.isArray(obj.tags)) {
+    // Legacy support for any saved prompts still producing the old shape.
+    decoration = obj.tags.filter(
+      (t): t is string => typeof t === "string" && valid.has(t),
+    );
+    if (typeof obj.notes === "string") reasoning = obj.notes;
+  } else {
+    return {
+      error: `response missing 'primary'/'decoration' (or legacy 'tags'): ${raw.slice(0, 200)}`,
+    };
   }
-  // Always fill in any missing parent Search Terms so the hierarchy is intact.
-  // Claude is told to do this in the prompt, but this is a safety net.
-  const expanded = expandToIncludeAncestors(validated);
-  return {
-    tags: expanded,
-    confidence,
-    notes: typeof obj.notes === "string" ? obj.notes : undefined,
-  };
+
+  // Union primary + decoration, then fill in Level-2/Level-1 parents for each
+  // Level-3 or Level-2 pick so the stored tag set has the full hierarchy.
+  const union = new Set<string>(decoration);
+  if (primary) union.add(primary);
+  const expanded = expandToIncludeAncestors(Array.from(union));
+
+  return { tags: expanded, primary, reasoning };
 }
 
 export interface TagOneInput {

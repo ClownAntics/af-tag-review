@@ -204,15 +204,26 @@ export function DetailModal({ design, onClose, onFlag }: Props) {
                 <p className="text-xs text-muted italic">No tags yet.</p>
               ) : (
                 <div className="flex flex-wrap gap-1.5">
-                  {approvedTags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[13px] px-2.5 py-1 rounded-md border bg-[#EAF3DE] border-[#C0DD97] text-[#27500A] lowercase"
-                    >
-                      {t}
-                    </span>
-                  ))}
+                  {approvedTags.map((t) => {
+                    const isPrimary = t === design.vision_raw?.primary;
+                    return (
+                      <span
+                        key={t}
+                        className="inline-flex items-center gap-1 text-[13px] px-2.5 py-1 rounded-md border bg-[#EAF3DE] border-[#C0DD97] text-[#27500A] lowercase"
+                        title={isPrimary ? "Primary theme (Claude's pick)" : undefined}
+                      >
+                        {isPrimary && <span className="normal-case">⭐</span>}
+                        {t}
+                      </span>
+                    );
+                  })}
                 </div>
+              )}
+              {design.vision_raw?.reasoning && (
+                <p className="text-[11px] text-muted italic mt-2">
+                  <span className="text-muted-2">Vision reasoning:</span>{" "}
+                  {design.vision_raw.reasoning}
+                </p>
               )}
             </section>
 
