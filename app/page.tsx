@@ -5,7 +5,7 @@
  * taxonomy, backed by Claude vision suggestions and a flag → pending →
  * ready-to-send → updated review pipeline.
  *
- * Currently the underlying `designs` table is AF garden/house flags, but the
+ * The underlying `designs` table is currently AF garden/house flags, but the
  * UI is written to be brand-agnostic: image URL comes from each design row,
  * Shopify admin links are driven by per-design data, and nothing in this page
  * hardcodes "AF" or "flag".
@@ -13,11 +13,13 @@
 import { useEffect, useState } from "react";
 import { TagFixing } from "@/components/TagFixing/TagFixing";
 import { DetailModal } from "@/components/DetailModal";
+import { VisionPromptModal } from "@/components/TagFixing/VisionPromptModal";
 import type { Design } from "@/lib/types";
 
 export default function Home() {
   const [detail, setDetail] = useState<Design | null>(null);
   const [dataVersion, setDataVersion] = useState(0);
+  const [promptModalOpen, setPromptModalOpen] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -54,15 +56,30 @@ export default function Home() {
             review Pending, push cleaned tags to Shopify.
           </p>
         </div>
-        <nav className="flex gap-3 text-xs text-muted shrink-0 pt-1">
+        <nav className="flex gap-4 text-xs text-muted shrink-0 pt-1">
           <a
-            href="https://af-sales-research.vercel.app"
+            href="https://github.com/ClownAntics/af-tag-review/blob/main/docs/USER_GUIDE.md"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-foreground hover:underline"
           >
-            AF sales research →
+            User guide
           </a>
+          <a
+            href="https://github.com/ClownAntics/af-tag-review/blob/main/docs/DEVELOPER.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground hover:underline"
+          >
+            Developer docs
+          </a>
+          <button
+            type="button"
+            onClick={() => setPromptModalOpen(true)}
+            className="hover:text-foreground hover:underline"
+          >
+            Edit vision prompt
+          </button>
         </nav>
       </header>
 
@@ -76,6 +93,11 @@ export default function Home() {
           onFlag={handleFlag}
         />
       )}
+
+      <VisionPromptModal
+        open={promptModalOpen}
+        onClose={() => setPromptModalOpen(false)}
+      />
     </main>
   );
 }

@@ -1,18 +1,28 @@
 "use client";
 
 /**
- * Tag fixing tab shell.
+ * Tag fixing shell. Owns:
+ *   - active-tile state (which status is being reviewed)
+ *   - current filter set (Theme / Sub / … / Manufacturer)
+ *   - counts (refreshed on mutation and when filters change)
  *
- * Owns the active-tile state and the per-tile counts. Each tile's body is
- * rendered by a child component (Phase 3 / Phase 4 work); this file stays
- * small and wires them together.
+ * Filters apply to the whole subtree: status-tile counts reflect the filtered
+ * subset, and the active tile's queue/review loads only filtered designs.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { StatusTiles } from "./StatusTiles";
 import { PendingReview } from "./PendingReview";
 import { TileGrid } from "./TileGrid";
 import { PasteSkusPanel } from "./PasteSkusPanel";
-import type { Design, ReviewCounts, ReviewStatus } from "@/lib/types";
+import { FilterBar } from "./FilterBar";
+import {
+  EMPTY_REVIEW_FILTERS,
+  type Design,
+  type ReviewCounts,
+  type ReviewFilters,
+  type ReviewStatus,
+} from "@/lib/types";
+import { toQueryString } from "@/lib/review-filters";
 
 interface Props {
   onOpenDetail: (design: Design) => void;
@@ -23,25 +33,33 @@ interface Props {
 
 export function TagFixing({ onOpenDetail, externalDataVersion = 0 }: Props) {
   const [tile, setTile] = useState<ReviewStatus>("pending");
+  const [filters, setFilters] = useState<ReviewFilters>(EMPTY_REVIEW_FILTERS);
   const [counts, setCounts] = useState<ReviewCounts | null>(null);
   const [countsRev, setCountsRev] = useState(0);
 
   const refreshCounts = useCallback(() => setCountsRev((r) => r + 1), []);
 
+  const filterQs = useMemo(() => toQueryString(filters), [filters]);
+
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/review/counts")
+    const url = `/api/review/counts${filterQs ? `?${filterQs}` : ""}`;
+    fetch(url)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
       .then((d: ReviewCounts) => {
         if (!cancelled) setCounts(d);
       })
       .catch(() => {
-        // Swallow — counts fetch failing is non-fatal, tiles just show "—".
+        // Non-fatal; tiles show "—".
       });
     return () => {
       cancelled = true;
     };
-  }, [countsRev, externalDataVersion]);
+  }, [countsRev, externalDataVersion, filterQs]);
+
+  // The filter querystring is part of child `key` so PendingReview/TileGrid
+  // remount when filters change, re-firing their own fetches.
+  const childKey = `${tile}-${externalDataVersion}-${filterQs}`;
 
   return (
     <div className="space-y-4">
@@ -60,20 +78,24 @@ export function TagFixing({ onOpenDetail, externalDataVersion = 0 }: Props) {
         <strong className="text-zinc-600 font-medium">Updated</strong>
       </p>
 
+      <FilterBar filters={filters} onChange={setFilters} />
+
       <StatusTiles value={tile} onChange={setTile} counts={counts} />
 
       <div className="pt-2">
         {tile === "pending" && (
           <PendingReview
-            key={`pending-${externalDataVersion}`}
+            key={childKey}
+            filterQs={filterQs}
             onOpenDetail={onOpenDetail}
             onCountsChanged={refreshCounts}
           />
         )}
         {tile !== "pending" && (
           <TileGrid
-            key={`${tile}-${externalDataVersion}`}
+            key={childKey}
             status={tile}
+            filterQs={filterQs}
             count={counts?.[tile] ?? null}
             onOpenDetail={onOpenDetail}
             onCountsChanged={refreshCounts}

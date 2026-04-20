@@ -11,6 +11,23 @@ HARD CONSTRAINTS (these override all reasoning below):
 - NEVER pick "Spring-Flowers" AND "Summer-Fall-Flowers" together. Pick exactly one, OR pick only "Flowers" if the season is unclear. No exceptions.
 - NEVER pick two sibling Level-2 seasonal sub-themes to "hedge". If unsure, go up one level.
 - NEVER pick a Search Term just because an English word from it appears in the design's text. Match on meaning.
+- YOU MUST STILL PICK LEVEL-3 SPECIFICS when you can identify them. The constraints above do NOT mean "avoid specificity" — they mean "don't double-up at Level 2". If you see roses, pick Roses. If you see hydrangeas, pick Hydrangeas. Going to the Level-1 parent is the LAST RESORT, not the default.
+
+GOOD vs BAD EXAMPLES:
+
+Image: clearly-visible red and pink roses
+  ✅ CORRECT:  ["Roses", "Spring-Flowers", "Flowers"]
+  ❌ WRONG:    ["Flowers"]                                                       (too vague — Roses is identifiable)
+  ❌ WRONG:    ["Roses", "Spring-Flowers", "Summer-Fall-Flowers", "Flowers"]     (hedging L2 siblings)
+  ❌ WRONG:    ["Roses", "Summer-Fall-Flowers", "Flowers"]                       (wrong parent for Roses)
+
+Image: hydrangeas
+  ✅ CORRECT:  ["Hydrangeas", "Spring-Flowers", "Flowers"]
+
+Image: a bouquet of mixed unidentifiable flowers
+  ✅ CORRECT:  ["Flowers"]                                                       (L1 parent is fine when you truly can't identify species)
+
+Rule: always go as deep as you can CONFIDENTLY identify. Use the L1 parent fallback only when you genuinely can't pin down the species/type.
 
 RULES:
 1. Only suggest tags whose Search Term appears verbatim in the taxonomy below — never invent new ones.

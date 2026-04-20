@@ -17,11 +17,19 @@ interface Props {
   count: number | null;
   onOpenDetail: (d: Design) => void;
   onCountsChanged: () => void;
+  // Filter querystring from the parent FilterBar (may be empty).
+  filterQs?: string;
 }
 
 const PAGE_SIZE = 40;
 
-export function TileGrid({ status, count, onOpenDetail, onCountsChanged }: Props) {
+export function TileGrid({
+  status,
+  count,
+  onOpenDetail,
+  onCountsChanged,
+  filterQs = "",
+}: Props) {
   const [designs, setDesigns] = useState<Design[] | null>(null);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -37,7 +45,7 @@ export function TileGrid({ status, count, onOpenDetail, onCountsChanged }: Props
       setLoading(true);
       try {
         const r = await fetch(
-          `/api/review/queue?status=${status}&offset=${newOffset}&limit=${PAGE_SIZE}`,
+          `/api/review/queue?status=${status}&offset=${newOffset}&limit=${PAGE_SIZE}${filterQs ? `&${filterQs}` : ""}`,
         );
         if (!r.ok) throw new Error(await r.text());
         const d = (await r.json()) as { designs: Design[]; total: number };
@@ -50,7 +58,7 @@ export function TileGrid({ status, count, onOpenDetail, onCountsChanged }: Props
         setLoading(false);
       }
     },
-    [status],
+    [status, filterQs],
   );
 
   useEffect(() => {

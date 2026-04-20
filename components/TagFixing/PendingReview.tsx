@@ -34,6 +34,8 @@ import { KeyboardHelpModal } from "./KeyboardHelpModal";
 interface Props {
   onOpenDetail: (d: Design) => void;
   onCountsChanged: () => void;
+  // Filter querystring from the parent FilterBar (may be empty).
+  filterQs?: string;
 }
 
 const BAND_LABELS: Record<string, { label: string; cls: string }> = {
@@ -44,7 +46,7 @@ const BAND_LABELS: Record<string, { label: string; cls: string }> = {
   dead:  { label: "DEAD (0)",     cls: "bg-[#FEECEC] text-[#A32D2D]" },
 };
 
-export function PendingReview({ onOpenDetail, onCountsChanged }: Props) {
+export function PendingReview({ onOpenDetail, onCountsChanged, filterQs = "" }: Props) {
   const [queue, setQueue] = useState<Design[] | null>(null);
   const [cursor, setCursor] = useState(0);
   const [total, setTotal] = useState(0);
@@ -62,7 +64,9 @@ export function PendingReview({ onOpenDetail, onCountsChanged }: Props) {
   // Load queue.
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/review/queue?status=pending&limit=200")
+    fetch(
+      `/api/review/queue?status=pending&limit=200${filterQs ? `&${filterQs}` : ""}`,
+    )
       .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
       .then((d: { designs: Design[]; total: number }) => {
         if (cancelled) return;
@@ -76,7 +80,7 @@ export function PendingReview({ onOpenDetail, onCountsChanged }: Props) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [filterQs]);
 
   const current = queue && cursor < queue.length ? queue[cursor] : null;
 

@@ -40,6 +40,36 @@ export interface Design {
   vision_tags?: string[] | null;
   last_reviewed_at?: string | null;
   last_pushed_at?: string | null;
+  // Multi-brand support (migration 003)
+  manufacturer?: string | null;
+}
+
+/** Filters applied on top of the status-tile scope. */
+export interface ReviewFilters {
+  themeName: string;    // 'all' | <Name>
+  subTheme: string;     // 'all' | 'Name: Sub'
+  subSubTheme: string;  // 'all' | 'Name: Sub: SubSub'
+  tag: string;          // 'all' | <tag>
+  productType: string;  // 'all' | <product type>
+  manufacturer: string; // 'all' | <manufacturer>
+}
+
+export const EMPTY_REVIEW_FILTERS: ReviewFilters = {
+  themeName: "all",
+  subTheme: "all",
+  subSubTheme: "all",
+  tag: "all",
+  productType: "all",
+  manufacturer: "all",
+};
+
+export interface FilterOptions {
+  themeNames: string[];
+  subThemes: string[];
+  subSubThemes: string[];
+  tags: string[];
+  productTypes: string[];
+  manufacturers: string[];
 }
 
 export interface ReviewCounts {
