@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { Design } from "@/lib/types";
+import { variantSkusFor } from "@/lib/product-image";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -12,44 +13,7 @@ function formatMonthYear(iso: string | null): string {
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
-// Build every variant SKU we know exists for a design family. Garden first,
-// then house, then banner — that's the natural reading order on the tile.
-// Each entry has the SKU, a short label ("" for garden = default), and the
-// full-res image URL (constructed from the SKU using the same pattern
-// TeamDesk's `imgLocationFTP500` column uses).
-interface VariantSku {
-  sku: string;
-  label: string;
-  imageUrl: string;
-}
-function variantSkus(design: Design): VariantSku[] {
-  const body = design.design_family.replace(/^AF/, "");
-  const types = design.product_types || [];
-  // Some designs don't have a bare SKU — only suffix variants exist:
-  //   monogram      → per-letter SKUs (use "A" as canonical)
-  //   personalized  → "-CF" suffix
-  //   preprint      → "WH" suffix
-  // Pick the most specific suffix in priority order.
-  const suffix = design.has_monogram
-    ? "A"
-    : design.has_personalized
-      ? "-CF"
-      : design.has_preprint
-        ? "WH"
-        : "";
-  const mk = (sku: string, label: string): VariantSku => ({
-    sku,
-    label,
-    imageUrl: `https://images.clownantics.com/CA_resize_500_500/${sku.toLowerCase()}.jpg`,
-  });
-  // Always show garden + house — both variants exist in the catalog for the
-  // vast majority of designs, even when only one has recorded sales. Broken
-  // images on the rare exception are an acceptable trade for completeness.
-  // Banner only when product_types explicitly includes it (rare).
-  const out: VariantSku[] = [mk(`AFGF${body}${suffix}`, ""), mk(`AFHF${body}${suffix}`, "house")];
-  if (types.includes("garden-banner")) out.push(mk(`AFGB${body}${suffix}`, "banner"));
-  return out;
-}
+const variantSkus = variantSkusFor;
 
 const JF_ADMIN_SEARCH = "https://admin.shopify.com/store/justforfunflags/products?query=";
 

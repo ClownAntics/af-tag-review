@@ -40,6 +40,14 @@ RULES
    plain American flag is NOT a 4th of July design unless 4th-of-July imagery
    is actually present. A Halloween scene is NOT a Fall design — once a
    specific holiday applies, the season is redundant and conflicts.
+8. ONE major theme only. Decoration is subjects, never themes. Any Search Term
+   that would qualify as "primary" under category 1 above (a holiday, occasion,
+   or theme — e.g. Memorial, Anniversary, Welcome, Patriotic, Christmas,
+   Monogrammed, Bible-Scriptures) must NOT appear in decoration. Decoration is
+   reserved for concrete visible items: flowers, birds, animals, objects,
+   patterns. Pick exactly one major theme as primary; competing themes are
+   never co-tagged. Example: a memorial flag is Memorial — never also
+   Anniversary, Forever, or Family-Friends, even if "Forever" is in the text.
 
 PROCESS
 First identify the primary using the ordered list above. Then inventory

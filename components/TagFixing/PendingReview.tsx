@@ -23,6 +23,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Design } from "@/lib/types";
+import { variantSkusFor } from "@/lib/product-image";
 import {
   TaxonomyTypeahead,
   loadTaxonomy,
@@ -430,18 +431,8 @@ function LeftColumn({
   onFlag: () => void;
   onDetail: () => void;
 }) {
-  const body = design.design_family.replace(/^AF/, "");
-  const suffix = design.has_monogram
-    ? "A"
-    : design.has_personalized
-      ? "-CF"
-      : design.has_preprint
-        ? "WH"
-        : "";
-  const imgSku = `AFGF${body}${suffix}`.toLowerCase();
-  const imgUrl = `https://images.clownantics.com/CA_resize_500_500/${imgSku}.jpg`;
-  const gardenSku = `AFGF${body}${suffix}`;
-  const houseSku = `AFHF${body}${suffix}`;
+  const variants = variantSkusFor(design);
+  const imgUrl = variants[0].imageUrl;
   const rate = unitsPerYear(design);
   const band = BAND_LABELS[design.classification || ""] || null;
 
@@ -472,25 +463,20 @@ function LeftColumn({
           {design.design_name || design.design_family}
         </p>
         <p className="text-xs text-muted font-mono mt-1">
-          <a
-            href={`https://admin.shopify.com/store/justforfunflags/products?query=${gardenSku}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground hover:underline"
-            title={`Open ${gardenSku} in JF Shopify admin`}
-          >
-            {gardenSku}
-          </a>
-          <span className="mx-1 text-muted-2">/</span>
-          <a
-            href={`https://admin.shopify.com/store/justforfunflags/products?query=${houseSku}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground hover:underline"
-            title={`Open ${houseSku} in JF Shopify admin`}
-          >
-            {houseSku}
-          </a>
+          {variants.map((v, i) => (
+            <span key={v.sku}>
+              {i > 0 && <span className="mx-1 text-muted-2">/</span>}
+              <a
+                href={`https://admin.shopify.com/store/justforfunflags/products?query=${v.sku}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground hover:underline"
+                title={`Open ${v.sku} in JF Shopify admin`}
+              >
+                {v.sku}
+              </a>
+            </span>
+          ))}
         </p>
         <div className="flex gap-3.5 text-xs text-muted py-2 mt-2 border-y border-border">
           <span>

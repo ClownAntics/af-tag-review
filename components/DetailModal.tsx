@@ -16,6 +16,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { Design, ReviewEvent, ReviewStatus } from "@/lib/types";
+import { variantSkusFor } from "@/lib/product-image";
 
 interface Props {
   design: Design;
@@ -76,18 +77,8 @@ export function DetailModal({ design, onClose, onFlag }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const body = design.design_family.replace(/^AF/, "");
-  const suffix = design.has_monogram
-    ? "A"
-    : design.has_personalized
-      ? "-CF"
-      : design.has_preprint
-        ? "WH"
-        : "";
-  const gardenSku = `AFGF${body}${suffix}`;
-  const houseSku = `AFHF${body}${suffix}`;
-  const imgSku = gardenSku.toLowerCase();
-  const imgUrl = `https://images.clownantics.com/CA_resize_500_500/${imgSku}.jpg`;
+  const variants = variantSkusFor(design);
+  const imgUrl = variants[0].imageUrl;
   const jfAdmin = (sku: string) =>
     `https://admin.shopify.com/store/justforfunflags/products?query=${sku}`;
 
@@ -123,25 +114,20 @@ export function DetailModal({ design, onClose, onFlag }: Props) {
               {design.design_name || design.design_family}
             </h3>
             <p className="text-xs text-muted font-mono mt-0.5">
-              <a
-                href={jfAdmin(gardenSku)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-foreground hover:underline"
-                title={`Open ${gardenSku} in JF Shopify admin`}
-              >
-                {gardenSku}
-              </a>
-              <span className="mx-1 text-muted-2">/</span>
-              <a
-                href={jfAdmin(houseSku)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-foreground hover:underline"
-                title={`Open ${houseSku} in JF Shopify admin`}
-              >
-                {houseSku}
-              </a>
+              {variants.map((v, i) => (
+                <span key={v.sku}>
+                  {i > 0 && <span className="mx-1 text-muted-2">/</span>}
+                  <a
+                    href={jfAdmin(v.sku)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-foreground hover:underline"
+                    title={`Open ${v.sku} in JF Shopify admin`}
+                  >
+                    {v.sku}
+                  </a>
+                </span>
+              ))}
             </p>
           </div>
           <button

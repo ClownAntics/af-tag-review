@@ -37,7 +37,13 @@ export function TileGrid({
   const [runProgress, setRunProgress] = useState<{ done: number; total: number } | null>(null);
   const [processingFamilies, setProcessingFamilies] = useState<Set<string>>(new Set());
   const [doneFamilies, setDoneFamilies] = useState<Set<string>>(new Set());
+  const [pushing, setPushing] = useState(false);
+  const [pushProgress, setPushProgress] = useState<{ done: number; failed: number; total: number } | null>(null);
   const [promptModalOpen, setPromptModalOpen] = useState(false);
+  // Readytosend selection — families user has checked for push. Persists
+  // across pagination so multi-page batches work; cleared on status/filter
+  // change and after a successful push.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const abortRef = useRef<AbortController | null>(null);
 
   const loadPage = useCallback(
@@ -66,6 +72,7 @@ export function TileGrid({
     setOffset(0);
     setProcessingFamilies(new Set());
     setDoneFamilies(new Set());
+    setSelected(new Set());
     loadPage(0);
   }, [loadPage]);
 
@@ -191,6 +198,86 @@ export function TileGrid({
     }
   }, [designs, runningVision, doneFamilies, refresh]);
 
+  const pushToShopify = useCallback(async () => {
+    if (!designs || pushing) return;
+    const selectedFamilies = [...selected];
+    const pushCount = selectedFamilies.length > 0 ? selectedFamilies.length : (count ?? designs.length);
+    if (pushCount === 0) return;
+    const label =
+      selectedFamilies.length > 0
+        ? `${selectedFamilies.length} selected design${selectedFamilies.length === 1 ? "" : "s"}`
+        : `all ${pushCount} ready-to-send design${pushCount === 1 ? "" : "s"}`;
+    if (
+      !confirm(
+        `Push ${label} to JFF Shopify?\n\nThis REPLACES each product's tags with its approved_tags — anything not in FL Themes will be removed.`,
+      )
+    ) {
+      return;
+    }
+    setPushing(true);
+    setPushProgress({ done: 0, failed: 0, total: pushCount });
+    try {
+      const res = await fetch("/api/review/push", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          selectedFamilies.length > 0 ? { design_families: selectedFamilies } : {},
+        ),
+      });
+      if (!res.ok || !res.body) throw new Error(await res.text());
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let done = 0;
+      let failed = 0;
+      while (true) {
+        const { done: finished, value } = await reader.read();
+        if (finished) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const evt = JSON.parse(line) as
+              | { type: "start"; family: string }
+              | { type: "ok"; family: string }
+              | { type: "error"; family: string; error: string }
+              | { type: "skipped"; family: string; reason: string }
+              | { type: "done"; families_pushed: number; products_failed: number };
+            if (evt.type === "start") {
+              setProcessingFamilies((s) => {
+                const next = new Set(s);
+                next.add(evt.family);
+                return next;
+              });
+            } else if (evt.type === "ok" || evt.type === "error" || evt.type === "skipped") {
+              setProcessingFamilies((s) => {
+                const next = new Set(s);
+                next.delete(evt.family);
+                return next;
+              });
+              if (evt.type === "ok") done++;
+              else failed++;
+              setPushProgress({ done, failed, total: pushCount });
+            }
+          } catch {
+            // Skip malformed lines.
+          }
+        }
+      }
+    } catch (e) {
+      console.error("push failed:", e);
+    } finally {
+      setPushing(false);
+      setSelected(new Set());
+      setTimeout(() => {
+        setPushProgress(null);
+        refresh();
+      }, 600);
+    }
+  }, [designs, pushing, count, selected, refresh]);
+
   const clearAllFlagged = useCallback(async () => {
     if (!designs || runningVision) return;
     if (!confirm("Clear all flagged designs back to No vision yet?")) return;
@@ -220,11 +307,36 @@ export function TileGrid({
     refresh();
   }, [designs, refresh]);
 
+  const toggleSelected = useCallback((family: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(family)) next.delete(family);
+      else next.add(family);
+      return next;
+    });
+  }, []);
+
   const cfg = TILE_CONFIGS[status];
   const total = count ?? 0;
   const waitingCount = designs
     ? designs.filter((d) => !doneFamilies.has(d.design_family) && !processingFamilies.has(d.design_family)).length
     : 0;
+  const visibleFamilies = designs?.map((d) => d.design_family) ?? [];
+  const allVisibleSelected =
+    visibleFamilies.length > 0 && visibleFamilies.every((f) => selected.has(f));
+  const toggleSelectAllVisible = () => {
+    setSelected((prev) => {
+      if (allVisibleSelected) {
+        // Deselect the visible page (leaves any prior cross-page picks intact).
+        const next = new Set(prev);
+        for (const f of visibleFamilies) next.delete(f);
+        return next;
+      }
+      const next = new Set(prev);
+      for (const f of visibleFamilies) next.add(f);
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -273,21 +385,34 @@ export function TileGrid({
           )}
           {status === "readytosend" && (
             <>
+              {pushProgress && (
+                <span className="text-xs text-muted self-center">
+                  {pushProgress.done}/{pushProgress.total} pushed
+                  {pushProgress.failed > 0 && ` · ${pushProgress.failed} failed`}
+                </span>
+              )}
+              {designs && designs.length > 0 && !pushing && (
+                <button
+                  type="button"
+                  onClick={toggleSelectAllVisible}
+                  className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50"
+                >
+                  {allVisibleSelected
+                    ? `Deselect ${visibleFamilies.length}`
+                    : `Select all ${visibleFamilies.length} visible`}
+                </button>
+              )}
               <button
                 type="button"
-                disabled
-                title="Phase 6 — Shopify write-back coming soon"
-                className="text-sm px-3.5 py-2 rounded-md border border-border bg-white opacity-50 cursor-not-allowed"
+                onClick={pushToShopify}
+                disabled={pushing || total === 0}
+                className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background border border-foreground hover:bg-zinc-800 disabled:opacity-60"
               >
-                Export CSV
-              </button>
-              <button
-                type="button"
-                disabled
-                title="Phase 6 — Shopify write-back needs your custom-app token"
-                className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background border border-foreground opacity-60 cursor-not-allowed"
-              >
-                ↑ Push {total} to Shopify →
+                {pushing
+                  ? "Pushing…"
+                  : selected.size > 0
+                    ? `↑ Push ${selected.size} selected to Shopify →`
+                    : `↑ Push all ${total} to Shopify →`}
               </button>
             </>
           )}
@@ -363,18 +488,20 @@ export function TileGrid({
             const showRemove =
               status === "flagged" && !runningVision && state === "waiting";
             const showFlagBtn = status === "readytosend" || status === "updated";
+            const showCheckbox =
+              status === "readytosend" && !pushing && state === "approved";
+            const isSelected = selected.has(d.design_family);
             // Which tag list to chip under each card:
-            //   flagged → shopify_tags (current Shopify state — what you're about to re-review)
+            //   flagged  / novision → shopify_tags (Shopify's current state)
             //   readytosend / updated → approved_tags (your curated output)
-            //   others → none
             const chipTags: string[] | null =
-              status === "flagged"
+              status === "flagged" || status === "novision"
                 ? d.shopify_tags ?? []
                 : status === "readytosend" || status === "updated"
                   ? d.approved_tags ?? []
                   : null;
             const chipColor =
-              status === "flagged"
+              status === "flagged" || status === "novision"
                 ? "bg-transparent border-zinc-300 text-muted-2 border-dashed"
                 : "bg-[#EAF3DE] border-[#C0DD97] text-[#27500A]";
 
@@ -383,19 +510,17 @@ export function TileGrid({
                 key={d.design_family}
                 design={d}
                 containerClassName={ringClass}
-                onImageClick={
-                  status === "novision"
-                    ? () => flagOne(d.design_family)
-                    : undefined
-                }
-                onOpenDetail={status === "novision" ? undefined : onOpenDetail}
+                onOpenDetail={onOpenDetail}
                 imageOverlay={
                   <CardImageOverlay
                     state={state}
                     showRemove={showRemove}
                     showFlagBtn={showFlagBtn}
+                    showCheckbox={showCheckbox}
+                    isSelected={isSelected}
                     onRemove={() => removeFromFlagged(d.design_family)}
                     onFlag={() => flagOne(d.design_family)}
+                    onToggleSelect={() => toggleSelected(d.design_family)}
                   />
                 }
                 hoverOverlay={
@@ -530,14 +655,20 @@ function CardImageOverlay({
   state,
   showRemove,
   showFlagBtn,
+  showCheckbox,
+  isSelected,
   onRemove,
   onFlag,
+  onToggleSelect,
 }: {
   state: CardState;
   showRemove: boolean;
   showFlagBtn: boolean;
+  showCheckbox: boolean;
+  isSelected: boolean;
   onRemove: () => void;
   onFlag: () => void;
+  onToggleSelect: () => void;
 }) {
   return (
     <>
@@ -550,6 +681,24 @@ function CardImageOverlay({
         <span className="absolute top-1.5 left-1.5 text-[10px] px-2 py-0.5 rounded-full bg-[#0F6E56] text-white font-medium pointer-events-none">
           ✓ done
         </span>
+      )}
+      {showCheckbox && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleSelect();
+          }}
+          title={isSelected ? "Deselect" : "Select for push"}
+          aria-pressed={isSelected}
+          className={`absolute top-2 left-2 w-7 h-7 rounded-md border-2 flex items-center justify-center text-base font-bold leading-none z-10 shadow-md transition-colors ${
+            isSelected
+              ? "bg-[#0F6E56] border-white text-white"
+              : "bg-white border-[#0F6E56]/60 text-transparent hover:bg-[#0F6E56]/10 hover:border-[#0F6E56]"
+          }`}
+        >
+          ✓
+        </button>
       )}
       {showRemove && (
         <button

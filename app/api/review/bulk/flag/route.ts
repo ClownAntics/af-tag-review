@@ -23,27 +23,30 @@ export async function POST(req: NextRequest): Promise<Response> {
   const rawSkus = Array.isArray(body.skus) ? body.skus.filter((s): s is string => typeof s === "string") : [];
   if (rawSkus.length === 0) return errorResponse(400, "skus[] required");
 
-  // Accept either a variant SKU (AFGFWR0053, AFHFSP0006, AFGFMS0509WH …) or
-  // a bare design_family (AFWR0053). Family is what lives in the designs
-  // table PK; parseSku covers the variants.
+  // Accept: AF variant SKU (AFGFWR0053, AFGFMS0509WH, …), AF bare family
+  // (AFWR0053), OR a non-AF design_family (which IS the SKU — PAAFANG,
+  // EV13M14303, CD4282M, etc.). The existence check below filters out typos.
   const families = new Set<string>();
-  const unparsed: string[] = [];
-  const FAMILY_PATTERN = /^AF[A-Z]{2}\d+$/;
+  const unknownCandidates: string[] = [];
+  const AF_FAMILY_PATTERN = /^AF[A-Z]{2}\d+$/;
   for (const s of rawSkus) {
     const up = s.trim().toUpperCase();
-    if (FAMILY_PATTERN.test(up)) {
+    if (!up) continue;
+    if (AF_FAMILY_PATTERN.test(up)) {
       families.add(up);
       continue;
     }
     const parsed = parseSku(s);
-    if (!parsed) {
-      unparsed.push(s);
+    if (parsed) {
+      families.add(parsed.designFamily);
       continue;
     }
-    families.add(parsed.designFamily);
+    // Could be a non-AF design_family. Queue for the existence check.
+    unknownCandidates.push(up);
+    families.add(up);
   }
   if (families.size === 0) {
-    return Response.json({ flagged: 0, missing: [], unparsed });
+    return Response.json({ flagged: 0, missing: [], unparsed: [] });
   }
 
   const sb = getAdminSupabase();
@@ -61,6 +64,10 @@ export async function POST(req: NextRequest): Promise<Response> {
   );
   const missing = familyList.filter((f) => !existingFamilies.has(f));
   const toFlag = familyList.filter((f) => existingFamilies.has(f));
+
+  // Tokens we queued optimistically that didn't match a real design_family
+  // get reported back as "unparsed" — same semantic as before (unknown SKU).
+  const unparsed = unknownCandidates.filter((c) => !existingFamilies.has(c));
 
   if (toFlag.length === 0) {
     return Response.json({ flagged: 0, missing, unparsed });

@@ -17,6 +17,7 @@ import type { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { buildSystemPrompt, tagOne, VISION_MODEL } from "@/lib/vision";
+import { primaryImageUrl } from "@/lib/product-image";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // Vercel: 5 minutes
@@ -25,11 +26,6 @@ const CONCURRENCY = 3;
 
 interface Body {
   design_families: string[];
-}
-
-const IMG_BASE = "https://images.clownantics.com/CA_resize_500_500/";
-function imgUrl(designFamily: string): string {
-  return `${IMG_BASE}${`AFGF${designFamily.replace(/^AF/, "")}`.toLowerCase()}.jpg`;
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
@@ -82,9 +78,29 @@ export async function POST(req: NextRequest): Promise<Response> {
           const family = queue.shift();
           if (!family) return;
           emit({ type: "start", family });
+          // Fetch design fields up front: manufacturer + personalization flags
+          // feed the image URL; approved_tags feeds the post-vision dedup below.
+          const { data: existing } = await sb
+            .from("designs")
+            .select("approved_tags,manufacturer,has_monogram,has_personalized,has_preprint")
+            .eq("design_family", family)
+            .single();
+          const d = existing as {
+            approved_tags: string[] | null;
+            manufacturer: string | null;
+            has_monogram: boolean | null;
+            has_personalized: boolean | null;
+            has_preprint: boolean | null;
+          } | null;
           const result = await tagOne(client, {
             designFamily: family,
-            imageUrl: imgUrl(family),
+            imageUrl: primaryImageUrl({
+              manufacturer: d?.manufacturer,
+              design_family: family,
+              has_monogram: d?.has_monogram,
+              has_personalized: d?.has_personalized,
+              has_preprint: d?.has_preprint,
+            }),
             systemPrompt,
           });
           if (!result.ok) {
@@ -101,14 +117,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           // Dedupe vision_tags against existing approved_tags: on re-review the
           // user has already locked those in, and showing them twice in the UI
           // (once in Approved, once in Vision) is confusing.
-          const { data: existing } = await sb
-            .from("designs")
-            .select("approved_tags")
-            .eq("design_family", family)
-            .single();
-          const approvedSet = new Set(
-            (existing as { approved_tags: string[] | null } | null)?.approved_tags ?? [],
-          );
+          const approvedSet = new Set(d?.approved_tags ?? []);
           const dedupedVisionTags = result.value.tags.filter((t) => !approvedSet.has(t));
           const { error: updateErr } = await sb
             .from("designs")

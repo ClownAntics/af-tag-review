@@ -89,6 +89,27 @@ function validTerms(): Set<string> {
   return _validTerms;
 }
 
+// Fallback resolver: when Claude emits a display label / name / "name: sub"
+// string instead of the canonical Search Term (e.g. "Welcome" when the
+// Search Term is "Welcome-Flags"), try to resolve it. Case-insensitive.
+let _labelToTerm: Map<string, string> | null = null;
+function resolveToTerm(raw: string): string | null {
+  const valid = validTerms();
+  if (valid.has(raw)) return raw;
+  if (!_labelToTerm) {
+    _labelToTerm = new Map();
+    for (const e of taxonomy.entries as TaxEntry[]) {
+      // Register lowercase label, lowercase name, and lowercase "name: sub"
+      // for Level-1 / Level-2 rows so name-only or parent-only emissions resolve.
+      _labelToTerm.set(e.label.toLowerCase(), e.term);
+      _labelToTerm.set(e.name.toLowerCase(), e.term);
+      if (e.sub) _labelToTerm.set(`${e.name}: ${e.sub}`.toLowerCase(), e.term);
+    }
+  }
+  const byLabel = _labelToTerm.get(raw.toLowerCase());
+  return byLabel || null;
+}
+
 export function buildSystemPrompt(template?: string): string {
   const t = (template || DEFAULT_PROMPT).replace(/\{\{taxonomy\}\}/g, taxonomyBlock());
   return t;
@@ -147,7 +168,6 @@ function parseResponse(raw: string): VisionResult | { error: string } {
 
   // New schema: {primary: string, decoration: string[], reasoning: string}.
   // Back-compat: if the old {tags, confidence, notes} comes in, convert it.
-  const valid = validTerms();
 
   const hasNewShape = "primary" in obj || "decoration" in obj;
   const hasOldShape = "tags" in obj;
@@ -156,23 +176,29 @@ function parseResponse(raw: string): VisionResult | { error: string } {
   let decoration: string[] = [];
   let reasoning: string | undefined;
 
+  const toTerm = (raw: unknown): string | null => {
+    if (typeof raw !== "string") return null;
+    return resolveToTerm(raw);
+  };
+
   if (hasNewShape) {
-    if (typeof obj.primary === "string" && valid.has(obj.primary)) {
-      primary = obj.primary;
-    } else if (typeof obj.primary === "string") {
-      return { error: `primary "${obj.primary}" is not in taxonomy` };
+    if (typeof obj.primary === "string") {
+      primary = toTerm(obj.primary);
+      if (!primary) {
+        return { error: `primary "${obj.primary}" is not in taxonomy` };
+      }
     }
     if (Array.isArray(obj.decoration)) {
-      decoration = obj.decoration.filter(
-        (t): t is string => typeof t === "string" && valid.has(t),
-      );
+      decoration = obj.decoration
+        .map((t) => toTerm(t))
+        .filter((t): t is string => t !== null);
     }
     if (typeof obj.reasoning === "string") reasoning = obj.reasoning;
   } else if (hasOldShape && Array.isArray(obj.tags)) {
     // Legacy support for any saved prompts still producing the old shape.
-    decoration = obj.tags.filter(
-      (t): t is string => typeof t === "string" && valid.has(t),
-    );
+    decoration = obj.tags
+      .map((t) => toTerm(t))
+      .filter((t): t is string => t !== null);
     if (typeof obj.notes === "string") reasoning = obj.notes;
   } else {
     return {

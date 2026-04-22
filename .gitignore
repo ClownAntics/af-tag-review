@@ -44,3 +44,10 @@ next-env.d.ts
 /data/
 
 .vercel
+
+# Claude Code per-developer settings
+.claude/
+
+# Shopify pull/push diff artifacts (regenerated on every dry-run)
+shopify_pull_diff.csv
+shopify_push_diff.csv
