@@ -433,14 +433,28 @@ function LeftColumn({
   const imgUrl = variants[0].imageUrl;
   const rate = unitsPerYear(design);
   const band = BAND_LABELS[design.classification || ""] || null;
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  // While the lightbox is open, swallow all keydowns in the capture phase so
+  // global shortcuts (Enter/A/F/arrows) don't fire behind the overlay. Escape
+  // closes the lightbox.
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const h = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxOpen(false);
+      e.stopImmediatePropagation();
+    };
+    window.addEventListener("keydown", h, true);
+    return () => window.removeEventListener("keydown", h, true);
+  }, [lightboxOpen]);
 
   return (
     <div>
       <button
         type="button"
-        onClick={onDetail}
+        onClick={() => setLightboxOpen(true)}
         className="relative block w-full aspect-[3/4] rounded-lg overflow-hidden border border-border bg-zinc-50 group"
-        title="Click to see full details + history (flag from the Flag button or press F)"
+        title="Click to enlarge"
       >
         <Image
           src={imgUrl}
@@ -451,10 +465,26 @@ function LeftColumn({
           className="object-cover"
         />
         <div className="absolute inset-0 bg-black/55 text-white flex flex-col items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <span className="text-2xl">📋</span>
-          <span className="text-sm font-medium">View details &amp; history</span>
+          <span className="text-2xl">🔍</span>
+          <span className="text-sm font-medium">Click to enlarge</span>
         </div>
       </button>
+      {lightboxOpen && (
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label="Close enlarged image"
+          onClick={() => setLightboxOpen(false)}
+          className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-6 cursor-zoom-out"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imgUrl}
+            alt={design.design_name || design.design_family}
+            className="max-w-[95vw] max-h-[95vh] object-contain rounded-md shadow-2xl"
+          />
+        </div>
+      )}
       <div className="mt-3 text-sm">
         <p className="text-[17px] font-medium leading-snug">
           {design.design_name || design.design_family}
