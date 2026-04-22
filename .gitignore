@@ -51,3 +51,4 @@ next-env.d.ts
 # Shopify pull/push diff artifacts (regenerated on every dry-run)
 shopify_pull_diff.csv
 shopify_push_diff.csv
+not_on_jf.csv
