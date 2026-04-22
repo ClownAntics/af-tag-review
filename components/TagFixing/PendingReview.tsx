@@ -377,7 +377,7 @@ export function PendingReview({ onOpenDetail, onCountsChanged, filterQs = "" }: 
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-7 items-start">
-        <LeftColumn design={current} onFlag={flag} onDetail={() => onOpenDetail(current)} />
+        <LeftColumn design={current} onDetail={() => onOpenDetail(current)} />
         <RightColumn
           design={current}
           mutating={mutating}
@@ -424,11 +424,9 @@ export function PendingReview({ onOpenDetail, onCountsChanged, filterQs = "" }: 
 
 function LeftColumn({
   design,
-  onFlag,
   onDetail,
 }: {
   design: Design;
-  onFlag: () => void;
   onDetail: () => void;
 }) {
   const variants = variantSkusFor(design);
@@ -440,9 +438,9 @@ function LeftColumn({
     <div>
       <button
         type="button"
-        onClick={onFlag}
+        onClick={onDetail}
         className="relative block w-full aspect-[3/4] rounded-lg overflow-hidden border border-border bg-zinc-50 group"
-        title="Click to flag for tag review"
+        title="Click to see full details + history (flag from the Flag button or press F)"
       >
         <Image
           src={imgUrl}
@@ -453,9 +451,8 @@ function LeftColumn({
           className="object-cover"
         />
         <div className="absolute inset-0 bg-black/55 text-white flex flex-col items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <span className="text-2xl">⚑</span>
-          <span className="text-sm font-medium">Flag for tag review</span>
-          <span className="text-[11px] opacity-75">vision will run again</span>
+          <span className="text-2xl">📋</span>
+          <span className="text-sm font-medium">View details &amp; history</span>
         </div>
       </button>
       <div className="mt-3 text-sm">

@@ -10,6 +10,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Design, ReviewStatus } from "@/lib/types";
 import { DesignCard } from "@/components/DesignCard";
+import { Toast } from "@/components/Toast";
 import { VisionPromptModal } from "./VisionPromptModal";
 
 interface Props {
@@ -39,6 +40,7 @@ export function TileGrid({
   const [doneFamilies, setDoneFamilies] = useState<Set<string>>(new Set());
   const [pushing, setPushing] = useState(false);
   const [pushProgress, setPushProgress] = useState<{ done: number; failed: number; total: number } | null>(null);
+  const [pushToast, setPushToast] = useState<{ message: string; variant: "success" | "error" } | null>(null);
   const [promptModalOpen, setPromptModalOpen] = useState(false);
   // Readytosend selection — families user has checked for push. Persists
   // across pagination so multi-page batches work; cleared on status/filter
@@ -104,14 +106,15 @@ export function TileGrid({
   // ─── Flagged-tile actions ──────────────────────────────────────────────
   const removeFromFlagged = useCallback(
     async (family: string) => {
-      // Going from flagged → novision via reset action.
+      // Flagged → novision via unflag (non-destructive). Prior vision/approved
+      // tags are preserved so re-flagging later resumes where it left off.
       try {
         await fetch(
           `/api/review/design/${encodeURIComponent(family)}/action`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "reset" }),
+            body: JSON.stringify({ action: "unflag" }),
           },
         );
         refresh();
@@ -128,6 +131,21 @@ export function TileGrid({
       .filter((d) => !doneFamilies.has(d.design_family))
       .map((d) => d.design_family);
     if (families.length === 0) return;
+
+    // Soft cap warning at 100+ designs. Sonnet 4.6 runs ~$0.006/design and
+    // ~3s/design at concurrency 3. Give the user explicit cost/time up front.
+    if (families.length > 100) {
+      const est$ = (families.length * 0.006).toFixed(2);
+      const estMin = Math.max(1, Math.round((families.length * 3) / 60));
+      const ok = window.confirm(
+        `Run Claude vision on ${families.length} designs?\n\n` +
+          `Estimated cost: ~$${est$}\n` +
+          `Estimated time: ~${estMin} min\n\n` +
+          `OK to proceed, Cancel to go back.`,
+      );
+      if (!ok) return;
+    }
+
     setRunningVision(true);
     setRunProgress({ done: 0, total: families.length });
     abortRef.current = new AbortController();
@@ -187,10 +205,13 @@ export function TileGrid({
         }
       }
     } catch (e) {
-      console.error("vision run failed:", e);
+      // AbortError is expected when user clicks Cancel — don't log as crash.
+      if ((e as Error).name !== "AbortError") {
+        console.error("vision run failed:", e);
+      }
     } finally {
       setRunningVision(false);
-      // All done — the server will have moved each design to pending. Reload.
+      // All done (or aborted) — reload so completed designs show as pending.
       setTimeout(() => {
         setRunProgress(null);
         refresh();
@@ -268,25 +289,50 @@ export function TileGrid({
       }
     } catch (e) {
       console.error("push failed:", e);
+      setPushToast({
+        message: `Push failed: ${(e as Error).message}`,
+        variant: "error",
+      });
     } finally {
       setPushing(false);
       setSelected(new Set());
-      setTimeout(() => {
-        setPushProgress(null);
-        refresh();
-      }, 600);
+      // Read final progress to compose the toast (push handles partial failure
+      // per Q28 — others succeed even if some fail).
+      setPushProgress((p) => {
+        if (p) {
+          if (p.failed > 0) {
+            setPushToast({
+              message: `Pushed ${p.done} to Shopify · ${p.failed} failed (see Updated tile + event log)`,
+              variant: "error",
+            });
+          } else if (p.done > 0) {
+            setPushToast({
+              message: `Pushed ${p.done} design${p.done === 1 ? "" : "s"} to Shopify`,
+              variant: "success",
+            });
+          }
+        }
+        return null;
+      });
+      setTimeout(refresh, 600);
     }
   }, [designs, pushing, count, selected, refresh]);
 
   const clearAllFlagged = useCallback(async () => {
     if (!designs || runningVision) return;
-    if (!confirm("Clear all flagged designs back to No vision yet?")) return;
+    if (
+      !confirm(
+        "Clear all flagged designs back to No vision yet?\n\n" +
+          "(Vision suggestions and approved tags are preserved — re-flagging later resumes where it left off.)",
+      )
+    )
+      return;
     await Promise.all(
       designs.map((d) =>
         fetch(`/api/review/design/${encodeURIComponent(d.design_family)}/action`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "reset" }),
+          body: JSON.stringify({ action: "unflag" }),
         }),
       ),
     );
@@ -458,6 +504,16 @@ export function TileGrid({
               : 0}
             %
           </span>
+          {runningVision && (
+            <button
+              type="button"
+              onClick={() => abortRef.current?.abort()}
+              className="text-xs px-2.5 py-1 rounded-md border border-[#BA7517]/40 bg-white text-[#633806] hover:bg-[#FAEEDA]"
+              title="Cancel the vision run (already-completed designs stay in pending)"
+            >
+              Cancel
+            </button>
+          )}
         </div>
       )}
 
@@ -487,7 +543,10 @@ export function TileGrid({
             const ringClass = STATE_BORDER[state];
             const showRemove =
               status === "flagged" && !runningVision && state === "waiting";
-            const showFlagBtn = status === "readytosend" || status === "updated";
+            const showFlagBtn =
+              status === "novision" ||
+              status === "readytosend" ||
+              status === "updated";
             const showCheckbox =
               status === "readytosend" && !pushing && state === "approved";
             const isSelected = selected.has(d.design_family);
@@ -572,6 +631,13 @@ export function TileGrid({
         onClose={() => setPromptModalOpen(false)}
       />
 
+      {/* Push completion toast (per Q20: only on push, not on per-design approve) */}
+      <Toast
+        message={pushToast?.message ?? null}
+        variant={pushToast?.variant}
+        onDismiss={() => setPushToast(null)}
+      />
+
       {/* Pager */}
       {total > PAGE_SIZE && (
         <div className="flex justify-center items-center gap-3 pt-4 text-xs text-muted">
@@ -611,8 +677,8 @@ interface TileConfig {
 const TILE_CONFIGS: Record<ReviewStatus, TileConfig> = {
   novision: {
     titleNoun: "designs with no vision analysis",
-    subtitle: "Hover any design to flag it. Or bulk-flag visible to queue them all up.",
-    perCardHoverFlag: true,
+    subtitle: "Click a card to see details. Use the ⚑ button to flag for review. Or bulk-flag visible to queue them all up.",
+    perCardHoverFlag: false,
   },
   flagged: {
     titleNoun: "designs flagged",

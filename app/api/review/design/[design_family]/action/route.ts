@@ -26,6 +26,7 @@ type Body =
   | { action: "update_tags"; tags: string[] }
   | { action: "accept_vision"; term: string }
   | { action: "reject_vision"; term: string }
+  | { action: "unflag" }
   | { action: "reset" };
 
 export async function POST(
@@ -125,7 +126,18 @@ export async function POST(
       eventPayload = { tag: body.term };
       break;
     }
+    case "unflag": {
+      // Non-destructive: just change status back to novision. Vision and
+      // approved tags are preserved so re-flagging resumes prior state.
+      // Used by Clear All on the Flagged tile.
+      patch = { status: "novision" satisfies ReviewStatus };
+      eventType = "unflagged";
+      eventPayload = { from_status: state.status };
+      break;
+    }
     case "reset": {
+      // Destructive: wipe everything back to novision. Kept for explicit
+      // "start completely over" cases; not used by Clear All.
       patch = {
         status: "novision" satisfies ReviewStatus,
         approved_tags: null,

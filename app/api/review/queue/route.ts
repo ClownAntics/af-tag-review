@@ -45,11 +45,46 @@ export async function GET(req: NextRequest): Promise<Response> {
     ? R
     : never;
 
+  // Sort order varies by tile (per Q29):
+  //   pending     → most recently flagged → vision_completed first; vision_tagged_at desc
+  //   readytosend → most recently approved first; last_reviewed_at desc
+  //   updated     → most recently pushed first; last_pushed_at desc
+  //   novision    → alphabetical by design_name (then family for stability)
+  //   flagged     → most recent flag first; vision_tagged_at NULLs first then catalog_created_date
+  //                  (no flagged_at column today; falling back is fine)
+  const ordered = (() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const f = filtered as any;
+    switch (status as ReviewStatus) {
+      case "pending":
+        return f
+          .order("vision_tagged_at", { ascending: false, nullsFirst: false })
+          .order("design_family", { ascending: true });
+      case "readytosend":
+        return f
+          .order("last_reviewed_at", { ascending: false, nullsFirst: false })
+          .order("design_family", { ascending: true });
+      case "updated":
+        return f
+          .order("last_pushed_at", { ascending: false, nullsFirst: false })
+          .order("design_family", { ascending: true });
+      case "novision":
+        return f
+          .order("design_name", { ascending: true, nullsFirst: false })
+          .order("design_family", { ascending: true });
+      case "flagged":
+      default:
+        return f
+          .order("catalog_created_date", { ascending: false, nullsFirst: false })
+          .order("design_family", { ascending: true });
+    }
+  })();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error, count } = await (filtered as any)
-    .order("units_total", { ascending: false })
-    .order("design_family", { ascending: true })
-    .range(offset, offset + limit - 1);
+  const { data, error, count } = await (ordered as any).range(
+    offset,
+    offset + limit - 1,
+  );
 
   if (error) return errorResponse(500, error.message);
 
