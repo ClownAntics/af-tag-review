@@ -20,7 +20,7 @@ import { getAdminSupabase } from "@/lib/supabase-admin";
 import { updateProductTags } from "@/lib/shopify";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 600; // Vercel: up to 10 min for big pushes
+export const maxDuration = 300; // Vercel Hobby/Pro cap; big pushes run via CLI
 
 interface ReadyDesign {
   design_family: string;
