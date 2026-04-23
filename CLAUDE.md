@@ -1,5 +1,14 @@
 @AGENTS.md
 
+# Workflow preferences
+
+**Always push after a change.** When I (Claude) make any code change on this
+repo, immediately commit and push to `origin/main` without waiting to be
+asked. Vercel's auto-deploy depends on it, and Blake doesn't want to have to
+prompt for it each time. Exception: if changes are clearly mid-flight (e.g.
+I'm still iterating on a multi-file edit and haven't verified it yet),
+finish the coherent unit first, then commit + push.
+
 # Tag Review — project notes
 
 Standalone companion to `af-sales-research`. Purpose: **curate Shopify tags on
