@@ -15,6 +15,7 @@ import { TagFixing } from "@/components/TagFixing/TagFixing";
 import { DetailModal } from "@/components/DetailModal";
 import { SkuSearch } from "@/components/SkuSearch";
 import { QuickStartModal } from "@/components/QuickStartModal";
+import { SettingsModal } from "@/components/SettingsModal";
 import { VisionPromptModal } from "@/components/TagFixing/VisionPromptModal";
 import type { Design } from "@/lib/types";
 
@@ -23,6 +24,7 @@ export default function Home() {
   const [dataVersion, setDataVersion] = useState(0);
   const [promptModalOpen, setPromptModalOpen] = useState(false);
   const [quickStartOpen, setQuickStartOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -70,6 +72,13 @@ export default function Home() {
           >
             Quick start
           </button>
+          <button
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            className="hover:text-foreground hover:underline"
+          >
+            Settings
+          </button>
           <a
             href="https://github.com/ClownAntics/af-tag-review/blob/main/docs/USER_GUIDE.md"
             target="_blank"
@@ -115,6 +124,12 @@ export default function Home() {
       <QuickStartModal
         open={quickStartOpen}
         onClose={() => setQuickStartOpen(false)}
+      />
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onResetComplete={() => setDataVersion((v) => v + 1)}
       />
     </main>
   );

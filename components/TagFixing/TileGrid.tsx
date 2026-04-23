@@ -494,15 +494,6 @@ export function TileGrid({
               </button>
             </>
           )}
-          {status === "updated" && (
-            <button
-              type="button"
-              disabled
-              className="text-sm px-3.5 py-2 rounded-md border border-border bg-white opacity-50 cursor-not-allowed"
-            >
-              Export CSV
-            </button>
-          )}
           {status === "novision" && designs && designs.length > 0 && (
             <button
               type="button"
@@ -715,7 +706,7 @@ interface TileConfig {
 const TILE_CONFIGS: Record<ReviewStatus, TileConfig> = {
   novision: {
     titleNoun: "designs with no vision analysis",
-    subtitle: "Per-card: ✓ (top-right) marks current Shopify tags fine → ready to send. ⚑ (top-left) sends through vision. Click the image for details.",
+    subtitle: "Per-card: ✓ (top-left) marks current Shopify tags fine → ready to send. ⚑ (top-right) sends through vision. Click the image for details.",
     perCardHoverFlag: false,
   },
   flagged: {
@@ -778,10 +769,11 @@ function CardImageOverlay({
   onToggleSelect: () => void;
   onMarkFine: () => void;
 }) {
-  // When the Mark-as-fine checkbox occupies the upper-right corner, shove the
-  // flag button to the upper-left so the two don't collide. Elsewhere the
-  // flag button stays in its traditional upper-right spot.
-  const flagBtnPosition = showMarkFineBtn ? "top-1.5 left-1.5" : "top-1.5 right-1.5";
+  // On novision cards, the ✓ "Mark as fine" checkbox sits in the upper-left
+  // (approve/keep affordance) and the ⚑ flag button in the upper-right (push
+  // back through vision). Elsewhere the flag button stays in its traditional
+  // upper-right spot.
+  const flagBtnPosition = "top-1.5 right-1.5";
   return (
     <>
       {state === "processing" && (
@@ -821,7 +813,7 @@ function CardImageOverlay({
           }}
           title="Mark as fine — copy current Shopify tags to approved and queue for push"
           aria-label="Mark as fine"
-          className="absolute top-1.5 right-1.5 w-5 h-5 rounded-sm border-2 border-[#0F6E56]/70 bg-white hover:bg-[#0F6E56] hover:border-[#0F6E56] text-transparent hover:text-white flex items-center justify-center text-[11px] font-bold leading-none z-10 shadow-sm transition-colors"
+          className="absolute top-1.5 left-1.5 w-5 h-5 rounded-sm border-2 border-[#0F6E56] bg-white hover:bg-[#0F6E56] text-[#0F6E56] hover:text-white flex items-center justify-center text-[11px] font-bold leading-none z-10 shadow-sm transition-colors"
         >
           ✓
         </button>

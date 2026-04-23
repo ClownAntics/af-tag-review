@@ -31,11 +31,49 @@ interface Props {
   externalDataVersion?: number;
 }
 
+const LAST_TILE_KEY = "tagReview.lastTile";
+const VALID_STATUSES: ReviewStatus[] = [
+  "flagged",
+  "pending",
+  "readytosend",
+  "updated",
+  "novision",
+];
+
+function initialTile(): ReviewStatus {
+  // Lazy initializer: only runs on first render. In a Next.js "use client"
+  // component this first render happens in the browser, so localStorage is
+  // safe to read. Still guarded against exotic environments (SSR prerender,
+  // private browsing) by the typeof + try/catch.
+  if (typeof window === "undefined") return "pending";
+  try {
+    const saved = window.localStorage.getItem(LAST_TILE_KEY);
+    if (saved && VALID_STATUSES.includes(saved as ReviewStatus)) {
+      return saved as ReviewStatus;
+    }
+  } catch {
+    // ignore
+  }
+  return "pending";
+}
+
 export function TagFixing({ onOpenDetail, externalDataVersion = 0 }: Props) {
-  const [tile, setTile] = useState<ReviewStatus>("pending");
+  // Default tile = last one the user was on. Falls back to "pending" for
+  // first-time visitors. Keyed in localStorage so it survives full refreshes
+  // but stays per-browser (no server-side persistence needed).
+  const [tile, setTileState] = useState<ReviewStatus>(initialTile);
   const [filters, setFilters] = useState<ReviewFilters>(EMPTY_REVIEW_FILTERS);
   const [counts, setCounts] = useState<ReviewCounts | null>(null);
   const [countsRev, setCountsRev] = useState(0);
+
+  const setTile = useCallback((next: ReviewStatus) => {
+    setTileState(next);
+    try {
+      window.localStorage.setItem(LAST_TILE_KEY, next);
+    } catch {
+      // Ignore write failures — tile state is non-critical.
+    }
+  }, []);
 
   const refreshCounts = useCallback(() => setCountsRev((r) => r + 1), []);
 
