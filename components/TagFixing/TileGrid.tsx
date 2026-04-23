@@ -579,11 +579,10 @@ export function TileGrid({
               status === "novision" ||
               status === "readytosend" ||
               status === "updated";
-            // Designs with no image_url are typically accessories (flag stakes,
-            // banners-sans-art, etc.) — vision can't tag them and Mark-as-fine
-            // is rarely the right call. Flag them visually on novision so the
-            // user can skip or bulk-handle separately.
-            const noImage = status === "novision" && !d.image_url;
+            // Novision gets a dedicated per-card "Mark as fine" checkbox
+            // (fast path → ready to send). Shown next to the ⚑ button so the
+            // two actions are equally discoverable without a hover overlay.
+            const showMarkFineBtn = status === "novision";
             const showCheckbox =
               status === "readytosend" && !pushing && state === "approved";
             const isSelected = selected.has(d.design_family);
@@ -608,49 +607,23 @@ export function TileGrid({
                 containerClassName={ringClass}
                 onOpenDetail={onOpenDetail}
                 imageOverlay={
-                  <>
-                    <CardImageOverlay
-                      state={state}
-                      showRemove={showRemove}
-                      showFlagBtn={showFlagBtn}
-                      showCheckbox={showCheckbox}
-                      isSelected={isSelected}
-                      onRemove={() => removeFromFlagged(d.design_family)}
-                      onFlag={() => flagOne(d.design_family)}
-                      onToggleSelect={() => toggleSelected(d.design_family)}
-                    />
-                    {noImage && (
-                      <span
-                        className="absolute bottom-1.5 left-1.5 text-[10px] px-2 py-0.5 rounded-full bg-[#FAEEDA] text-[#633806] border border-[#FAC775] font-medium pointer-events-none"
-                        title="No image on file — likely an accessory, not a reviewable flag design"
-                      >
-                        ⚠ no image
-                      </span>
-                    )}
-                  </>
+                  <CardImageOverlay
+                    state={state}
+                    showRemove={showRemove}
+                    showFlagBtn={showFlagBtn}
+                    showCheckbox={showCheckbox}
+                    showMarkFineBtn={showMarkFineBtn}
+                    isSelected={isSelected}
+                    onRemove={() => removeFromFlagged(d.design_family)}
+                    onFlag={() => flagOne(d.design_family)}
+                    onToggleSelect={() => toggleSelected(d.design_family)}
+                    onMarkFine={() => markFine(d.design_family)}
+                  />
                 }
                 hoverOverlay={
-                  status === "novision" &&
+                  cfg.perCardHoverFlag &&
                   state !== "processing" &&
                   state !== "done" ? (
-                    // Fast-path: "the current Shopify tags are fine — queue
-                    // for push without running vision." The top-right ⚑
-                    // button still offers the slow path (flag → vision).
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        markFine(d.design_family);
-                      }}
-                      className="px-4 py-3 bg-[#0F6E56]/90 hover:bg-[#0F6E56] rounded-md text-white text-center shadow-lg"
-                      title="Mark as fine — copy current Shopify tags to approved and queue for push"
-                    >
-                      <div className="text-2xl leading-none mb-1">✓</div>
-                      <div className="text-xs font-medium">Mark as fine</div>
-                    </button>
-                  ) : cfg.perCardHoverFlag &&
-                    state !== "processing" &&
-                    state !== "done" ? (
                     <div className="px-4 py-3 bg-black/65 rounded-md text-white text-center">
                       <div className="text-2xl leading-none mb-1">⚑</div>
                       <div className="text-xs font-medium">Flag for tag review</div>
@@ -742,7 +715,7 @@ interface TileConfig {
 const TILE_CONFIGS: Record<ReviewStatus, TileConfig> = {
   novision: {
     titleNoun: "designs with no vision analysis",
-    subtitle: "Hover a card → ✓ Mark as fine to queue its current Shopify tags for push, or ⚑ to run it through vision.",
+    subtitle: "Per-card: ✓ (top-right) marks current Shopify tags fine → ready to send. ⚑ (top-left) sends through vision. Click the image for details.",
     perCardHoverFlag: false,
   },
   flagged: {
@@ -787,20 +760,28 @@ function CardImageOverlay({
   showRemove,
   showFlagBtn,
   showCheckbox,
+  showMarkFineBtn,
   isSelected,
   onRemove,
   onFlag,
   onToggleSelect,
+  onMarkFine,
 }: {
   state: CardState;
   showRemove: boolean;
   showFlagBtn: boolean;
   showCheckbox: boolean;
+  showMarkFineBtn: boolean;
   isSelected: boolean;
   onRemove: () => void;
   onFlag: () => void;
   onToggleSelect: () => void;
+  onMarkFine: () => void;
 }) {
+  // When the Mark-as-fine checkbox occupies the upper-right corner, shove the
+  // flag button to the upper-left so the two don't collide. Elsewhere the
+  // flag button stays in its traditional upper-right spot.
+  const flagBtnPosition = showMarkFineBtn ? "top-1.5 left-1.5" : "top-1.5 right-1.5";
   return (
     <>
       {state === "processing" && (
@@ -831,6 +812,20 @@ function CardImageOverlay({
           ✓
         </button>
       )}
+      {showMarkFineBtn && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMarkFine();
+          }}
+          title="Mark as fine — copy current Shopify tags to approved and queue for push"
+          aria-label="Mark as fine"
+          className="absolute top-1.5 right-1.5 w-5 h-5 rounded-sm border-2 border-[#0F6E56]/70 bg-white hover:bg-[#0F6E56] hover:border-[#0F6E56] text-transparent hover:text-white flex items-center justify-center text-[11px] font-bold leading-none z-10 shadow-sm transition-colors"
+        >
+          ✓
+        </button>
+      )}
       {showRemove && (
         <button
           type="button"
@@ -852,7 +847,7 @@ function CardImageOverlay({
             onFlag();
           }}
           title="Flag for tag review (sends back through vision + review)"
-          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/90 border border-border text-muted hover:text-[#A32D2D] hover:border-[#A32D2D] flex items-center justify-center text-xs leading-none z-10"
+          className={`absolute ${flagBtnPosition} w-6 h-6 rounded-full bg-white/90 border border-border text-muted hover:text-[#A32D2D] hover:border-[#A32D2D] flex items-center justify-center text-xs leading-none z-10`}
         >
           ⚑
         </button>

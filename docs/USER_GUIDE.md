@@ -117,8 +117,8 @@ Same grid layout as Ready to send, but these designs have been pushed. Re-flag v
 ### No vision yet
 The starting pool. Each card has two per-card actions:
 
-- **Hover overlay → "✓ Mark as fine"** — fast path. Copies the card's current Shopify tags into `approved_tags`, refreshes the derived theme columns, and moves it directly to Ready to send. No vision is run. A toast confirms: *"✓ Marked fine — queued in Ready to send."*
-- **Top-right ⚑ button** — slow path. Flags the design so Claude vision will re-tag it from the image. Use when the existing tags are wrong, missing, or stale.
+- **Top-right ✓ checkbox** — fast path. Copies the card's current Shopify tags into `approved_tags`, refreshes the derived theme columns, and moves it directly to Ready to send. No vision is run. A toast confirms: *"✓ Marked fine — queued in Ready to send."*
+- **Top-left ⚑ button** — slow path. Flags the design so Claude vision will re-tag it from the image. Use when the existing tags are wrong, missing, or stale.
 
 Top-right of the tile: **"⚑ Flag all N visible"** still bulk-flags the entire visible page through the slow path.
 
