@@ -623,11 +623,14 @@ export function TileGrid({
                 }
                 bodyExtra={
                   chipTags && chipTags.length > 0 ? (
+                    // Show all tags — no truncation. Grids can get tall when a
+                    // design has 15+ tags, but that's the signal the user wants
+                    // to see without hovering a "+N" bubble.
                     <div
                       className="flex flex-wrap gap-1 mt-1"
                       title={chipTags.join(", ")}
                     >
-                      {chipTags.slice(0, 5).map((t) => {
+                      {chipTags.map((t) => {
                         const isPrimary = t === d.vision_raw?.primary;
                         return (
                           <span
@@ -640,11 +643,6 @@ export function TileGrid({
                           </span>
                         );
                       })}
-                      {chipTags.length > 5 && (
-                        <span className="text-[10px] text-muted-2 leading-none py-0.5">
-                          +{chipTags.length - 5}
-                        </span>
-                      )}
                     </div>
                   ) : null
                 }
