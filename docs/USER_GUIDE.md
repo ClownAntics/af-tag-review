@@ -12,7 +12,7 @@ Top to bottom:
 
 1. **Header** — title + links to User guide, Developer docs, Edit vision prompt
 2. **Paste SKUs** button (top right of main area) — bulk-flag designs by pasting SKU lists
-3. **Pipeline reminder** — `Flag → vision → Pending → review → Ready to send → push → Updated`
+3. **Pipeline reminder** — two paths to Ready to send: `Flag → vision → Pending → review` (slow) or `Mark fine` (fast), then `Ready to send → push → Updated`
 4. **Filter bar** — Manufacturer / Theme / Sub / Sub-sub / Tag / Type. Every filter narrows every tile + queue below.
 5. **Five status tiles** — counts for each pipeline stage, clickable
 6. **Active tile view** — Pending is the review UI; others show grids of design cards
@@ -21,32 +21,46 @@ Top to bottom:
 
 ## The pipeline
 
+Two paths into **Ready to send**, then one path out to **Updated**:
+
+```
+No vision yet ──┬── (flag) ──→ Flagged ──→ vision ──→ Pending ──→ (approve) ──┐
+                │                                                              │
+                └── (mark fine) ─────────────────────────────────────────────→─┴─→ Ready to send ──→ (push) ──→ Updated
+```
+
+- **Slow path (with vision):** Flag → vision → Pending → Approve. Use when the existing Shopify tags are wrong, missing, or you want Claude to start from the image.
+- **Fast path (skip vision):** Mark fine. Use when the current Shopify tags are already correct — you just need to move the design through the queue.
+
+Both paths write to the same `approved_tags` / `theme_names` / `sub_themes` / `sub_sub_themes` columns, and both end up in the **same push batch** from the Ready-to-send tile.
+
 | Status | What it means | How it enters |
 |---|---|---|
 | **No vision yet** | Design exists in catalog, never reviewed | Default for everything |
 | **Flagged** | User marked for re-review, Claude hasn't run yet | Click ⚑ anywhere |
 | **Pending** | Claude tagged it, awaits your review | Vision finishes → auto-moves here |
-| **Ready to send** | You approved the tags, queued for Shopify push | Click Approve in review |
-| **Updated** | Tags are live on Shopify | After a successful push (Phase 6) |
+| **Ready to send** | Tags approved, queued for Shopify push | Approve in Pending **or** Mark fine on No-vision |
+| **Updated** | Tags are live on Shopify | After a successful push |
 
 You can re-flag a design from any state. Re-flagging from Ready-to-send or Updated **clears the previous approved tags** (fresh start). Re-flagging from No-vision or Pending preserves your in-progress work.
 
 ---
 
-## Getting designs into Pending
+## Getting designs ready to push
 
-There are three ways to flag a design:
+### Fast path — Mark as fine (no vision)
 
-### 1. From the No-vision tile (single design)
-Go to **No vision yet** tile. Hover any card → overlay shows "⚑ Flag for tag review" → click.
+From the **No vision yet** tile, hover any card → click **"✓ Mark as fine"**. The design's current Shopify tags are trusted as-is: they're copied into `approved_tags`, the derived theme columns are refreshed, and the design jumps straight to **Ready to send**. No vision run, no review step. Use this when the existing tags are already correct.
 
-### 2. From the No-vision tile (bulk)
-Top-right button: **"⚑ Flag all N visible"** — flags every card on the current page.
+### Slow path — Flag → vision → review
 
-### 3. Paste SKU list
-Top-right **"📋 Paste SKUs"** button. Opens a panel. Paste SKUs in any format (comma, space, newline, tab). Live counter shows "N SKUs found". Click **"Flag N designs →"**.
+Use when the existing tags are wrong, missing, or stale. Three ways to flag:
 
-Once flagged, go to the **Flagged** tile. Click **"⚡ Run vision on N designs →"**. Each card cycles red (waiting) → amber (analyzing) → green (done). When all finish, they move to **Pending** automatically.
+1. **From the No-vision tile (single design)** — click the top-right **⚑** button on any card.
+2. **From the No-vision tile (bulk)** — **"⚑ Flag all N visible"** flags every card on the current page.
+3. **Paste SKU list** — top-right **"📋 Paste SKUs"** button. Paste SKUs in any format (comma, space, newline, tab). Live counter shows "N SKUs found". Click **"Flag N designs →"**.
+
+Once flagged, go to the **Flagged** tile. Click **"⚡ Run vision on N designs →"**. Each card cycles red (waiting) → amber (analyzing) → green (done). When all finish, they move to **Pending** automatically, where you approve / reject / edit tags before they land in **Ready to send**.
 
 ---
 
@@ -101,7 +115,12 @@ Compact grid. Each card shows the approved tag chips below the SKU. Hover any ca
 Same grid layout as Ready to send, but these designs have been pushed. Re-flag via the ⚑ button if a design needs another review cycle.
 
 ### No vision yet
-The starting pool. Hover any card → "Flag for tag review" overlay. Or bulk-flag the visible page with **"⚑ Flag all N visible"**.
+The starting pool. Each card has two per-card actions:
+
+- **Hover overlay → "✓ Mark as fine"** — fast path. Copies the card's current Shopify tags into `approved_tags`, refreshes the derived theme columns, and moves it directly to Ready to send. No vision is run. A toast confirms: *"✓ Marked fine — queued in Ready to send."*
+- **Top-right ⚑ button** — slow path. Flags the design so Claude vision will re-tag it from the image. Use when the existing tags are wrong, missing, or stale.
+
+Top-right of the tile: **"⚑ Flag all N visible"** still bulk-flags the entire visible page through the slow path.
 
 ---
 

@@ -103,6 +103,38 @@ export function TileGrid({
     [refresh],
   );
 
+  // ─── Per-card "Mark as fine" action (novision fast-path → Ready to send) ──
+  // Skips vision entirely: trusts the current shopify_tags as-is, copies them
+  // into approved_tags, refreshes the derived theme columns, and queues the
+  // design for the same push flow that Approve feeds.
+  const markFine = useCallback(
+    async (family: string) => {
+      try {
+        const r = await fetch(
+          `/api/review/design/${encodeURIComponent(family)}/action`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "mark_fine" }),
+          },
+        );
+        if (!r.ok) throw new Error(await r.text());
+        setPushToast({
+          message: "✓ Marked fine — queued in Ready to send",
+          variant: "success",
+        });
+        refresh();
+      } catch (e) {
+        console.error("mark_fine failed:", e);
+        setPushToast({
+          message: `Mark fine failed: ${(e as Error).message}`,
+          variant: "error",
+        });
+      }
+    },
+    [refresh],
+  );
+
   // ─── Flagged-tile actions ──────────────────────────────────────────────
   const removeFromFlagged = useCallback(
     async (family: string) => {
@@ -547,6 +579,11 @@ export function TileGrid({
               status === "novision" ||
               status === "readytosend" ||
               status === "updated";
+            // Designs with no image_url are typically accessories (flag stakes,
+            // banners-sans-art, etc.) — vision can't tag them and Mark-as-fine
+            // is rarely the right call. Flag them visually on novision so the
+            // user can skip or bulk-handle separately.
+            const noImage = status === "novision" && !d.image_url;
             const showCheckbox =
               status === "readytosend" && !pushing && state === "approved";
             const isSelected = selected.has(d.design_family);
@@ -571,21 +608,49 @@ export function TileGrid({
                 containerClassName={ringClass}
                 onOpenDetail={onOpenDetail}
                 imageOverlay={
-                  <CardImageOverlay
-                    state={state}
-                    showRemove={showRemove}
-                    showFlagBtn={showFlagBtn}
-                    showCheckbox={showCheckbox}
-                    isSelected={isSelected}
-                    onRemove={() => removeFromFlagged(d.design_family)}
-                    onFlag={() => flagOne(d.design_family)}
-                    onToggleSelect={() => toggleSelected(d.design_family)}
-                  />
+                  <>
+                    <CardImageOverlay
+                      state={state}
+                      showRemove={showRemove}
+                      showFlagBtn={showFlagBtn}
+                      showCheckbox={showCheckbox}
+                      isSelected={isSelected}
+                      onRemove={() => removeFromFlagged(d.design_family)}
+                      onFlag={() => flagOne(d.design_family)}
+                      onToggleSelect={() => toggleSelected(d.design_family)}
+                    />
+                    {noImage && (
+                      <span
+                        className="absolute bottom-1.5 left-1.5 text-[10px] px-2 py-0.5 rounded-full bg-[#FAEEDA] text-[#633806] border border-[#FAC775] font-medium pointer-events-none"
+                        title="No image on file — likely an accessory, not a reviewable flag design"
+                      >
+                        ⚠ no image
+                      </span>
+                    )}
+                  </>
                 }
                 hoverOverlay={
-                  cfg.perCardHoverFlag &&
+                  status === "novision" &&
                   state !== "processing" &&
                   state !== "done" ? (
+                    // Fast-path: "the current Shopify tags are fine — queue
+                    // for push without running vision." The top-right ⚑
+                    // button still offers the slow path (flag → vision).
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        markFine(d.design_family);
+                      }}
+                      className="px-4 py-3 bg-[#0F6E56]/90 hover:bg-[#0F6E56] rounded-md text-white text-center shadow-lg"
+                      title="Mark as fine — copy current Shopify tags to approved and queue for push"
+                    >
+                      <div className="text-2xl leading-none mb-1">✓</div>
+                      <div className="text-xs font-medium">Mark as fine</div>
+                    </button>
+                  ) : cfg.perCardHoverFlag &&
+                    state !== "processing" &&
+                    state !== "done" ? (
                     <div className="px-4 py-3 bg-black/65 rounded-md text-white text-center">
                       <div className="text-2xl leading-none mb-1">⚑</div>
                       <div className="text-xs font-medium">Flag for tag review</div>
@@ -677,7 +742,7 @@ interface TileConfig {
 const TILE_CONFIGS: Record<ReviewStatus, TileConfig> = {
   novision: {
     titleNoun: "designs with no vision analysis",
-    subtitle: "Click a card to see details. Use the ⚑ button to flag for review. Or bulk-flag visible to queue them all up.",
+    subtitle: "Hover a card → ✓ Mark as fine to queue its current Shopify tags for push, or ⚑ to run it through vision.",
     perCardHoverFlag: false,
   },
   flagged: {

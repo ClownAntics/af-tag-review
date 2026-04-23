@@ -69,6 +69,43 @@ export function expandToIncludeAncestors(tags: string[]): string[] {
   return Array.from(out).sort();
 }
 
+/**
+ * Map a flat list of Search-Term tags into the hierarchical columns used for
+ * filtering (`theme_names`, `sub_themes`, `sub_sub_themes`). Unknown tags are
+ * skipped — this is safe to call on raw Shopify tag sets that may contain
+ * noise (sizes, brand tokens, etc.).
+ *
+ * Used by the "Mark as fine" fast-path, which trusts the existing Shopify
+ * tags and needs to keep the derived theme columns in sync so the filters
+ * still surface the design after it moves to Ready-to-send.
+ *
+ *   theme_names     → unique `name` values                (e.g. "Birds")
+ *   sub_themes      → unique "name: sub" strings          (e.g. "Birds: Cardinals")
+ *   sub_sub_themes  → unique "name: sub: subSub" strings  (e.g. "Flowers: Spring Flowers: Roses")
+ */
+export function mapTagsToThemes(tags: string[]): {
+  theme_names: string[];
+  sub_themes: string[];
+  sub_sub_themes: string[];
+} {
+  buildIndexes();
+  const names = new Set<string>();
+  const subs = new Set<string>();
+  const subSubs = new Set<string>();
+  for (const t of tags) {
+    const e = _byTerm!.get(t);
+    if (!e) continue;
+    names.add(e.name);
+    if (e.sub) subs.add(`${e.name}: ${e.sub}`);
+    if (e.subSub && e.sub) subSubs.add(`${e.name}: ${e.sub}: ${e.subSub}`);
+  }
+  return {
+    theme_names: Array.from(names).sort(),
+    sub_themes: Array.from(subs).sort(),
+    sub_sub_themes: Array.from(subSubs).sort(),
+  };
+}
+
 interface TaxonomyEntry {
   term: string;
   label: string;

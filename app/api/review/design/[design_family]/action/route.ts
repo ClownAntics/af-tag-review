@@ -7,6 +7,9 @@
  *   { action: "update_tags", tags: string[] }     // replace approved_tags (no status change)
  *   { action: "accept_vision", term: string }     // promote a vision_tag to approved_tags
  *   { action: "reject_vision", term: string }     // drop a vision_tag
+ *   { action: "unflag" }                          // flagged → novision (preserves state)
+ *   { action: "mark_fine" }                       // fast-path: current shopify_tags are good,
+ *                                                 //   queue for push without running vision
  *   { action: "reset" }                           // back to novision (testing/debug)
  *
  * Every action logs an event row (audit trail). Writes use the anon key against
@@ -15,6 +18,7 @@
 import type { NextRequest } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import type { Design, ReviewStatus } from "@/lib/types";
+import { mapTagsToThemes } from "@/lib/vision";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +31,7 @@ type Body =
   | { action: "accept_vision"; term: string }
   | { action: "reject_vision"; term: string }
   | { action: "unflag" }
+  | { action: "mark_fine" }
   | { action: "reset" };
 
 export async function POST(
@@ -44,9 +49,13 @@ export async function POST(
   const supabase = getSupabase();
 
   // Load current state — we need it for merge semantics on accept/reject vision.
+  // shopify_product_ids is loaded so mark_fine can refuse to queue a design
+  // that has no JFF products (otherwise push would skip it downstream).
   const { data: current, error: loadErr } = await supabase
     .from("designs")
-    .select("design_family,status,approved_tags,vision_tags,shopify_tags")
+    .select(
+      "design_family,status,approved_tags,vision_tags,shopify_tags,shopify_product_ids",
+    )
     .eq("design_family", design_family)
     .single();
   if (loadErr) return errorResponse(404, `design not found: ${loadErr.message}`);
@@ -54,7 +63,7 @@ export async function POST(
   const state = current as Pick<
     Design,
     "design_family" | "status" | "approved_tags" | "vision_tags" | "shopify_tags"
-  >;
+  > & { shopify_product_ids: number[] | null };
 
   const now = new Date().toISOString();
   let patch: Record<string, unknown> = {};
@@ -133,6 +142,43 @@ export async function POST(
       patch = { status: "novision" satisfies ReviewStatus };
       eventType = "unflagged";
       eventPayload = { from_status: state.status };
+      break;
+    }
+    case "mark_fine": {
+      // Fast path: "the existing Shopify tags are already correct — skip
+      // vision entirely and queue this design for push." The approved_tags
+      // become an exact copy of the current shopify_tags (dedup+sort), and
+      // the derived theme columns are refreshed from taxonomy so filters
+      // remain accurate. Snapshot of the tags is captured on the event row
+      // so we know what we trusted at the time (Shopify tags can drift).
+      //
+      // Guard: refuse to queue a design that has no JFF products. The push
+      // route would silently skip it anyway, but failing loudly here avoids
+      // ever parking it in Ready-to-send where it'd sit indefinitely.
+      const productIds = state.shopify_product_ids ?? [];
+      if (productIds.length === 0) {
+        return errorResponse(
+          409,
+          `no shopify_product_ids on ${design_family} — can't queue for push (re-run shopify-pull or flag this as an accessory)`,
+        );
+      }
+      const snapshot = dedupSort(state.shopify_tags ?? []);
+      const themes = mapTagsToThemes(snapshot);
+      patch = {
+        status: "readytosend" satisfies ReviewStatus,
+        approved_tags: snapshot,
+        theme_names: themes.theme_names,
+        sub_themes: themes.sub_themes,
+        sub_sub_themes: themes.sub_sub_themes,
+        vision_tags: [], // no vision was run; ensure nothing stale lingers
+        last_reviewed_at: now,
+      };
+      eventType = "marked_fine";
+      eventPayload = {
+        from_status: state.status,
+        shopify_tags_snapshot: snapshot,
+        tag_count: snapshot.length,
+      };
       break;
     }
     case "reset": {
