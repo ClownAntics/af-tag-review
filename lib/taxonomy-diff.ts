@@ -11,22 +11,29 @@
  */
 
 export interface TaxonomyRowDiffInput {
-  id: number;
+  /**
+   * Stable identifier used to join rows across sides. When both sides have
+   * real TeamDesk `@row.id` values, use those (stringified) so renames show
+   * up as renames. When one side lacks them (pre-Supabase-migration state),
+   * fall back to using `label` as the id — renames will then surface as
+   * remove+add, which is an acceptable lossy mode.
+   */
+  id: string;
   label: string;
 }
 
 export interface TaxonomyAddition {
-  id: number;
+  id: string;
   label: string;
 }
 
 export interface TaxonomyRemoval {
-  id: number;
+  id: string;
   label: string;
 }
 
 export interface TaxonomyRename {
-  id: number;
+  id: string;
   from_label: string;
   to_label: string;
 }
@@ -48,9 +55,9 @@ export function diffTaxonomies(
   local: TaxonomyRowDiffInput[],
   incoming: TaxonomyRowDiffInput[],
 ): TaxonomyDiff {
-  const localById = new Map<number, TaxonomyRowDiffInput>();
+  const localById = new Map<string, TaxonomyRowDiffInput>();
   for (const r of local) localById.set(r.id, r);
-  const incomingById = new Map<number, TaxonomyRowDiffInput>();
+  const incomingById = new Map<string, TaxonomyRowDiffInput>();
   for (const r of incoming) incomingById.set(r.id, r);
 
   const added: TaxonomyAddition[] = [];

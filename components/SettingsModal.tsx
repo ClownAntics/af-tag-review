@@ -42,9 +42,9 @@ interface TaxonomyStatus {
 }
 
 interface TaxonomyDiffSummary {
-  added: { id: number; label: string }[];
-  removed: { id: number; label: string }[];
-  renamed: { id: number; from_label: string; to_label: string }[];
+  added: { id: string; label: string }[];
+  removed: { id: string; label: string }[];
+  renamed: { id: string; from_label: string; to_label: string }[];
   unchanged_count: number;
   safe_to_apply_silently: boolean;
 }

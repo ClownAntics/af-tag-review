@@ -36,17 +36,18 @@ interface LocalEntry {
 }
 
 /**
- * Map the baked JSON into the diff helper's shape. Today we use the Search
- * Term as a synthetic stable id (since the baked JSON has no numeric ids);
- * once TeamDesk's numeric ids are stored in Supabase, switch to those so
- * renames vs. delete+add are correctly classified.
+ * Map the baked JSON into the diff helper's shape. The local JSON has no
+ * TeamDesk `@row.id` values (it was built from the CSV export), so we fall
+ * back to using `label` as the join id. TeamDesk rows coming in use the same
+ * label as their id for the diff so additions/removals line up. This means
+ * pure-rename changes (label moves, same underlying row) will surface as
+ * remove+add in the plan — acceptable until Supabase-backed storage lands
+ * with real `@row.id` persistence, at which point the diff upgrades to true
+ * rename detection without any API change.
  */
-function currentLocalRows(): { id: number; label: string }[] {
+function currentLocalRows(): { id: string; label: string }[] {
   const entries = (taxonomy.entries ?? []) as LocalEntry[];
-  return entries.map((e, i) => ({
-    id: i + 1, // placeholder — real TeamDesk ids replace this once wired up
-    label: e.label,
-  }));
+  return entries.map((e) => ({ id: e.label, label: e.label }));
 }
 
 function notConfiguredResponse(): Response {
@@ -54,7 +55,7 @@ function notConfiguredResponse(): Response {
     JSON.stringify({
       error: "not_configured",
       message:
-        "TeamDesk API not configured yet. Add TEAMDESK_API_TOKEN, TEAMDESK_DB_ID, and TEAMDESK_TABLE_ID to Vercel env vars, then redeploy.",
+        "TeamDesk API not configured yet. Add TEAMDESK_API_TOKEN, TEAMDESK_ACCOUNT, TEAMDESK_DB_ID, and TEAMDESK_TABLE_ID to Vercel env vars, then redeploy.",
       docs: "https://www.teamdesk.net/help/2143.aspx",
     }),
     {
@@ -79,9 +80,11 @@ export async function POST(req: Request): Promise<Response> {
       return errorJson(502, `TeamDesk fetch failed: ${(e as Error).message}`);
     }
     const local = currentLocalRows();
+    // Match TeamDesk rows against local by label too, since local has no
+    // `@row.id` persisted yet. See `currentLocalRows` docstring for detail.
     const diff: TaxonomyDiff = diffTaxonomies(
       local,
-      incoming.map((r) => ({ id: r.id, label: r.label })),
+      incoming.map((r) => ({ id: r.label, label: r.label })),
     );
     return Response.json({
       diff,
