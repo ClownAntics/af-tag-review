@@ -173,10 +173,13 @@ export function normalizeTeamDeskRows(rows: TeamDeskRawRow[]): TeamDeskRow[] {
  * Pull every FL Theme row from TeamDesk.
  *
  * The /-/ segment in the URL is TeamDesk's placeholder for "no view filter"
- * (i.e. return all rows, not scoped to a specific saved view). Authorization
- * goes as a query-string parameter, not a header — TeamDesk's REST API
- * supports either, but the query-param form matches the Playground and is
- * simpler to debug.
+ * (i.e. return all rows, not scoped to a specific saved view).
+ *
+ * Authorization is passed as an HTTP header with the raw token (no "Bearer"
+ * prefix) — that's TeamDesk's documented scheme for REST API v2 token auth.
+ * The query-string form (`?Authorization=<token>`) works in the in-browser
+ * Playground but returns 403 "No such user" against /secure/api/v2 endpoints
+ * when called from outside the browser session.
  */
 export async function listFlThemes(): Promise<TeamDeskRow[]> {
   if (!isConfigured()) {
@@ -190,10 +193,13 @@ export async function listFlThemes(): Promise<TeamDeskRow[]> {
 
   const url = `https://${account}.teamdesk.net/secure/api/v2/${dbId}/-/${encodeURIComponent(
     tableId,
-  )}/select.json?Authorization=${encodeURIComponent(token)}`;
+  )}/select.json`;
 
   const res = await fetch(url, {
-    headers: { Accept: "application/json" },
+    headers: {
+      Accept: "application/json",
+      Authorization: token,
+    },
     // TeamDesk returns the full table in a single response; no pagination.
     // For ~700 rows that's a few hundred KB at most.
   });
