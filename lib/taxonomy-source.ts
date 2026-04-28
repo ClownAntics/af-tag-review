@@ -97,7 +97,20 @@ async function loadFromSupabase(): Promise<Taxonomy> {
       conflicts: r.conflicts_with ?? undefined,
     });
   }
+  // Sort by (name, sub, subSub) so the typeahead's default list is
+  // hierarchically alphabetical: each parent's children sit together and are
+  // alpha-sorted within their group. Otherwise rows come back in td_row_id
+  // (insertion) order and new entries appear at the bottom of the list.
+  entries.sort(compareEntries);
   return { entries, source: "supabase" };
+}
+
+function compareEntries(a: TaxonomyEntry, b: TaxonomyEntry): number {
+  const n = a.name.localeCompare(b.name);
+  if (n !== 0) return n;
+  const s = (a.sub ?? "").localeCompare(b.sub ?? "");
+  if (s !== 0) return s;
+  return (a.subSub ?? "").localeCompare(b.subSub ?? "");
 }
 
 function bakedFallback(): Taxonomy {
