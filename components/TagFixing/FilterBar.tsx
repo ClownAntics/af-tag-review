@@ -47,18 +47,31 @@ export function FilterBar({ filters, onChange }: Props) {
     filters.manufacturer !== "all";
 
   // Cascade: sub-theme dropdown is filtered by active theme; sub-sub by sub/theme.
+  // The API sorts by full hierarchical string ("Birds: Cardinals"), but the
+  // dropdown shows only the trailing segment, so we re-sort here by the
+  // visible label to keep the alphabetical order users see consistent across
+  // parent groups (otherwise "Beach, Lighthouses, Bluebirds, Cardinals" looks
+  // scrambled when no theme is selected).
   const subThemes = options?.subThemes || [];
   const subSubs = options?.subSubThemes || [];
-  const filteredSubs =
+  const subLabel = (s: string) => s.replace(/^[^:]+:\s*/, "");
+  const subSubLabel = (s: string) => s.split(": ").slice(-1)[0];
+  const filteredSubs = (
     filters.themeName === "all"
       ? subThemes
-      : subThemes.filter((s) => s.startsWith(`${filters.themeName}: `));
-  const filteredSubSubs =
+      : subThemes.filter((s) => s.startsWith(`${filters.themeName}: `))
+  )
+    .slice()
+    .sort((a, b) => subLabel(a).localeCompare(subLabel(b)));
+  const filteredSubSubs = (
     filters.subTheme !== "all"
       ? subSubs.filter((s) => s.startsWith(`${filters.subTheme}: `))
       : filters.themeName !== "all"
         ? subSubs.filter((s) => s.startsWith(`${filters.themeName}: `))
-        : subSubs;
+        : subSubs
+  )
+    .slice()
+    .sort((a, b) => subSubLabel(a).localeCompare(subSubLabel(b)));
 
   const update = (next: Partial<ReviewFilters>) =>
     onChange({ ...filters, ...next });
@@ -93,7 +106,7 @@ export function FilterBar({ filters, onChange }: Props) {
           { value: "all", label: "All sub-themes" },
           ...filteredSubs.map((t) => ({
             value: t,
-            label: t.replace(/^[^:]+:\s*/, ""),
+            label: subLabel(t),
           })),
         ]}
       />
@@ -105,7 +118,7 @@ export function FilterBar({ filters, onChange }: Props) {
           { value: "all", label: "All sub-sub-themes" },
           ...filteredSubSubs.map((t) => ({
             value: t,
-            label: t.split(": ").slice(-1)[0],
+            label: subSubLabel(t),
           })),
         ]}
       />
