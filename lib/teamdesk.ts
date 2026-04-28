@@ -172,14 +172,14 @@ export function normalizeTeamDeskRows(rows: TeamDeskRawRow[]): TeamDeskRow[] {
 /**
  * Pull every FL Theme row from TeamDesk.
  *
- * The /-/ segment in the URL is TeamDesk's placeholder for "no view filter"
- * (i.e. return all rows, not scoped to a specific saved view).
+ * URL form: `/secure/api/v2/<dbid>/<table>/select.json` — note there is NO
+ * `/-/` segment. The `-` placeholder seen in the in-browser Playground tells
+ * TeamDesk "use cookie-based auth from the existing browser session", which
+ * causes Bearer token requests to fall through to cookie auth and return
+ * 403 "No such user" when no session exists. Drop it for token requests.
  *
- * Authorization is `Bearer <token>` per TeamDesk's REST API v2 docs:
+ * Auth is `Authorization: Bearer <token>` per
  * https://www.teamdesk.net/help/rest-api/authorization/
- * The bare-token form (no Bearer prefix) and the query-string form
- * (`?Authorization=<token>`) both return 403 "No such user" against this
- * endpoint when called from outside a browser session.
  */
 export async function listFlThemes(): Promise<TeamDeskRow[]> {
   if (!isConfigured()) {
@@ -191,7 +191,7 @@ export async function listFlThemes(): Promise<TeamDeskRow[]> {
   const tableId = process.env.TEAMDESK_TABLE_ID!;
   const token = process.env.TEAMDESK_API_TOKEN!;
 
-  const url = `https://${account}.teamdesk.net/secure/api/v2/${dbId}/-/${encodeURIComponent(
+  const url = `https://${account}.teamdesk.net/secure/api/v2/${dbId}/${encodeURIComponent(
     tableId,
   )}/select.json`;
 
