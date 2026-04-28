@@ -175,11 +175,11 @@ export function normalizeTeamDeskRows(rows: TeamDeskRawRow[]): TeamDeskRow[] {
  * The /-/ segment in the URL is TeamDesk's placeholder for "no view filter"
  * (i.e. return all rows, not scoped to a specific saved view).
  *
- * Authorization is passed as an HTTP header with the raw token (no "Bearer"
- * prefix) — that's TeamDesk's documented scheme for REST API v2 token auth.
- * The query-string form (`?Authorization=<token>`) works in the in-browser
- * Playground but returns 403 "No such user" against /secure/api/v2 endpoints
- * when called from outside the browser session.
+ * Authorization is `Bearer <token>` per TeamDesk's REST API v2 docs:
+ * https://www.teamdesk.net/help/rest-api/authorization/
+ * The bare-token form (no Bearer prefix) and the query-string form
+ * (`?Authorization=<token>`) both return 403 "No such user" against this
+ * endpoint when called from outside a browser session.
  */
 export async function listFlThemes(): Promise<TeamDeskRow[]> {
   if (!isConfigured()) {
@@ -198,7 +198,7 @@ export async function listFlThemes(): Promise<TeamDeskRow[]> {
   const res = await fetch(url, {
     headers: {
       Accept: "application/json",
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
     // TeamDesk returns the full table in a single response; no pagination.
     // For ~700 rows that's a few hundred KB at most.
