@@ -22,8 +22,14 @@
  *                             "Open TeamDesk table ↗" button
  *
  * URL shape:
- *   GET https://<account>.teamdesk.net/secure/api/v2/<db_id>/-/<table>/select.json
- *       ?Authorization=<token>
+ *   GET https://<account>.teamdesk.net/secure/api/v2/<db_id>/<table>/select.json
+ *       ?top=500&skip=<n>
+ *   Auth header: `Authorization: Bearer <token>`
+ *
+ * Pagination: TeamDesk caps select.json at 500 rows per response. FL Theme
+ * is ~700 rows so we page through with skip until a short page returns.
+ * Skipping pagination silently truncates and shows phantom "deletions" in
+ * the taxonomy diff.
  *
  * Docs: https://www.teamdesk.net/help/2143.aspx
  */
@@ -194,29 +200,39 @@ export async function listFlThemes(): Promise<TeamDeskRow[]> {
   const tableId = process.env.TEAMDESK_TABLE_ID!;
   const token = process.env.TEAMDESK_API_TOKEN!;
 
-  const url = `https://${account}.teamdesk.net/secure/api/v2/${dbId}/${encodeURIComponent(
+  const baseUrl = `https://${account}.teamdesk.net/secure/api/v2/${dbId}/${encodeURIComponent(
     tableId,
   )}/select.json`;
 
-  const res = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    // TeamDesk returns the full table in a single response; no pagination.
-    // For ~700 rows that's a few hundred KB at most.
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(
-      `TeamDesk ${res.status} ${res.statusText}: ${body.slice(0, 400)}`,
-    );
+  // TeamDesk caps responses at top=500. FL Theme is ~700 rows, so we have to
+  // paginate via skip until a page comes back short of the page size.
+  const PAGE_SIZE = 500;
+  const all: TeamDeskRawRow[] = [];
+  let skip = 0;
+  // Hard cap to avoid an infinite loop if the API ever stops decrementing.
+  for (let i = 0; i < 50; i++) {
+    const url = `${baseUrl}?top=${PAGE_SIZE}&skip=${skip}`;
+    const res = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(
+        `TeamDesk ${res.status} ${res.statusText}: ${body.slice(0, 400)}`,
+      );
+    }
+    const page = (await res.json()) as TeamDeskRawRow[];
+    if (!Array.isArray(page)) {
+      throw new Error(
+        `TeamDesk response was not an array — got ${typeof page}. Response: ${JSON.stringify(page).slice(0, 400)}`,
+      );
+    }
+    all.push(...page);
+    if (page.length < PAGE_SIZE) break;
+    skip += PAGE_SIZE;
   }
-  const raw = (await res.json()) as TeamDeskRawRow[];
-  if (!Array.isArray(raw)) {
-    throw new Error(
-      `TeamDesk response was not an array — got ${typeof raw}. Response: ${JSON.stringify(raw).slice(0, 400)}`,
-    );
-  }
-  return normalizeTeamDeskRows(raw);
+  return normalizeTeamDeskRows(all);
 }

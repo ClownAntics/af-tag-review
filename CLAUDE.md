@@ -36,6 +36,10 @@ hours on these — write them down so the next session doesn't repeat:
 - Token-in-URL form (`/<dbid>/<token>/<table>/select.json`) is also
   documented and works without any header. We use the Bearer header; it's
   cleaner for env-var-driven config.
+- **`select.json` caps responses at `top=500`** (default and max). FL Theme
+  is ~700 rows, so we paginate with `skip=` until a short page comes back.
+  Skipping this silently truncates and the taxonomy diff shows phantom
+  "deletions" for everything past row 500.
 - Per-database scoping: tokens are bound to the database they were created
   in. To create a new token for db 27503, navigate to a page within that
   DB first (URL bar should show `/db/27503/`), then Setup → Integration
