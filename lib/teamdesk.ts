@@ -13,7 +13,7 @@
  *   TEAMDESK_DB_ID         — TeamDesk database numeric id (27503 for ClownAntics)
  *   TEAMDESK_TABLE_ID      — FL Theme table identifier: either the name
  *                             ("FL Theme", URL-encoded as needed) or the
- *                             alias ("t_236519"). Prefer the alias — it's
+ *                             numeric id ("236519"). Prefer the id — it's
  *                             stable across table renames.
  *   TEAMDESK_VIEW_URL      — browser-friendly URL for the "Source" link and
  *                             "Open TeamDesk table ↗" button
