@@ -2,29 +2,37 @@
  * Lightweight status endpoint for the Settings → Taxonomy section.
  *
  * Returns the current entry count (grouped by level), the TeamDesk connection
- * status, the Source URL (if configured), and the last-synced timestamp.
- *
- * Counts come from the baked `lib/taxonomy.json` today. Once TeamDesk auth
- * lands and storage moves to Supabase, this route switches to reading from
- * `taxonomy_entries` without UI changes.
+ * status, the Source URL (if configured), and the last-synced timestamp from
+ * taxonomy_refresh_log.
  */
-import taxonomy from "@/lib/taxonomy.json";
 import { isConfigured as teamdeskConfigured, viewUrl } from "@/lib/teamdesk";
+import { getTaxonomy } from "@/lib/taxonomy-source";
+import { getAdminSupabase } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
-interface Entry {
-  level: number;
-}
-
 export async function GET(): Promise<Response> {
-  const entries = (taxonomy.entries ?? []) as Entry[];
+  const { entries, source } = await getTaxonomy();
   const total = entries.length;
   const byLevel = { 1: 0, 2: 0, 3: 0 };
   for (const e of entries) {
     if (e.level === 1) byLevel[1]++;
     else if (e.level === 2) byLevel[2]++;
     else if (e.level === 3) byLevel[3]++;
+  }
+
+  let last_synced_at: string | null = null;
+  try {
+    const sb = getAdminSupabase();
+    const { data } = await sb
+      .from("taxonomy_refresh_log")
+      .select("ran_at")
+      .order("ran_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    last_synced_at = (data?.ran_at as string | undefined) ?? null;
+  } catch {
+    // No log table yet (pre-005 migration) — leave null.
   }
 
   return Response.json({
@@ -34,9 +42,7 @@ export async function GET(): Promise<Response> {
     level_3: byLevel[3],
     api_connected: teamdeskConfigured(),
     source_url: viewUrl(),
-    // Wired up when Supabase-backed storage lands. Until then, null tells the
-    // UI to render "never synced" — the baked JSON was last updated at build
-    // time (already surfaced by the git commit timeline, not here).
-    last_synced_at: null as string | null,
+    source, // 'supabase' or 'baked' — surfaces fallback state for debug
+    last_synced_at,
   });
 }

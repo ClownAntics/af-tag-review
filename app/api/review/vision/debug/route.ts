@@ -9,7 +9,7 @@ import { buildSystemPrompt, VISION_MODEL } from "@/lib/vision";
 export const dynamic = "force-dynamic";
 
 export async function GET(): Promise<Response> {
-  const prompt = buildSystemPrompt(); // no template arg = use DEFAULT_PROMPT
+  const prompt = await buildSystemPrompt(); // no template arg = use DEFAULT_PROMPT
   const hasRule7 = prompt.includes("NO HEDGING");
   const hasRule6OneParent = prompt.includes("ONE PARENT PER PICK");
   // Env-presence probe (values never returned — just length + first 3 chars

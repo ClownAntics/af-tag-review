@@ -163,7 +163,7 @@ export async function POST(
         );
       }
       const snapshot = dedupSort(state.shopify_tags ?? []);
-      const themes = mapTagsToThemes(snapshot);
+      const themes = await mapTagsToThemes(snapshot);
       patch = {
         status: "readytosend" satisfies ReviewStatus,
         approved_tags: snapshot,

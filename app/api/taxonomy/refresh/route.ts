@@ -35,6 +35,7 @@ import {
   type TaxonomyDiff,
 } from "@/lib/taxonomy-diff";
 import { getAdminSupabase } from "@/lib/supabase-admin";
+import { invalidateTaxonomyCache } from "@/lib/taxonomy-source";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -217,6 +218,10 @@ async function applyPhase(): Promise<Response> {
     designsRenamed = sweep.designsRenamed;
     designsFlagged = sweep.designsFlagged;
   }
+
+  // After data write succeeds, invalidate the in-memory taxonomy cache so the
+  // next /api/taxonomy GET sees the new entries instead of waiting for TTL.
+  invalidateTaxonomyCache();
 
   // 4. Audit row.
   {

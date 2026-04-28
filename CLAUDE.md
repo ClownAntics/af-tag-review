@@ -109,9 +109,16 @@ display-only, not a storage format. The CSV's `Search Term` column is authoritat
 Display: all tag pills use `text-transform: lowercase` so the UI matches
 Shopify's lowercase convention without having to mutate data on write.
 
-Taxonomy is baked into `lib/taxonomy.json` by `scripts/export-taxonomy.ts` —
-re-run that any time FL Themes changes in TeamDesk. That JSON ships with the app
-(Vercel has no file access).
+Taxonomy lives in Supabase `taxonomy_entries` (migration `005_taxonomy.sql`).
+Settings → Refresh from TeamDesk pulls live rows, upserts by `td_row_id`, and
+migrates designs for renames/removals. Server reads go through
+`lib/taxonomy-source.ts` (`getTaxonomy()`) — cached for 60s, invalidated on
+apply.
+
+`lib/taxonomy.json` (built by `scripts/export-taxonomy.ts`) is now a
+**fallback only**: served when `taxonomy_entries` is empty (pre-bootstrap)
+or when Supabase is unreachable. CLI scripts under `scripts/` still read it
+directly — they're dev tools, not on the runtime path.
 
 ---
 

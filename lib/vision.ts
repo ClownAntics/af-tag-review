@@ -10,7 +10,7 @@
  *   - Validate the response against the taxonomy, returning Search Terms only.
  */
 import Anthropic from "@anthropic-ai/sdk";
-import taxonomy from "@/lib/taxonomy.json";
+import { getTaxonomy, type TaxonomyEntry as SourceEntry } from "@/lib/taxonomy-source";
 import { DEFAULT_PROMPT } from "@/lib/vision-prompt";
 
 export { DEFAULT_PROMPT };
@@ -25,22 +25,20 @@ export const VISION_MAX_TOKENS = 1024;
 // its ancestors up the taxonomy (Level-2 and Level-1 parents). Used as a
 // safety net so the hierarchy is always complete even when Claude forgets.
 
-interface TaxEntry {
-  term: string;
-  name: string;
-  sub: string | null;
-  subSub: string | null;
-  level: 1 | 2 | 3;
-  label: string;
-}
+type TaxEntry = SourceEntry;
 
+// Index caches keyed off the entries-array identity returned by getTaxonomy.
+// getTaxonomy itself memoizes, so reference equality is a cheap "did the
+// taxonomy change?" check that avoids rebuilding maps on every request.
+let _entriesRef: readonly TaxEntry[] | null = null;
 let _byTerm: Map<string, TaxEntry> | null = null;
 let _l2ParentTerm: Map<string, string> | null = null; // "Name|Sub" → level-2 Search Term
 let _l1ParentTerm: Map<string, string> | null = null; // "Name"     → level-1 Search Term
 
-function buildIndexes() {
-  if (_byTerm) return;
-  const entries = taxonomy.entries as TaxEntry[];
+async function ensureIndexes(): Promise<void> {
+  const { entries } = await getTaxonomy();
+  if (entries === _entriesRef && _byTerm) return;
+  _entriesRef = entries;
   _byTerm = new Map(entries.map((e) => [e.term, e]));
   _l2ParentTerm = new Map();
   _l1ParentTerm = new Map();
@@ -48,10 +46,14 @@ function buildIndexes() {
     if (e.level === 1) _l1ParentTerm.set(e.name, e.term);
     else if (e.level === 2 && e.sub) _l2ParentTerm.set(`${e.name}|${e.sub}`, e.term);
   }
+  // Reset derived caches that depend on the entries set.
+  _taxBlock = null;
+  _validTerms = null;
+  _labelToTerm = null;
 }
 
-export function expandToIncludeAncestors(tags: string[]): string[] {
-  buildIndexes();
+export async function expandToIncludeAncestors(tags: string[]): Promise<string[]> {
+  await ensureIndexes();
   const out = new Set<string>();
   for (const t of tags) {
     const entry = _byTerm!.get(t);
@@ -83,12 +85,12 @@ export function expandToIncludeAncestors(tags: string[]): string[] {
  *   sub_themes      → unique "name: sub" strings          (e.g. "Birds: Cardinals")
  *   sub_sub_themes  → unique "name: sub: subSub" strings  (e.g. "Flowers: Spring Flowers: Roses")
  */
-export function mapTagsToThemes(tags: string[]): {
+export async function mapTagsToThemes(tags: string[]): Promise<{
   theme_names: string[];
   sub_themes: string[];
   sub_sub_themes: string[];
-} {
-  buildIndexes();
+}> {
+  await ensureIndexes();
   const names = new Set<string>();
   const subs = new Set<string>();
   const subSubs = new Set<string>();
@@ -106,23 +108,18 @@ export function mapTagsToThemes(tags: string[]): {
   };
 }
 
-interface TaxonomyEntry {
-  term: string;
-  label: string;
-}
-
+// Derived caches — invalidated by ensureIndexes when the entries set changes.
 let _taxBlock: string | null = null;
 function taxonomyBlock(): string {
   if (_taxBlock) return _taxBlock;
-  const entries = taxonomy.entries as TaxonomyEntry[];
-  _taxBlock = entries.map((e) => `${e.term} — ${e.label}`).join("\n");
+  _taxBlock = (_entriesRef ?? []).map((e) => `${e.term} — ${e.label}`).join("\n");
   return _taxBlock;
 }
 
 let _validTerms: Set<string> | null = null;
 function validTerms(): Set<string> {
   if (_validTerms) return _validTerms;
-  _validTerms = new Set((taxonomy.entries as TaxonomyEntry[]).map((e) => e.term));
+  _validTerms = new Set((_entriesRef ?? []).map((e) => e.term));
   return _validTerms;
 }
 
@@ -135,7 +132,7 @@ function resolveToTerm(raw: string): string | null {
   if (valid.has(raw)) return raw;
   if (!_labelToTerm) {
     _labelToTerm = new Map();
-    for (const e of taxonomy.entries as TaxEntry[]) {
+    for (const e of _entriesRef ?? []) {
       // Register lowercase label, lowercase name, and lowercase "name: sub"
       // for Level-1 / Level-2 rows so name-only or parent-only emissions resolve.
       _labelToTerm.set(e.label.toLowerCase(), e.term);
@@ -147,7 +144,8 @@ function resolveToTerm(raw: string): string | null {
   return byLabel || null;
 }
 
-export function buildSystemPrompt(template?: string): string {
+export async function buildSystemPrompt(template?: string): Promise<string> {
+  await ensureIndexes();
   const t = (template || DEFAULT_PROMPT).replace(/\{\{taxonomy\}\}/g, taxonomyBlock());
   return t;
 }
@@ -188,7 +186,8 @@ function extractFirstJsonObject(s: string): string | null {
   return null;
 }
 
-function parseResponse(raw: string): VisionResult | { error: string } {
+async function parseResponse(raw: string): Promise<VisionResult | { error: string }> {
+  await ensureIndexes();
   let txt = raw.trim();
   if (txt.startsWith("```")) {
     txt = txt.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/i, "");
@@ -247,7 +246,7 @@ function parseResponse(raw: string): VisionResult | { error: string } {
   // Level-3 or Level-2 pick so the stored tag set has the full hierarchy.
   const union = new Set<string>(decoration);
   if (primary) union.add(primary);
-  const expanded = expandToIncludeAncestors(Array.from(union));
+  const expanded = await expandToIncludeAncestors(Array.from(union));
 
   return { tags: expanded, primary, reasoning };
 }
@@ -290,7 +289,7 @@ export async function tagOne(
       .filter((b): b is Anthropic.TextBlock => b.type === "text")
       .map((b) => b.text)
       .join("\n");
-    const v = parseResponse(text);
+    const v = await parseResponse(text);
     if ("error" in v) return { ok: false, error: v.error };
     return { ok: true, value: v, usage: resp.usage };
   } catch (e) {

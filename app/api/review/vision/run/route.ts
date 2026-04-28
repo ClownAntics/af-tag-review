@@ -54,7 +54,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   } catch {
     // no saved prompt yet — use default
   }
-  const systemPrompt = buildSystemPrompt(promptTemplate);
+  const systemPrompt = await buildSystemPrompt(promptTemplate);
 
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,

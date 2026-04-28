@@ -166,7 +166,7 @@ export async function POST(req: Request): Promise<Response> {
           if (!priorByFamily.has(family)) continue; // new row — skip, CLI handles
           const tags = Array.from(agg.tags).sort();
           const productIds = Array.from(agg.productIds).sort((a, b) => a - b);
-          const themes = mapTagsToThemes(tags);
+          const themes = await mapTagsToThemes(tags);
           updateBatch.push({
             design_family: family,
             shopify_tags: tags,
