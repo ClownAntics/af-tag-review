@@ -11,10 +11,13 @@
  *   TEAMDESK_ACCOUNT       — TeamDesk subdomain, e.g. "clownantics" for
  *                             https://clownantics.teamdesk.net
  *   TEAMDESK_DB_ID         — TeamDesk database numeric id (27503 for ClownAntics)
- *   TEAMDESK_TABLE_ID      — FL Theme table identifier: either the name
- *                             ("FL Theme", URL-encoded as needed) or the
- *                             numeric id ("236519"). Prefer the id — it's
- *                             stable across table renames.
+ *   TEAMDESK_TABLE_ID      — FL Theme table identifier: the singular
+ *                             table name ("FL Theme") or its alphanumeric
+ *                             alias from Describe. The numeric internal id
+ *                             ("236519") is NOT accepted — TeamDesk returns
+ *                             400 "Table does not exist". The code wraps
+ *                             this value in encodeURIComponent so spaces
+ *                             are fine.
  *   TEAMDESK_VIEW_URL      — browser-friendly URL for the "Source" link and
  *                             "Open TeamDesk table ↗" button
  *

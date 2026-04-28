@@ -14,20 +14,25 @@ finish the coherent unit first, then commit + push.
 The FL Themes taxonomy lives in TeamDesk. Our integration burned a few
 hours on these — write them down so the next session doesn't repeat:
 
-- **Account is `clownantics`**, DB id is `27503`, FL Theme table alias is
-  `236519`. URL host: `https://clownantics.teamdesk.net`. The
+- **Account is `clownantics`**, DB id is `27503`, FL Theme table is
+  referenced by its **singular name `FL Theme`** (URL-encoded to
+  `FL%20Theme`). URL host: `https://clownantics.teamdesk.net`. The
   `www.teamdesk.net` host returns 400 "Database does not exist" for our DB
   — always use the account subdomain.
+- **The table segment is the singular name or alphanumeric alias** as
+  returned by Describe — NOT the numeric internal id. Both `236519` and
+  `t_236519` return 400 "Table does not exist". See the Select (Table)
+  method docs at https://www.teamdesk.net/help/rest-api/.
 - **Auth header is `Authorization: Bearer <token>`** — with the Bearer
   prefix. Bare token (`Authorization: <token>`) and query-string form
   (`?Authorization=<token>`) both return 403 "No such user".
 - **The `/-/` segment in the URL means cookie-auth.** TeamDesk's in-browser
-  REST Playground generates URLs like `/secure/api/v2/27503/-/236519/...`
+  REST Playground generates URLs like `/secure/api/v2/27503/-/FL%20Theme/...`
   because it uses the browser's logged-in session cookie. With a `/-/`
   present, TeamDesk **ignores the Bearer header and falls through to cookie
   auth**, then 403s when no session exists. The fix: drop `/-/` for token
   requests. Correct shape:
-  `https://clownantics.teamdesk.net/secure/api/v2/27503/236519/select.json`
+  `https://clownantics.teamdesk.net/secure/api/v2/27503/FL%20Theme/select.json`
 - Token-in-URL form (`/<dbid>/<token>/<table>/select.json`) is also
   documented and works without any header. We use the Bearer header; it's
   cleaner for env-var-driven config.
@@ -40,7 +45,8 @@ Env vars (in Vercel + `.env.local`):
 - `TEAMDESK_API_TOKEN` — the 32-char hex token (mark Sensitive in Vercel)
 - `TEAMDESK_ACCOUNT` — `clownantics`
 - `TEAMDESK_DB_ID` — `27503`
-- `TEAMDESK_TABLE_ID` — `236519` (numeric id is safer than the name "FL Theme")
+- `TEAMDESK_TABLE_ID` — `FL Theme` (singular name; the code URL-encodes it.
+  Numeric ids like `236519` / `t_236519` return 400 "Table does not exist".)
 - `TEAMDESK_VIEW_URL` — browser URL for the "Open ↗" button
 
 Implementation: `lib/teamdesk.ts`. Settings UI: `components/SettingsModal.tsx`.
