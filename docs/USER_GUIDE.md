@@ -152,6 +152,25 @@ Click any design's image card (outside of flagged hover context) → opens a mod
 
 ---
 
+## Adding a new tag to the taxonomy
+
+To create a new FL Themes tag (e.g. a new state or theme):
+
+1. Click **Settings** → **Open TeamDesk table** (the ↗ link). The FL Theme table opens in TeamDesk.
+2. In TeamDesk, click **Export View** and copy a similar existing record as a starting point.
+3. Edit the new row:
+   - **Search Term** — the canonical tag token. Use `-` for spaces (e.g. `Connecticut`, `Spring-Flowers`, `Halloween-Pumpkins`).
+   - **Sub Theme** — the immediate parent (Level-2) name.
+   - **Related FL Theme** — the link back up the hierarchy (parent reference).
+4. Save the row in TeamDesk.
+5. Back in the app: **Settings** → **Refresh from TeamDesk** → **Apply changes**.
+
+The new term shows up in the **+ Add from taxonomy** typeahead on the Pending review tab immediately (hard-refresh the page if it doesn't — the typeahead caches in memory until reload).
+
+It **won't appear in the All tags filter dropdown** until at least one design is tagged with it. That dropdown lists tags actually in use on designs, not the full taxonomy.
+
+---
+
 ## Editing the vision prompt
 
 Top-right header link: **"Edit vision prompt"**. Opens a modal with the current prompt template (or the default if nothing's saved). Use `{{taxonomy}}` to inject the FL Themes list at runtime.
