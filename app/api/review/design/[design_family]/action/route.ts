@@ -70,6 +70,24 @@ export async function POST(
   let eventType = "";
   let eventPayload: Record<string, unknown> = {};
 
+  // Whenever an action mutates approved_tags, derived theme columns must
+  // change in lockstep — otherwise filters in /api/review/counts and
+  // /api/review/queue (which key on theme_names / sub_themes /
+  // sub_sub_themes) lie about which designs match. Helper folds the
+  // recompute into the patch so every action stays consistent.
+  const withThemes = async (
+    base: Record<string, unknown>,
+    approvedTags: string[],
+  ): Promise<Record<string, unknown>> => {
+    const themes = await mapTagsToThemes(approvedTags);
+    return {
+      ...base,
+      theme_names: themes.theme_names,
+      sub_themes: themes.sub_themes,
+      sub_sub_themes: themes.sub_sub_themes,
+    };
+  };
+
   switch (body.action) {
     case "flag": {
       // When flagging from readytosend / updated, the user is saying "this
@@ -79,11 +97,13 @@ export async function POST(
       // From novision / flagged, nothing to clear.
       const wipeApproved =
         state.status === "readytosend" || state.status === "updated";
-      patch = {
+      const basePatch: Record<string, unknown> = {
         status: "flagged" satisfies ReviewStatus,
-        ...(wipeApproved ? { approved_tags: [] } : {}),
         vision_tags: [],
       };
+      patch = wipeApproved
+        ? await withThemes({ ...basePatch, approved_tags: [] }, [])
+        : basePatch;
       eventType = "flagged";
       eventPayload = {
         from_status: state.status,
@@ -97,30 +117,35 @@ export async function POST(
       // saw. If the client wants merge semantics, it passes a tags array that
       // already includes them.
       const approved = dedupSort(body.tags ?? state.approved_tags ?? []);
-      patch = {
-        status: "readytosend" satisfies ReviewStatus,
-        approved_tags: approved,
-        vision_tags: [], // consumed — cleared either way
-        last_reviewed_at: now,
-      };
+      patch = await withThemes(
+        {
+          status: "readytosend" satisfies ReviewStatus,
+          approved_tags: approved,
+          vision_tags: [], // consumed — cleared either way
+          last_reviewed_at: now,
+        },
+        approved,
+      );
       eventType = "approved";
       eventPayload = { tag_count: approved.length };
       break;
     }
     case "update_tags": {
-      patch = { approved_tags: dedupSort(body.tags) };
+      const approved = dedupSort(body.tags);
+      patch = await withThemes({ approved_tags: approved }, approved);
       eventType = "tag_updated";
-      eventPayload = { tag_count: dedupSort(body.tags).length };
+      eventPayload = { tag_count: approved.length };
       break;
     }
     case "accept_vision": {
-      const approved = new Set(state.approved_tags ?? []);
+      const approvedSet = new Set(state.approved_tags ?? []);
+      approvedSet.add(body.term);
+      const approved = Array.from(approvedSet).sort();
       const vision = (state.vision_tags ?? []).filter((t) => t !== body.term);
-      approved.add(body.term);
-      patch = {
-        approved_tags: Array.from(approved).sort(),
-        vision_tags: vision,
-      };
+      patch = await withThemes(
+        { approved_tags: approved, vision_tags: vision },
+        approved,
+      );
       eventType = "tag_promoted";
       eventPayload = { tag: body.term };
       break;
@@ -130,7 +155,10 @@ export async function POST(
       // approved_tags so the final push can't pick it up via the Approve merge.
       const vision = (state.vision_tags ?? []).filter((t) => t !== body.term);
       const approved = (state.approved_tags ?? []).filter((t) => t !== body.term);
-      patch = { vision_tags: vision, approved_tags: approved };
+      patch = await withThemes(
+        { vision_tags: vision, approved_tags: approved },
+        approved,
+      );
       eventType = "tag_rejected";
       eventPayload = { tag: body.term };
       break;
@@ -184,10 +212,13 @@ export async function POST(
     case "reset": {
       // Destructive: wipe everything back to novision. Kept for explicit
       // "start completely over" cases; not used by Clear All.
-      patch = {
-        status: "novision" satisfies ReviewStatus,
-        approved_tags: null,
-      };
+      patch = await withThemes(
+        {
+          status: "novision" satisfies ReviewStatus,
+          approved_tags: null,
+        },
+        [],
+      );
       eventType = "reset";
       eventPayload = { from_status: state.status };
       break;
