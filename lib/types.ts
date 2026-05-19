@@ -27,6 +27,10 @@ export interface Design {
   units_fl_walmart: number;
   units_af_etsy: number;
   shopify_tags: string[] | null;
+  /** Distinct Shopify product_type values across the family's products
+   *  (e.g. ["Garden Flag", "House Flag"] or ["Flag Stake"]). Populated by
+   *  shopify-pull; useful for filtering accessories out of vision queues. */
+  shopify_product_types: string[] | null;
   theme_names: string[] | null;
   sub_themes: string[] | null;
   sub_sub_themes: string[] | null;

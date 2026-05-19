@@ -45,6 +45,7 @@ interface Aggregated {
   manufacturer: string;
   tags: Set<string>;
   productIds: Set<number>;
+  productTypes: Set<string>;
 }
 
 async function main() {
@@ -74,11 +75,13 @@ async function main() {
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
+    const pt = (p.product_type ?? "").trim();
 
     const existing = byFamily.get(resolved.design_family);
     if (existing) {
       for (const t of tags) existing.tags.add(t);
       existing.productIds.add(p.id);
+      if (pt) existing.productTypes.add(pt);
     } else {
       byFamily.set(resolved.design_family, {
         design_family: resolved.design_family,
@@ -86,6 +89,7 @@ async function main() {
         manufacturer: resolved.manufacturer,
         tags: new Set(tags),
         productIds: new Set([p.id]),
+        productTypes: pt ? new Set([pt]) : new Set(),
       });
     }
     if (productsSeen % 100 === 0) {
@@ -129,6 +133,7 @@ async function main() {
     design_name: string;
     manufacturer: string;
     productIds: number[];
+    productTypes: string[];
     before: string[];
     after: string[];
     changed: boolean;
@@ -145,6 +150,7 @@ async function main() {
       design_name: agg.design_name,
       manufacturer: agg.manufacturer,
       productIds: [...agg.productIds].sort((a, b) => a - b),
+      productTypes: [...agg.productTypes].sort(),
       before,
       after,
       changed,
@@ -193,6 +199,7 @@ async function main() {
       status: "novision",
       shopify_tags: d.after,
       shopify_product_ids: d.productIds,
+      shopify_product_types: d.productTypes,
     }));
   if (inserts.length > 0) {
     for (let i = 0; i < inserts.length; i += 200) {
@@ -202,27 +209,44 @@ async function main() {
       console.log(`  inserted ${Math.min(i + 200, inserts.length)}/${inserts.length} new designs`);
     }
   }
-  // Updates include both tag refreshes AND product-id backfill: any existing
-  // row whose current shopify_product_ids doesn't match the Shopify-side set
-  // needs to be rewritten so push knows where to write. Doing both in one pass.
+  // Updates include tag refreshes, product-id backfill, AND product-type
+  // backfill: any existing row whose current shopify_product_ids /
+  // shopify_product_types doesn't match the Shopify-side set needs to be
+  // rewritten. Doing all three in one pass.
   const existingProductIds = new Map<string, number[]>();
+  const existingProductTypes = new Map<string, string[]>();
   for (let i = 0; i < families.length; i += chunk) {
     const slice = families.slice(i, i + chunk);
     const { data } = await sb
       .from("designs")
-      .select("design_family,shopify_product_ids")
+      .select("design_family,shopify_product_ids,shopify_product_types")
       .in("design_family", slice);
     for (const r of data ?? []) {
-      const row = r as { design_family: string; shopify_product_ids: number[] | null };
-      existingProductIds.set(row.design_family, (row.shopify_product_ids ?? []).slice().sort((a, b) => a - b));
+      const row = r as {
+        design_family: string;
+        shopify_product_ids: number[] | null;
+        shopify_product_types: string[] | null;
+      };
+      existingProductIds.set(
+        row.design_family,
+        (row.shopify_product_ids ?? []).slice().sort((a, b) => a - b),
+      );
+      existingProductTypes.set(
+        row.design_family,
+        (row.shopify_product_types ?? []).slice().sort(),
+      );
     }
   }
+  const arrayDiff = (a: string[], b: string[]): boolean =>
+    a.length !== b.length || a.some((v, i) => v !== b[i]);
   const updates = diffs.filter((d) => {
     if (d.is_new) return false;
     if (d.changed) return true;
     const curIds = existingProductIds.get(d.design_family) ?? [];
     if (curIds.length !== d.productIds.length) return true;
-    return curIds.some((id, i) => id !== d.productIds[i]);
+    if (curIds.some((id, i) => id !== d.productIds[i])) return true;
+    const curTypes = existingProductTypes.get(d.design_family) ?? [];
+    return arrayDiff(curTypes, d.productTypes);
   });
   for (let i = 0; i < updates.length; i++) {
     const u = updates[i];
@@ -231,6 +255,7 @@ async function main() {
       .update({
         shopify_tags: u.after,
         shopify_product_ids: u.productIds,
+        shopify_product_types: u.productTypes,
       })
       .eq("design_family", u.design_family);
     if (error) throw new Error(`update ${u.design_family}: ${error.message}`);

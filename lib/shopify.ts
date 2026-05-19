@@ -25,6 +25,7 @@ export interface ShopifyProduct {
   vendor: string;
   status: "active" | "archived" | "draft";
   tags: string; // comma-separated string; we split on read.
+  product_type: string; // Shopify's free-text category (e.g. "Garden Flag", "Flag Stake")
   variants: ShopifyVariant[];
 }
 
@@ -138,7 +139,7 @@ export async function* listProducts(
   const delayMs = opts.delayMs ?? 400;
 
   let url: string | null =
-    `${baseUrl()}/products.json?status=${status}&limit=${limit}&fields=id,title,handle,vendor,status,tags,variants`;
+    `${baseUrl()}/products.json?status=${status}&limit=${limit}&fields=id,title,handle,vendor,status,tags,product_type,variants`;
   let yielded = 0;
 
   while (url && yielded < max) {
