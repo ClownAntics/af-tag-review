@@ -40,31 +40,41 @@ const VALID_STATUSES: ReviewStatus[] = [
   "novision",
 ];
 
-function initialTile(): ReviewStatus {
-  // Lazy initializer: only runs on first render. In a Next.js "use client"
-  // component this first render happens in the browser, so localStorage is
-  // safe to read. Still guarded against exotic environments (SSR prerender,
-  // private browsing) by the typeof + try/catch.
-  if (typeof window === "undefined") return "pending";
+function readStoredTile(): ReviewStatus | null {
+  if (typeof window === "undefined") return null;
   try {
     const saved = window.localStorage.getItem(LAST_TILE_KEY);
     if (saved && VALID_STATUSES.includes(saved as ReviewStatus)) {
       return saved as ReviewStatus;
     }
   } catch {
-    // ignore
+    // localStorage can throw in private browsing — ignore.
   }
-  return "pending";
+  return null;
 }
 
 export function TagFixing({ onOpenDetail, externalDataVersion = 0 }: Props) {
-  // Default tile = last one the user was on. Falls back to "pending" for
-  // first-time visitors. Keyed in localStorage so it survives full refreshes
-  // but stays per-browser (no server-side persistence needed).
-  const [tile, setTileState] = useState<ReviewStatus>(initialTile);
+  // Default tile = last one the user was on. Initial state must be the same
+  // on server and client (Next.js SSR-prerenders "use client" components) —
+  // otherwise the localStorage-derived state on the client causes a React
+  // hydration mismatch (#418). Start with "pending", then bump to the stored
+  // value once mounted on the client.
+  const [tile, setTileState] = useState<ReviewStatus>("pending");
   const [filters, setFilters] = useState<ReviewFilters>(EMPTY_REVIEW_FILTERS);
   const [counts, setCounts] = useState<ReviewCounts | null>(null);
   const [countsRev, setCountsRev] = useState(0);
+
+  // Hydrate from localStorage after mount. setState in an effect is normally
+  // discouraged, but for client-only-initial-state derived from a browser API
+  // it's the correct pattern — there's no other way to defer the read past
+  // the SSR-matched first render.
+  useEffect(() => {
+    const stored = readStoredTile();
+    if (stored && stored !== "pending") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTileState(stored);
+    }
+  }, []);
 
   const setTile = useCallback((next: ReviewStatus) => {
     setTileState(next);
