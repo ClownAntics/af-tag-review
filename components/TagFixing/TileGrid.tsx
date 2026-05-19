@@ -256,10 +256,13 @@ export function TileGrid({
     const selectedFamilies = [...selected];
     const pushCount = selectedFamilies.length > 0 ? selectedFamilies.length : (count ?? designs.length);
     if (pushCount === 0) return;
+    const filterNote = filterQs && selectedFamilies.length === 0
+      ? " (matching current filters)"
+      : "";
     const label =
       selectedFamilies.length > 0
         ? `${selectedFamilies.length} selected design${selectedFamilies.length === 1 ? "" : "s"}`
-        : `all ${pushCount} ready-to-send design${pushCount === 1 ? "" : "s"}`;
+        : `all ${pushCount} ready-to-send design${pushCount === 1 ? "" : "s"}${filterNote}`;
     if (
       !confirm(
         `Push ${label} to JFF Shopify?\n\nThis REPLACES each product's tags with its approved_tags — anything not in FL Themes will be removed.`,
@@ -270,7 +273,13 @@ export function TileGrid({
     setPushing(true);
     setPushProgress({ done: 0, failed: 0, total: pushCount });
     try {
-      const res = await fetch("/api/review/push", {
+      // Forward filterQs so the push API can scope to the same subset the
+      // user is looking at. When the user has manually selected designs the
+      // explicit list wins and filters are ignored server-side.
+      const pushUrl = filterQs && selectedFamilies.length === 0
+        ? `/api/review/push?${filterQs}`
+        : "/api/review/push";
+      const res = await fetch(pushUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
@@ -348,7 +357,7 @@ export function TileGrid({
       });
       setTimeout(refresh, 600);
     }
-  }, [designs, pushing, count, selected, refresh]);
+  }, [designs, pushing, count, selected, refresh, filterQs]);
 
   const clearAllFlagged = useCallback(async () => {
     if (!designs || runningVision) return;

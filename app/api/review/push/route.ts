@@ -1,10 +1,17 @@
 /**
  * Push curated tags to JFF Shopify for ready-to-send designs.
  *
- * Request: POST /api/review/push
+ * Request: POST /api/review/push?<filter params>
  *   body: optional { design_families?: string[] }
- *     - omitted / empty array → push ALL status='readytosend'
- *     - non-empty array       → push only those families (still gated on status)
+ *     - non-empty array       → push only those families (filters ignored)
+ *     - omitted / empty array → push every status='readytosend' that matches
+ *                                the URL filter params (themeName, subTheme,
+ *                                tag, productType, manufacturer). No filters
+ *                                in the URL → push everything.
+ *
+ * The filter query string mirrors `/api/review/queue` and `/api/review/counts`
+ * so "Push all N" in the UI pushes exactly the N rows the user sees, even
+ * when filters are active.
  *
  * Response: chunked NDJSON stream, one JSON object per line:
  *   { "type": "start",   "family": "AFSP0106", "product_ids": [...] }
@@ -16,8 +23,13 @@
  * Shopify REST is rate-limited (~2 req/sec). We push sequentially per family
  * but in parallel across a family's products (2-5 at most for AF).
  */
+import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { updateProductTags } from "@/lib/shopify";
+import {
+  applyReviewFilters,
+  parseFiltersFromSearch,
+} from "@/lib/review-filters";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // Vercel Hobby/Pro cap; big pushes run via CLI
@@ -28,7 +40,7 @@ interface ReadyDesign {
   shopify_product_ids: number[] | null;
 }
 
-export async function POST(req: Request): Promise<Response> {
+export async function POST(req: NextRequest): Promise<Response> {
   if (!process.env.SHOPIFY_ADMIN_TOKEN || !process.env.SHOPIFY_STORE) {
     return errorResponse(500, "Missing SHOPIFY_STORE / SHOPIFY_ADMIN_TOKEN");
   }
@@ -42,16 +54,36 @@ export async function POST(req: Request): Promise<Response> {
       );
     }
   } catch {
-    // No body / non-JSON → treat as "push all readytosend".
+    // No body / non-JSON → treat as "push all readytosend, respecting URL filters".
   }
 
+  const filters = parseFiltersFromSearch(req.nextUrl.searchParams);
+
   const sb = getAdminSupabase();
-  let q = sb
+  // Cast through `unknown` so applyReviewFilters' structural type doesn't
+  // tangle with PostgREST's deeply-nested generics (TS2589) — mirrors the
+  // same pattern used in /api/review/queue.
+  const base = sb
     .from("designs")
     .select("design_family,approved_tags,shopify_product_ids")
-    .eq("status", "readytosend");
-  if (requestedFamilies) q = q.in("design_family", requestedFamilies);
-  const { data, error } = await q.order("design_family");
+    .eq("status", "readytosend") as unknown as Parameters<
+    typeof applyReviewFilters
+  >[0];
+
+  // When the caller passes an explicit family list, that's the authoritative
+  // scope — skip the URL filter (it's already implicit in how the UI built
+  // the list). Otherwise honor URL filters so "Push all N" matches the tile.
+  let q: ReturnType<typeof applyReviewFilters>;
+  if (requestedFamilies) {
+    q = base;
+  } else {
+    q = applyReviewFilters(base, filters);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let q2: any = q;
+  if (requestedFamilies) q2 = q2.in("design_family", requestedFamilies);
+  const { data, error } = await q2.order("design_family");
   if (error) return errorResponse(500, `select: ${error.message}`);
   const designs = (data ?? []) as ReadyDesign[];
 
