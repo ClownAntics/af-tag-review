@@ -10,11 +10,11 @@ This app helps you clean up Shopify tags on FL designs. Claude vision looks at e
 
 Top to bottom:
 
-1. **Header** — title + links to User guide, Developer docs, Edit vision prompt
+1. **Header** — title + SKU/name search + links to Quick start, **Settings**, User guide, Developer docs, Edit vision prompt
 2. **Paste SKUs** button (top right of main area) — bulk-flag designs by pasting SKU lists
-3. **Pipeline reminder** — two paths to Ready to send: `Flag → vision → Pending → review` (slow) or `Mark fine` (fast), then `Ready to send → push → Updated`
+3. **Pipeline reminder** — two paths to Ready to send: `Flag → vision → Pending → review` (slow) or `Mark fine` (fast), then `Ready to send → push → Updated`. Excluded designs sit aside the main loop.
 4. **Filter bar** — Manufacturer / Theme / Sub / Sub-sub / Tag / Type. Every filter narrows every tile + queue below.
-5. **Five status tiles** — counts for each pipeline stage, clickable
+5. **Six status tiles** — counts for each pipeline stage, clickable
 6. **Active tile view** — Pending is the review UI; others show grids of design cards
 
 ---
@@ -41,8 +41,9 @@ Both paths write to the same `approved_tags` / `theme_names` / `sub_themes` / `s
 | **Pending** | Claude tagged it, awaits your review | Vision finishes → auto-moves here |
 | **Ready to send** | Tags approved, queued for Shopify push | Approve in Pending **or** Mark fine on No-vision |
 | **Updated** | Tags are live on Shopify | After a successful push |
+| **Excluded** | Intentionally not being reviewed (accessories, gift cards, items with no artwork) | Click × on a No-vision card |
 
-You can re-flag a design from any state. Re-flagging from Ready-to-send or Updated **clears the previous approved tags** (fresh start). Re-flagging from No-vision or Pending preserves your in-progress work.
+You can re-flag a design from any state in the main loop. Re-flagging from Ready-to-send or Updated **clears the previous approved tags** (fresh start). Re-flagging from No-vision or Pending preserves your in-progress work. Excluded designs are reversible too — click **↩ Include** on an Excluded card to send it back to No-vision.
 
 ---
 
@@ -109,18 +110,28 @@ Active only while in Pending review:
 Compact grid of flagged designs. Each card has a ✕ in the top-right to remove (back to No-vision). Top row: **Clear all** and **⚡ Run vision on N →**. The pipeline reminder subtitle also has an **Edit vision prompt** link.
 
 ### Ready to send
-Compact grid. Each card shows the approved tag chips below the SKU. Hover any card to see a **⚑** flag button in the top-right — sends it back through review. Primary button: **"↑ Push N to Shopify →"** (disabled until Phase 6 ships).
+Compact grid. Each card shows the approved tag chips below the SKU. Hover any card to see a **⚑** flag button in the top-right — sends it back through review. Primary button: **"↑ Push N to Shopify →"** — actually pushes now. Per-card checkboxes let you select a subset; if no cards are checked the button pushes everything on the (filtered) tile.
+
+**Filters are respected.** When the tile shows a filtered subset (e.g. *"3 ready to send"* under Theme: Flowers), the push button only iterates those 3 — the confirm dialog explicitly says *"(matching current filters)"*. Untoggle filters first if you want a full push.
 
 ### Updated
 Same grid layout as Ready to send, but these designs have been pushed. Re-flag via the ⚑ button if a design needs another review cycle.
 
 ### No vision yet
-The starting pool. Each card has two per-card actions:
+The starting pool. Each card has **three per-card actions**:
 
-- **Top-right ✓ checkbox** — fast path. Copies the card's current Shopify tags into `approved_tags`, refreshes the derived theme columns, and moves it directly to Ready to send. No vision is run. A toast confirms: *"✓ Marked fine — queued in Ready to send."*
-- **Top-left ⚑ button** — slow path. Flags the design so Claude vision will re-tag it from the image. Use when the existing tags are wrong, missing, or stale.
+- **Top-left ✓ checkbox** — fast path. Copies the card's current Shopify tags into `approved_tags`, refreshes the derived theme columns, and moves it directly to Ready to send. No vision is run. A toast confirms: *"✓ Marked fine — queued in Ready to send."*
+- **Top-right ⚑ button** — slow path. Flags the design so Claude vision will re-tag it from the image. Use when the existing tags are wrong, missing, or stale.
+- **Bottom-right × button** — exclude. Pulls the design out of the review pipeline (accessories, gift cards, things without artwork). Lands in the Excluded tile. Reversible.
 
 Top-right of the tile: **"⚑ Flag all N visible"** still bulk-flags the entire visible page through the slow path.
+
+### Excluded
+Designs you've explicitly removed from the review pipeline (accessories, gift cards, items with no artwork). Each card has a **↩ Include** button in the top-right that sends it back to No-vision. Excluded designs:
+
+- Don't appear in the No-vision count (so the queue actually represents your review backlog)
+- Aren't pushed to Shopify
+- Still keep all their data — exclusion is non-destructive and reversible
 
 ---
 
@@ -128,14 +139,14 @@ Top-right of the tile: **"⚑ Flag all N visible"** still bulk-flags the entire 
 
 The filter bar above the tiles narrows every view simultaneously. Filters cascade:
 
-- **Manufacturer** — AF, and others as more brands are loaded
+- **Manufacturer** — AF, Carson, Evergreen, etc. (auto-discovered from the Shopify catalog)
 - **Theme → Sub → Sub-sub** — hierarchical. Picking a theme narrows the sub dropdown, which narrows sub-sub.
 - **Tag** — raw Shopify tag (useful if the taxonomy view doesn't surface what you need)
-- **Type** — garden / house / garden-banner / etc.
+- **Type** — Shopify's native product_type values (`Sleeved Flags: Small Flags: Sublimated (Printed)`, `Mailbox Covers: Regular`, `Doormats: Regular`, `Garden Flags`, etc.)
 
 Click **Clear** to reset.
 
-Pending count at the top-right of each tile reflects the filtered subset.
+Count at the top-right of each tile reflects the filtered subset. The Shopify push and bulk actions also respect the active filter — what you see is what you act on.
 
 ---
 
@@ -149,6 +160,32 @@ Click any design's image card (outside of flagged hover context) → opens a mod
 - Current tags (labeled based on status — "Current Shopify tags" / "Approved tags (draft)" / "Tags queued for Shopify push" / "Tags live on Shopify")
 - Full event history (flag, vision, approve, push — immutable audit log)
 - **⚑ Flag for tag review** button (if the design is in a state where flagging makes sense)
+
+---
+
+## Settings modal
+
+Header link **Settings** opens the project-level settings modal with two sections:
+
+### Taxonomy (FL Themes)
+Shows the read-only state of your FL Themes taxonomy. Displays:
+- **Source** — link to the TeamDesk FL Themes table (↗ opens in a new tab)
+- **Last synced** — timestamp of the most recent successful refresh
+- **Entries** — total + breakdown by level (themes / sub-themes / sub-sub-themes)
+- **API status** — green dot if `TEAMDESK_API_TOKEN` is configured server-side, red otherwise
+
+Two buttons:
+- **↻ Refresh from TeamDesk** — pulls the current FL Themes table from TeamDesk and diffs against local. Shows a confirmation dialog summarizing additions / renames / deletions, then applies (when wired). Renames auto-migrate existing tags on tagged designs; deletions flag affected designs for re-review.
+- **Open TeamDesk table ↗** — opens the TeamDesk view for hand-editing.
+
+### Sync from Shopify
+Nuclear reset. Moves every design back to **No vision yet** and refreshes Shopify tags / product types / variant SKUs / images for the whole catalog. History (events) is preserved — only review-state columns get wiped. Confirmation requires typing `RESET` exactly.
+
+Use this when:
+- The catalog has drifted significantly and you want to start the review cycle over
+- You've added a new manufacturer or product type and want to backfill the new columns
+
+Streams progress (DB reset → Shopify pull → done). Big resets may hit Vercel's 300s function cap; in that case the DB reset succeeds and you can finish the Shopify pull from the CLI with `npx tsx scripts/shopify-pull.ts --apply`.
 
 ---
 
@@ -189,6 +226,12 @@ Prompt tweaks take effect immediately on the next `Run vision` batch.
 - **Use the conflict banner.** If you see two seasonal tags you think shouldn't coexist (Christmas + Summer), remove one.
 - **Use Paste SKUs for batches.** It's faster than the per-card flow when you already know which designs need review.
 - **Re-flag freely.** If tags look wrong even after a push, flag from the Updated tile. The pipeline loops.
+
+---
+
+## What's new
+
+See [CHANGELOG.md](./CHANGELOG.md) for a running log of features, changes, and fixes.
 
 ---
 
