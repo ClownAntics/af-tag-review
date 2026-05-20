@@ -116,6 +116,34 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
     };
   }, [open]);
 
+  // Auto-load the bulk-exclude preview the first time the modal opens so the
+  // user sees the count and primary action immediately — no extra "preview"
+  // click needed.
+  useEffect(() => {
+    if (!open) return;
+    if (bulkExclude.kind !== "idle") return;
+    setBulkExclude({ kind: "loading" });
+    let cancelled = false;
+    fetch("/api/review/bulk-exclude")
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({ error: r.statusText }));
+          throw new Error(body.error ?? `HTTP ${r.status}`);
+        }
+        return (await r.json()) as BulkExcludePreview;
+      })
+      .then((preview) => {
+        if (!cancelled) setBulkExclude({ kind: "preview", preview });
+      })
+      .catch((e) => {
+        if (!cancelled)
+          setBulkExclude({ kind: "error", message: (e as Error).message });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, bulkExclude.kind]);
+
   // Reset dialog state every time the modal is reopened.
   useEffect(() => {
     if (!open) {
@@ -195,22 +223,7 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   }, []);
 
   // ─── Bulk-exclude (accessories) ────────────────────────────────────────
-  const loadBulkExcludePreview = useCallback(async () => {
-    setBulkExclude({ kind: "loading" });
-    try {
-      const r = await fetch("/api/review/bulk-exclude");
-      if (!r.ok) {
-        const body = await r.json().catch(() => ({ error: r.statusText }));
-        setBulkExclude({ kind: "error", message: body.error ?? `HTTP ${r.status}` });
-        return;
-      }
-      const preview = (await r.json()) as BulkExcludePreview;
-      setBulkExclude({ kind: "preview", preview });
-    } catch (e) {
-      setBulkExclude({ kind: "error", message: (e as Error).message });
-    }
-  }, []);
-
+  // Preview is auto-loaded by the open-effect above; no manual loader needed.
   const applyBulkExclude = useCallback(async (total: number) => {
     setBulkExclude({ kind: "applying", total });
     try {
@@ -465,13 +478,11 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
             </div>
 
             {bulkExclude.kind === "idle" && (
-              <button
-                type="button"
-                onClick={loadBulkExcludePreview}
-                className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50"
-              >
-                Preview accessory designs →
-              </button>
+              // Modal effect kicks off the preview load on open, so "idle"
+              // is only visible for the split-second before the loading
+              // state takes over. Render the same skeleton text so the UI
+              // doesn't flicker between blank → loading → preview.
+              <div className="text-xs text-muted">Scanning catalog…</div>
             )}
 
             {bulkExclude.kind === "loading" && (
