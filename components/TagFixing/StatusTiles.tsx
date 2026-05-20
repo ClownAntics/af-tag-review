@@ -17,6 +17,7 @@ const TILES: TileSpec[] = [
   { id: "readytosend", label: "Ready to send", subtitle: "reviewed, not yet pushed",  color: "text-[#185FA5]" },
   { id: "updated",     label: "Updated",       subtitle: "live on Shopify",           color: "text-[#0F6E56]" },
   { id: "novision",    label: "No vision yet", subtitle: "not yet flagged",           color: "text-zinc-400" },
+  { id: "excluded",    label: "Excluded",      subtitle: "not reviewable (accessories etc.)", color: "text-zinc-500" },
 ];
 
 export function StatusTiles({
@@ -29,7 +30,7 @@ export function StatusTiles({
   counts: ReviewCounts | null;
 }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
       {TILES.map((t) => {
         const active = t.id === value;
         const n = counts?.[t.id] ?? null;

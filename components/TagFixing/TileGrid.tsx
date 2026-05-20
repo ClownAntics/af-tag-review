@@ -135,6 +135,49 @@ export function TileGrid({
     [refresh],
   );
 
+  // ─── Per-card "Exclude" (Novision tile → Excluded) ─────────────────────
+  // Pulls a design out of the review pipeline entirely. Used for accessories
+  // (poles, brackets, stakes), gift cards, and anything else that isn't
+  // reviewable artwork. Reversible via "Include" on the Excluded tile.
+  const excludeOne = useCallback(
+    async (family: string) => {
+      try {
+        await fetch(
+          `/api/review/design/${encodeURIComponent(family)}/action`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "exclude" }),
+          },
+        );
+        refresh();
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [refresh],
+  );
+
+  // ─── Per-card "Include" (Excluded tile → Novision) ─────────────────────
+  const includeOne = useCallback(
+    async (family: string) => {
+      try {
+        await fetch(
+          `/api/review/design/${encodeURIComponent(family)}/action`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "include" }),
+          },
+        );
+        refresh();
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [refresh],
+  );
+
   // ─── Flagged-tile actions ──────────────────────────────────────────────
   const removeFromFlagged = useCallback(
     async (family: string) => {
@@ -583,6 +626,12 @@ export function TileGrid({
             // (fast path → ready to send). Shown next to the ⚑ button so the
             // two actions are equally discoverable without a hover overlay.
             const showMarkFineBtn = status === "novision";
+            // Novision also gets a small × "Exclude" button — takes the
+            // design out of the review pipeline entirely (accessories,
+            // gift cards, items with no artwork). Reversible from the
+            // Excluded tile's × Include button.
+            const showExcludeBtn = status === "novision";
+            const showIncludeBtn = status === "excluded";
             const showCheckbox =
               status === "readytosend" && !pushing && state === "approved";
             const isSelected = selected.has(d.design_family);
@@ -613,11 +662,15 @@ export function TileGrid({
                     showFlagBtn={showFlagBtn}
                     showCheckbox={showCheckbox}
                     showMarkFineBtn={showMarkFineBtn}
+                    showExcludeBtn={showExcludeBtn}
+                    showIncludeBtn={showIncludeBtn}
                     isSelected={isSelected}
                     onRemove={() => removeFromFlagged(d.design_family)}
                     onFlag={() => flagOne(d.design_family)}
                     onToggleSelect={() => toggleSelected(d.design_family)}
                     onMarkFine={() => markFine(d.design_family)}
+                    onExclude={() => excludeOne(d.design_family)}
+                    onInclude={() => includeOne(d.design_family)}
                   />
                 }
                 hoverOverlay={
@@ -713,7 +766,7 @@ interface TileConfig {
 const TILE_CONFIGS: Record<ReviewStatus, TileConfig> = {
   novision: {
     titleNoun: "designs with no vision analysis",
-    subtitle: "Per-card: ✓ (top-left) marks current Shopify tags fine → ready to send. ⚑ (top-right) sends through vision. Click the image for details.",
+    subtitle: "Per-card: ✓ (top-left) marks current Shopify tags fine → ready to send. ⚑ (top-right) sends through vision. × (bottom-right) excludes (accessory, not reviewable). Click the image for details.",
     perCardHoverFlag: false,
   },
   flagged: {
@@ -735,6 +788,11 @@ const TILE_CONFIGS: Record<ReviewStatus, TileConfig> = {
   updated: {
     titleNoun: "designs updated on Shopify",
     subtitle: "Tags are live. Click a card to see details. Use the ⚑ button to send back through review.",
+    perCardHoverFlag: false,
+  },
+  excluded: {
+    titleNoun: "designs excluded from review",
+    subtitle: "Accessories, gift cards, and other items intentionally kept out of the pipeline. Click ↩ Include to send a design back to No-vision.",
     perCardHoverFlag: false,
   },
 };
@@ -759,22 +817,30 @@ function CardImageOverlay({
   showFlagBtn,
   showCheckbox,
   showMarkFineBtn,
+  showExcludeBtn,
+  showIncludeBtn,
   isSelected,
   onRemove,
   onFlag,
   onToggleSelect,
   onMarkFine,
+  onExclude,
+  onInclude,
 }: {
   state: CardState;
   showRemove: boolean;
   showFlagBtn: boolean;
   showCheckbox: boolean;
   showMarkFineBtn: boolean;
+  showExcludeBtn: boolean;
+  showIncludeBtn: boolean;
   isSelected: boolean;
   onRemove: () => void;
   onFlag: () => void;
   onToggleSelect: () => void;
   onMarkFine: () => void;
+  onExclude: () => void;
+  onInclude: () => void;
 }) {
   // On novision cards, the ✓ "Mark as fine" checkbox sits in the upper-left
   // (approve/keep affordance) and the ⚑ flag button in the upper-right (push
@@ -849,6 +915,38 @@ function CardImageOverlay({
           className={`absolute ${flagBtnPosition} w-6 h-6 rounded-full bg-white/90 border border-border text-muted hover:text-[#A32D2D] hover:border-[#A32D2D] flex items-center justify-center text-xs leading-none z-10`}
         >
           ⚑
+        </button>
+      )}
+      {showExcludeBtn && (
+        // × in the bottom-right corner. Small footprint so it doesn't compete
+        // with the ✓ (top-left) and ⚑ (top-right) on novision cards.
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onExclude();
+          }}
+          title="Exclude — not a reviewable design (accessory, gift card, etc.)"
+          aria-label="Exclude"
+          className="absolute bottom-1.5 right-1.5 w-5 h-5 rounded-full bg-white/90 border border-border text-muted hover:text-zinc-700 hover:border-zinc-500 flex items-center justify-center text-[12px] leading-none z-10"
+        >
+          ×
+        </button>
+      )}
+      {showIncludeBtn && (
+        // On the Excluded tile, the only per-card action: put it back in
+        // No-vision. Top-right ↩ for "send back."
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onInclude();
+          }}
+          title="Include — bring this design back into the review pipeline"
+          aria-label="Include"
+          className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-white/95 border border-border text-[10px] text-muted hover:text-foreground hover:border-foreground flex items-center justify-center leading-none z-10"
+        >
+          ↩ Include
         </button>
       )}
     </>

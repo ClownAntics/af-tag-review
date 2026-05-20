@@ -32,6 +32,7 @@ const STATUS_LABEL: Record<ReviewStatus, string> = {
   pending: "Pending review",
   readytosend: "Ready to send",
   updated: "Updated",
+  excluded: "Excluded",
 };
 
 const STATUS_COLOR: Record<ReviewStatus, string> = {
@@ -40,6 +41,7 @@ const STATUS_COLOR: Record<ReviewStatus, string> = {
   pending: "text-[#BA7517]",
   readytosend: "text-[#185FA5]",
   updated: "text-[#0F6E56]",
+  excluded: "text-zinc-500",
 };
 
 export function DetailModal({ design, onClose, onFlag }: Props) {

@@ -14,6 +14,7 @@ const STATUSES: ReviewStatus[] = [
   "readytosend",
   "updated",
   "novision",
+  "excluded",
 ];
 
 export async function GET(req: NextRequest): Promise<Response> {

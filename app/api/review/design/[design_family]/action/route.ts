@@ -10,6 +10,9 @@
  *   { action: "unflag" }                          // flagged → novision (preserves state)
  *   { action: "mark_fine" }                       // fast-path: current shopify_tags are good,
  *                                                 //   queue for push without running vision
+ *   { action: "exclude", reason?: string }        // take out of the review pipeline
+ *                                                 //   (accessories, gift cards, etc.)
+ *   { action: "include" }                         // reverse of exclude → back to novision
  *   { action: "reset" }                           // back to novision (testing/debug)
  *
  * Every action logs an event row (audit trail). Writes use the anon key against
@@ -32,6 +35,8 @@ type Body =
   | { action: "reject_vision"; term: string }
   | { action: "unflag" }
   | { action: "mark_fine" }
+  | { action: "exclude"; reason?: string }
+  | { action: "include" }
   | { action: "reset" };
 
 export async function POST(
@@ -169,6 +174,28 @@ export async function POST(
       // Used by Clear All on the Flagged tile.
       patch = { status: "novision" satisfies ReviewStatus };
       eventType = "unflagged";
+      eventPayload = { from_status: state.status };
+      break;
+    }
+    case "exclude": {
+      // Take a design out of the review pipeline entirely. Used for
+      // accessories (poles, brackets, stakes), gift cards, and other
+      // products that aren't reviewable artwork. Non-destructive: vision /
+      // approved / theme columns are preserved so toggling back to
+      // novision restores prior state.
+      patch = { status: "excluded" satisfies ReviewStatus };
+      eventType = "excluded";
+      eventPayload = {
+        from_status: state.status,
+        reason: body.reason ?? null,
+      };
+      break;
+    }
+    case "include": {
+      // Reverse of `exclude` — put the design back into the pipeline at
+      // novision. The user can then flag / mark-fine as usual.
+      patch = { status: "novision" satisfies ReviewStatus };
+      eventType = "included";
       eventPayload = { from_status: state.status };
       break;
     }

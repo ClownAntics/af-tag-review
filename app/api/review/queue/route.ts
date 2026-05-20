@@ -14,6 +14,7 @@ const ALL_STATUSES: ReviewStatus[] = [
   "pending",
   "readytosend",
   "updated",
+  "excluded",
 ];
 
 // Returns designs at a given status, paginated + filtered. The review UI loads

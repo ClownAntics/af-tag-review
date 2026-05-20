@@ -5,7 +5,8 @@ export type ReviewStatus =
   | "flagged"
   | "pending"
   | "readytosend"
-  | "updated";
+  | "updated"
+  | "excluded";
 
 export interface Design {
   design_family: string;
@@ -85,6 +86,7 @@ export interface ReviewCounts {
   readytosend: number;
   updated: number;
   novision: number;
+  excluded: number;
 }
 
 export interface ReviewEvent {
