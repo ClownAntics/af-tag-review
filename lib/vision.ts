@@ -72,6 +72,56 @@ export async function expandToIncludeAncestors(tags: string[]): Promise<string[]
 }
 
 /**
+ * Strip decoration tags that conflict with the primary's level-2 occasion.
+ *
+ * The vision model sometimes emits decoration terms whose taxonomy lineage
+ * sits under a sibling occasion of the primary — e.g. on a Mardi Gras flag
+ * with sparkles + masks it might emit `Fireworks` (under `Seasonal: 4th of
+ * July`) and `Masks` (under `Seasonal: Halloween`). The ancestor expander
+ * then dragged in the sibling level-2 parents (`4th-Of-July`, `Halloween`),
+ * cross-tagging the design with unrelated occasions. Filtering before
+ * expansion is the cleanest place to enforce "one occasion per design".
+ *
+ * Rules:
+ *   - Primary not in taxonomy → no-op (defensive).
+ *   - Primary is level-1 (e.g. "Seasonal" itself) → keep everything; the
+ *     primary is the whole umbrella, sibling sub-themes can coexist.
+ *   - Decoration's `name` differs from primary's `name` → different level-1
+ *     theme entirely (e.g. `Birds: Cardinals` on a `Seasonal: Christmas` flag).
+ *     Keep.
+ *   - Same `name`, different `sub` → competing occasion, drop.
+ *   - Same `name`, same `sub` → descendant or peer-leaf of primary, keep.
+ */
+export async function filterConflictingDecoration(
+  primary: string | null,
+  decoration: string[],
+): Promise<{ kept: string[]; dropped: string[] }> {
+  if (!primary) return { kept: decoration, dropped: [] };
+  await ensureIndexes();
+  const primaryEntry = _byTerm!.get(primary);
+  if (!primaryEntry || primaryEntry.level === 1) {
+    return { kept: decoration, dropped: [] };
+  }
+  const kept: string[] = [];
+  const dropped: string[] = [];
+  for (const term of decoration) {
+    const e = _byTerm!.get(term);
+    if (!e) {
+      kept.push(term);
+      continue;
+    }
+    if (e.name !== primaryEntry.name) {
+      kept.push(term);
+    } else if (e.sub === primaryEntry.sub) {
+      kept.push(term);
+    } else {
+      dropped.push(term);
+    }
+  }
+  return { kept, dropped };
+}
+
+/**
  * Map a flat list of Search-Term tags into the hierarchical columns used for
  * filtering (`theme_names`, `sub_themes`, `sub_sub_themes`). Unknown tags are
  * skipped — this is safe to call on raw Shopify tag sets that may contain
@@ -160,6 +210,10 @@ export interface VisionResult {
   primary: string | null;
   /** Claude's one-sentence justification for the primary pick. */
   reasoning?: string;
+  /** Decoration terms stripped by the occasion-conflict filter, recorded
+   *  inside `vision_raw` for auditability. Empty array if nothing was
+   *  filtered. Not promoted into the stored tag set. */
+  dropped_conflicting?: string[];
 }
 
 function extractFirstJsonObject(s: string): string | null {
@@ -242,13 +296,20 @@ async function parseResponse(raw: string): Promise<VisionResult | { error: strin
     };
   }
 
+  // Drop decoration tags whose lineage points to a competing occasion under
+  // the same level-1 theme (e.g. `Fireworks` under `Seasonal: 4th of July`
+  // on a `Mardi-Gras` flag). Without this the ancestor expander below would
+  // pull the conflicting level-2 parent into the stored tag set.
+  const { kept: filteredDecoration, dropped: droppedConflicting } =
+    await filterConflictingDecoration(primary, decoration);
+
   // Union primary + decoration, then fill in Level-2/Level-1 parents for each
   // Level-3 or Level-2 pick so the stored tag set has the full hierarchy.
-  const union = new Set<string>(decoration);
+  const union = new Set<string>(filteredDecoration);
   if (primary) union.add(primary);
   const expanded = await expandToIncludeAncestors(Array.from(union));
 
-  return { tags: expanded, primary, reasoning };
+  return { tags: expanded, primary, reasoning, dropped_conflicting: droppedConflicting };
 }
 
 export interface TagOneInput {

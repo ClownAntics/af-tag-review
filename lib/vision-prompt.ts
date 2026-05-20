@@ -40,6 +40,12 @@ RULES
    plain American flag is NOT a 4th of July design unless 4th-of-July imagery
    is actually present. A Halloween scene is NOT a Fall design — once a
    specific holiday applies, the season is redundant and conflicts.
+   Sibling occasions are MUTUALLY EXCLUSIVE: once you've picked a primary
+   under "Seasonal: <occasion>", do NOT include any other "Seasonal:
+   <occasion>" term as decoration, even if the imagery superficially
+   resembles a different holiday. Mardi Gras masks are NOT Halloween masks.
+   Mardi Gras sparkles are NOT 4th of July fireworks. New Year fireworks
+   are NOT 4th of July fireworks. Same level-1, different level-2 = wrong.
 8. ONE major theme only. Decoration is subjects, never themes. Any Search Term
    that would qualify as "primary" under category 1 above (a holiday, occasion,
    or theme — e.g. Memorial, Anniversary, Welcome, Patriotic, Christmas,
@@ -76,6 +82,9 @@ Image: monogrammed "M" with scattered flowers
 
 Image: fall leaves and pumpkins with no holiday text
 {"primary":"Fall","decoration":["Fall-Leaves","Pumpkins"],"reasoning":"No specific holiday shown; season is the best primary."}
+
+Image: Mardi Gras flag with colorful masks and sparkly purple/gold/green background
+{"primary":"Mardi-Gras","decoration":[],"reasoning":"Mardi Gras is the occasion; masks and sparkles are the Mardi Gras iconography itself, not separate decorations — and 'Masks'/'Fireworks' live under sibling occasions which would cross-tag."}
 
 Image: unidentifiable mixed bouquet
 {"primary":"Flowers","decoration":[],"reasoning":"Cannot identify specific species; core subject is generic flowers."}
