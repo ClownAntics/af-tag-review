@@ -169,11 +169,21 @@ export async function* listProducts(
  *
  * Matches: AFGF|AFHF|AFGB|AFDR|AFMC + {2-letter region}{4-digit id}
  * + optional suffix (-CF | WH | A–Z).
+ *
+ * **Case-insensitive on the SKU as a whole**, then the canonical family is
+ * built in uppercase. Shopify has some variant SKUs like `AFhFSP0677` (note
+ * the lowercase `h`) for the house version of an artwork whose garden
+ * version is `AFGFSP0677`. Without case insensitivity those variants would
+ * resolve to a different design_family and never merge with the garden
+ * version, producing two separate review rows for the same artwork.
+ *
  * Accessories (AFFPGS/AFACRS/AFGFC/AFMB/AFMFS) and non-AF vendors return null.
  */
 export function skuToAfDesignFamily(sku: string | null | undefined): string | null {
   if (!sku) return null;
-  const m = sku.match(/^AF(?:GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(?:-CF|WH|[A-Z])?$/);
+  const m = sku
+    .toUpperCase()
+    .match(/^AF(?:GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(?:-CF|WH|[A-Z])?$/);
   return m ? `AF${m[1]}` : null;
 }
 
