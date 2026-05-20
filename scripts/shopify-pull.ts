@@ -46,6 +46,9 @@ interface Aggregated {
   tags: Set<string>;
   productIds: Set<number>;
   productTypes: Set<string>;
+  variantSkus: Set<string>;
+  /** First non-empty image URL seen for the family — used as the preview. */
+  imageUrl: string | null;
 }
 
 async function main() {
@@ -76,12 +79,18 @@ async function main() {
       .map((s) => s.trim())
       .filter(Boolean);
     const pt = (p.product_type ?? "").trim();
+    const skus = (p.variants ?? [])
+      .map((v) => (v.sku ?? "").trim())
+      .filter(Boolean);
+    const img = p.image?.src ?? null;
 
     const existing = byFamily.get(resolved.design_family);
     if (existing) {
       for (const t of tags) existing.tags.add(t);
       existing.productIds.add(p.id);
       if (pt) existing.productTypes.add(pt);
+      for (const s of skus) existing.variantSkus.add(s);
+      if (!existing.imageUrl && img) existing.imageUrl = img;
     } else {
       byFamily.set(resolved.design_family, {
         design_family: resolved.design_family,
@@ -90,6 +99,8 @@ async function main() {
         tags: new Set(tags),
         productIds: new Set([p.id]),
         productTypes: pt ? new Set([pt]) : new Set(),
+        variantSkus: new Set(skus),
+        imageUrl: img,
       });
     }
     if (productsSeen % 100 === 0) {
@@ -134,6 +145,8 @@ async function main() {
     manufacturer: string;
     productIds: number[];
     productTypes: string[];
+    variantSkus: string[];
+    imageUrl: string | null;
     before: string[];
     after: string[];
     changed: boolean;
@@ -151,6 +164,8 @@ async function main() {
       manufacturer: agg.manufacturer,
       productIds: [...agg.productIds].sort((a, b) => a - b),
       productTypes: [...agg.productTypes].sort(),
+      variantSkus: [...agg.variantSkus].sort(),
+      imageUrl: agg.imageUrl,
       before,
       after,
       changed,
@@ -200,6 +215,8 @@ async function main() {
       shopify_tags: d.after,
       shopify_product_ids: d.productIds,
       shopify_product_types: d.productTypes,
+      variant_skus: d.variantSkus,
+      image_url: d.imageUrl,
     }));
   if (inserts.length > 0) {
     for (let i = 0; i < inserts.length; i += 200) {
@@ -215,17 +232,23 @@ async function main() {
   // rewritten. Doing all three in one pass.
   const existingProductIds = new Map<string, number[]>();
   const existingProductTypes = new Map<string, string[]>();
+  const existingVariantSkus = new Map<string, string[]>();
+  const existingImageUrl = new Map<string, string | null>();
   for (let i = 0; i < families.length; i += chunk) {
     const slice = families.slice(i, i + chunk);
     const { data } = await sb
       .from("designs")
-      .select("design_family,shopify_product_ids,shopify_product_types")
+      .select(
+        "design_family,shopify_product_ids,shopify_product_types,variant_skus,image_url",
+      )
       .in("design_family", slice);
     for (const r of data ?? []) {
       const row = r as {
         design_family: string;
         shopify_product_ids: number[] | null;
         shopify_product_types: string[] | null;
+        variant_skus: string[] | null;
+        image_url: string | null;
       };
       existingProductIds.set(
         row.design_family,
@@ -235,6 +258,11 @@ async function main() {
         row.design_family,
         (row.shopify_product_types ?? []).slice().sort(),
       );
+      existingVariantSkus.set(
+        row.design_family,
+        (row.variant_skus ?? []).slice().sort(),
+      );
+      existingImageUrl.set(row.design_family, row.image_url ?? null);
     }
   }
   const arrayDiff = (a: string[], b: string[]): boolean =>
@@ -246,7 +274,11 @@ async function main() {
     if (curIds.length !== d.productIds.length) return true;
     if (curIds.some((id, i) => id !== d.productIds[i])) return true;
     const curTypes = existingProductTypes.get(d.design_family) ?? [];
-    return arrayDiff(curTypes, d.productTypes);
+    if (arrayDiff(curTypes, d.productTypes)) return true;
+    const curSkus = existingVariantSkus.get(d.design_family) ?? [];
+    if (arrayDiff(curSkus, d.variantSkus)) return true;
+    const curImg = existingImageUrl.get(d.design_family) ?? null;
+    return curImg !== d.imageUrl;
   });
   for (let i = 0; i < updates.length; i++) {
     const u = updates[i];
@@ -256,6 +288,8 @@ async function main() {
         shopify_tags: u.after,
         shopify_product_ids: u.productIds,
         shopify_product_types: u.productTypes,
+        variant_skus: u.variantSkus,
+        image_url: u.imageUrl,
       })
       .eq("design_family", u.design_family);
     if (error) throw new Error(`update ${u.design_family}: ${error.message}`);

@@ -35,15 +35,38 @@ export interface VariantSku {
 }
 
 /**
- * Ordered list of variant SKUs to display on a design tile. For AF this is
- * garden + house (+ optional banner); for non-AF it's just the one SKU that
- * IS the design_family.
+ * Ordered list of variant SKUs to display on a design tile.
+ *
+ * Preferred source: `design.variant_skus` (populated by shopify-pull from the
+ * actual Shopify variant data) and `design.image_url` (populated from
+ * `product.image.src`). When available these are the truth and we use them
+ * verbatim. This is what handles non-standard SKUs like the new burlap line
+ * (`afgfms-b-0001`) without doubled-prefix garbage.
+ *
+ * Fallback: derive from the design_family using the AF regex pattern. Kept
+ * because some pre-migration-008 rows may still lack `variant_skus`, and
+ * because non-AF manufacturers' design_family IS the SKU. The fallback path
+ * is only correct for designs whose SKUs match the strict AF pattern; new
+ * variant patterns should always come through the pulled column.
  */
 export function variantSkusFor(design: Design): VariantSku[] {
+  // Preferred: use the Shopify-pulled values.
+  const stored = (design.variant_skus ?? []).filter((s) => s && s.length > 0);
+  if (stored.length > 0) {
+    const img =
+      design.image_url && design.image_url.length > 0
+        ? design.image_url
+        : imageUrlForSku(stored[0]);
+    return stored.map((sku) => ({ sku, label: "", imageUrl: img }));
+  }
+
+  // Fallback: derive from the SKU pattern (covers pre-migration rows + non-AF).
   const mk = (sku: string, label: string): VariantSku => ({
     sku,
     label,
-    imageUrl: imageUrlForSku(sku),
+    imageUrl: design.image_url && design.image_url.length > 0
+      ? design.image_url
+      : imageUrlForSku(sku),
   });
   if (design.manufacturer !== "AF") {
     return [mk(design.design_family, "")];

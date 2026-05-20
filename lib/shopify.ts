@@ -18,6 +18,11 @@ export interface ShopifyVariant {
   title: string | null;
 }
 
+export interface ShopifyImage {
+  id: number;
+  src: string;
+}
+
 export interface ShopifyProduct {
   id: number;
   title: string;
@@ -26,6 +31,7 @@ export interface ShopifyProduct {
   status: "active" | "archived" | "draft";
   tags: string; // comma-separated string; we split on read.
   product_type: string; // Shopify's free-text category (e.g. "Garden Flag", "Flag Stake")
+  image: ShopifyImage | null; // Primary product image; null if the product has no media yet.
   variants: ShopifyVariant[];
 }
 
@@ -139,7 +145,7 @@ export async function* listProducts(
   const delayMs = opts.delayMs ?? 400;
 
   let url: string | null =
-    `${baseUrl()}/products.json?status=${status}&limit=${limit}&fields=id,title,handle,vendor,status,tags,product_type,variants`;
+    `${baseUrl()}/products.json?status=${status}&limit=${limit}&fields=id,title,handle,vendor,status,tags,product_type,image,variants`;
   let yielded = 0;
 
   while (url && yielded < max) {

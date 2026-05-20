@@ -32,6 +32,11 @@ export interface Design {
    *  (e.g. ["Garden Flag", "House Flag"] or ["Flag Stake"]). Populated by
    *  shopify-pull; useful for filtering accessories out of vision queues. */
   shopify_product_types: string[] | null;
+  /** Actual SKU strings of every variant across every product in this
+   *  design family. Source of truth — preferred over deriving SKUs from
+   *  a regex pattern. Empty array if the design pre-dates the 008
+   *  migration backfill. */
+  variant_skus: string[] | null;
   theme_names: string[] | null;
   sub_themes: string[] | null;
   sub_sub_themes: string[] | null;
