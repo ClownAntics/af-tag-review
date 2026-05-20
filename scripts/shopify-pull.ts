@@ -282,17 +282,43 @@ async function main() {
   });
   for (let i = 0; i < updates.length; i++) {
     const u = updates[i];
-    const { error } = await sb
-      .from("designs")
-      .update({
-        shopify_tags: u.after,
-        shopify_product_ids: u.productIds,
-        shopify_product_types: u.productTypes,
-        variant_skus: u.variantSkus,
-        image_url: u.imageUrl,
-      })
-      .eq("design_family", u.design_family);
-    if (error) throw new Error(`update ${u.design_family}: ${error.message}`);
+    // Retry transient network/Supabase errors a few times before giving up.
+    // The script is idempotent (drift check skips already-updated rows on
+    // re-run) but it's annoying to lose the in-flight progress to a single
+    // flaky connection.
+    let lastErr: unknown = null;
+    let ok = false;
+    for (let attempt = 0; attempt < 4 && !ok; attempt++) {
+      try {
+        const { error } = await sb
+          .from("designs")
+          .update({
+            shopify_tags: u.after,
+            shopify_product_ids: u.productIds,
+            shopify_product_types: u.productTypes,
+            variant_skus: u.variantSkus,
+            image_url: u.imageUrl,
+          })
+          .eq("design_family", u.design_family);
+        if (error) {
+          lastErr = error;
+        } else {
+          ok = true;
+          break;
+        }
+      } catch (e) {
+        lastErr = e;
+      }
+      // Exponential backoff: 500ms, 1.5s, 4.5s
+      await new Promise((r) => setTimeout(r, 500 * Math.pow(3, attempt)));
+    }
+    if (!ok) {
+      const msg =
+        lastErr && typeof lastErr === "object" && "message" in lastErr
+          ? (lastErr as { message: string }).message
+          : String(lastErr);
+      throw new Error(`update ${u.design_family} (after retries): ${msg}`);
+    }
     if ((i + 1) % 50 === 0 || i === updates.length - 1) {
       console.log(`  updated ${i + 1}/${updates.length} designs`);
     }
