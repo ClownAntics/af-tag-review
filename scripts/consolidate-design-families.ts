@@ -218,7 +218,10 @@ async function applyRename(
   if (selErr || !full)
     throw new Error(`rename re-select ${current.design_family}: ${selErr?.message ?? "no row"}`);
 
-  const copy = { ...(full as Record<string, unknown>), design_family: canonical };
+  const copy: Record<string, unknown> = {
+    ...(full as Record<string, unknown>),
+    design_family: canonical,
+  };
   // Strip generated / system-managed columns Supabase won't let us insert.
   delete copy.effective_date;
 
