@@ -55,7 +55,15 @@ export async function GET(): Promise<Response> {
       for (const v of r.sub_themes || []) sets.subThemes.add(v);
       for (const v of r.sub_sub_themes || []) sets.subSubThemes.add(v);
       for (const v of r.shopify_tags || []) sets.tags.add(v);
-      for (const v of r.shopify_product_types || []) sets.productTypes.add(v);
+      for (const v of r.shopify_product_types || []) {
+        // Filter out garbage values: some products in Shopify have a raw
+        // product id (e.g. "EV432556") dumped into the product_type field
+        // instead of a real category. Hide those from the dropdown — they
+        // still live in the row so we don't lose data; this is purely a
+        // picker-UX cleanup. Fix-at-source is in Shopify.
+        if (/^EV\d+$/.test(v)) continue;
+        sets.productTypes.add(v);
+      }
       if (r.manufacturer) sets.manufacturers.add(r.manufacturer);
     }
     if (rows.length < pageSize) break;
