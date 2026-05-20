@@ -168,7 +168,14 @@ export async function* listProducts(
  * flag + doormat + mailbox cover for the same artwork) under a single family.
  *
  * Matches: AFGF|AFHF|AFGB|AFDR|AFMC + {2-letter region}{4-digit id}
- * + optional suffix (-CF | WH | A–Z).
+ * + optional suffix.
+ *
+ * The suffix is permissive on purpose: it represents a personalization
+ * variant of the *same artwork* (`-CF` = custom field, `-CG` = custom
+ * greeting, `WH` = preprint/white, `A`–`Z` = monogram letter, etc.), so all
+ * variants must collapse onto the same design_family. New suffix codes have
+ * surfaced in the catalog over time (-CG was the most recent), so we accept
+ * any `-XX[X]` or 1–2 trailing letters rather than enumerating the known set.
  *
  * **Case-insensitive on the SKU as a whole**, then the canonical family is
  * built in uppercase. Shopify has some variant SKUs like `AFhFSP0677` (note
@@ -183,7 +190,7 @@ export function skuToAfDesignFamily(sku: string | null | undefined): string | nu
   if (!sku) return null;
   const m = sku
     .toUpperCase()
-    .match(/^AF(?:GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(?:-CF|WH|[A-Z])?$/);
+    .match(/^AF(?:GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(?:-[A-Z]{1,3}|[A-Z]{1,2})?$/);
   return m ? `AF${m[1]}` : null;
 }
 
