@@ -3,10 +3,13 @@
 /**
  * Project-level Settings modal. Accessible from the header "Settings" link.
  *
- * Sections:
+ * Sections (top to bottom):
  *   - Taxonomy (FL Themes) — connection status + "Refresh from TeamDesk"
  *     button. Calls `/api/taxonomy/status` on open and `/api/taxonomy/refresh`
- *     on click. Ships in stub mode until `TEAMDESK_API_TOKEN` is provisioned.
+ *     on click.
+ *   - Bulk exclude accessories — preview + one-click exclude of every design
+ *     whose Shopify product_type matches the accessory rule. Per-card
+ *     ↩ Include reverses individual exclusions from the Excluded tile.
  *   - Sync from Shopify — "Reset everything and re-pull from Shopify" button.
  *     Streams NDJSON progress from `/api/review/reset-all`. Requires typing
  *     RESET to confirm.
@@ -58,6 +61,23 @@ type TaxonomyRefreshState =
   | { kind: "applying" }
   | { kind: "applied"; summary: string };
 
+interface BulkExcludePreview {
+  count: number;
+  sample: {
+    design_family: string;
+    design_name: string | null;
+    shopify_product_types: string[];
+  }[];
+}
+
+type BulkExcludeState =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "error"; message: string }
+  | { kind: "preview"; preview: BulkExcludePreview }
+  | { kind: "applying"; total: number }
+  | { kind: "applied"; excluded: number };
+
 export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   const [confirmText, setConfirmText] = useState("");
   const [running, setRunning] = useState(false);
@@ -65,6 +85,7 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   const [totalDesigns, setTotalDesigns] = useState<number | null>(null);
   const [taxonomyStatus, setTaxonomyStatus] = useState<TaxonomyStatus | null>(null);
   const [taxonomyState, setTaxonomyState] = useState<TaxonomyRefreshState>({ kind: "idle" });
+  const [bulkExclude, setBulkExclude] = useState<BulkExcludeState>({ kind: "idle" });
   const abortRef = useRef<AbortController | null>(null);
 
   // Lightweight count fetch so the warning text shows the real catalog size.
@@ -102,6 +123,7 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
       setProgress(null);
       setRunning(false);
       setTaxonomyState({ kind: "idle" });
+      setBulkExclude({ kind: "idle" });
       abortRef.current?.abort();
       abortRef.current = null;
     }
@@ -171,6 +193,44 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
       setTaxonomyState({ kind: "error", message: (e as Error).message });
     }
   }, []);
+
+  // ─── Bulk-exclude (accessories) ────────────────────────────────────────
+  const loadBulkExcludePreview = useCallback(async () => {
+    setBulkExclude({ kind: "loading" });
+    try {
+      const r = await fetch("/api/review/bulk-exclude");
+      if (!r.ok) {
+        const body = await r.json().catch(() => ({ error: r.statusText }));
+        setBulkExclude({ kind: "error", message: body.error ?? `HTTP ${r.status}` });
+        return;
+      }
+      const preview = (await r.json()) as BulkExcludePreview;
+      setBulkExclude({ kind: "preview", preview });
+    } catch (e) {
+      setBulkExclude({ kind: "error", message: (e as Error).message });
+    }
+  }, []);
+
+  const applyBulkExclude = useCallback(async (total: number) => {
+    setBulkExclude({ kind: "applying", total });
+    try {
+      const r = await fetch("/api/review/bulk-exclude", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: "EXCLUDE" }),
+      });
+      if (!r.ok) {
+        const body = await r.json().catch(() => ({ error: r.statusText }));
+        setBulkExclude({ kind: "error", message: body.error ?? `HTTP ${r.status}` });
+        return;
+      }
+      const body = (await r.json()) as { excluded: number };
+      setBulkExclude({ kind: "applied", excluded: body.excluded });
+      onResetComplete?.(); // refresh counts so the Excluded tile updates
+    } catch (e) {
+      setBulkExclude({ kind: "error", message: (e as Error).message });
+    }
+  }, [onResetComplete]);
 
   const runReset = useCallback(async () => {
     if (confirmText !== "RESET" || running) return;
@@ -392,6 +452,62 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
 
           <div className="border-t border-border -mx-6" />
 
+          {/* ─── Bulk exclude accessories ──────────────────────────────── */}
+          <section className="space-y-3">
+            <div>
+              <h3 className="text-sm font-medium">Bulk exclude accessories</h3>
+              <p className="text-xs text-muted mt-0.5">
+                Move every design whose Shopify product_type is purely accessory
+                (poles, brackets, finials, stakes, gift cards, etc.) to the
+                Excluded tile in one click. Per-card ↩ Include reverses any
+                exclusion you don&apos;t agree with.
+              </p>
+            </div>
+
+            {bulkExclude.kind === "idle" && (
+              <button
+                type="button"
+                onClick={loadBulkExcludePreview}
+                className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50"
+              >
+                Preview accessory designs →
+              </button>
+            )}
+
+            {bulkExclude.kind === "loading" && (
+              <div className="text-xs text-muted">Scanning catalog…</div>
+            )}
+
+            {bulkExclude.kind === "error" && (
+              <div className="text-xs bg-[#FDECEC] border border-[#A32D2D]/30 text-[#A32D2D] px-3 py-2 rounded-md">
+                ✗ {bulkExclude.message}
+              </div>
+            )}
+
+            {bulkExclude.kind === "preview" && (
+              <BulkExcludePreviewPanel
+                preview={bulkExclude.preview}
+                onCancel={() => setBulkExclude({ kind: "idle" })}
+                onApply={() => applyBulkExclude(bulkExclude.preview.count)}
+              />
+            )}
+
+            {bulkExclude.kind === "applying" && (
+              <div className="text-xs bg-[#FAEEDA] border border-[#FAC775] text-[#633806] px-3 py-2 rounded-md">
+                Excluding {bulkExclude.total.toLocaleString()} designs…
+              </div>
+            )}
+
+            {bulkExclude.kind === "applied" && (
+              <div className="text-xs bg-[#E8F5EE] border border-[#0F6E56]/30 text-[#0F6E56] px-3 py-2 rounded-md">
+                ✓ Excluded {bulkExclude.excluded.toLocaleString()} designs. Find
+                them in the Excluded tile; use ↩ Include to send any back.
+              </div>
+            )}
+          </section>
+
+          <div className="border-t border-border -mx-6" />
+
           {/* ─── Sync from Shopify ─────────────────────────────────────── */}
           <section className="space-y-3">
             <h3 className="text-sm font-medium">Sync from Shopify</h3>
@@ -553,6 +669,77 @@ function TaxonomyConfirmDialog({
           className="text-xs px-3 py-1.5 rounded-md bg-[#0F6E56] text-white hover:bg-[#0C5947]"
         >
           Apply changes
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function BulkExcludePreviewPanel({
+  preview,
+  onCancel,
+  onApply,
+}: {
+  preview: BulkExcludePreview;
+  onCancel: () => void;
+  onApply: () => void;
+}) {
+  if (preview.count === 0) {
+    return (
+      <div className="text-xs bg-zinc-50 border border-border text-muted px-3 py-2 rounded-md flex items-center justify-between gap-3">
+        <span>No designs match the accessory rule — nothing to exclude.</span>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="text-xs px-2.5 py-1 rounded-md border border-border bg-white hover:bg-zinc-50"
+        >
+          Dismiss
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="border border-border bg-zinc-50 rounded-md px-3 py-3 text-xs space-y-2">
+      <div>
+        <strong className="text-foreground">
+          {preview.count.toLocaleString()}
+        </strong>{" "}
+        designs match the accessory rule. Sample:
+      </div>
+      <ul className="space-y-1">
+        {preview.sample.map((s) => (
+          <li key={s.design_family} className="flex items-baseline gap-2">
+            <span className="font-mono text-muted shrink-0">
+              {s.design_family}
+            </span>
+            <span className="text-foreground flex-1 truncate">
+              {s.design_name ?? "(no name)"}
+            </span>
+            <span className="text-muted text-[10px] truncate max-w-[40%]">
+              {s.shopify_product_types.join(", ")}
+            </span>
+          </li>
+        ))}
+        {preview.count > preview.sample.length && (
+          <li className="text-muted italic">
+            …and {(preview.count - preview.sample.length).toLocaleString()} more.
+          </li>
+        )}
+      </ul>
+      <div className="flex gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-zinc-50"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onApply}
+          className="text-xs px-3 py-1.5 rounded-md bg-zinc-700 text-white hover:bg-zinc-900"
+        >
+          Exclude {preview.count.toLocaleString()} designs
         </button>
       </div>
     </div>

@@ -6,9 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 
 ---
 
-## [Unreleased] — pending UI work
+## 2026-05 — Excluded status, Shopify product type / variant SKUs / images, bulk exclude
 
-- Bulk-exclude UI in Settings: one click to push every accessory / non-reviewable design into the Excluded tile using the `shopify_product_types` regex.
+### Added (continued)
+- **Bulk-exclude accessories** in Settings. Preview shows the count + first 10 matching designs with their product_types; one click moves them all to the Excluded tile. Uses the rule in `lib/accessory-rules.ts` — a design is only flagged if **every** entry in `shopify_product_types` matches accessory keywords (poles, brackets, finials, stakes, gift cards, etc.). Mixed flag+accessory families are intentionally left alone. Per-card ↩ Include reverses individual decisions.
+- Audit event `bulk_excluded` is written per design with the offending `product_types` and prior status in the payload, so the action is fully reviewable from the history.
 
 ---
 
