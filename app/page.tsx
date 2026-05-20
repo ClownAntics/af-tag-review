@@ -95,6 +95,14 @@ export default function Home() {
           >
             Developer docs
           </a>
+          <a
+            href="https://github.com/ClownAntics/af-tag-review/blob/main/docs/CHANGELOG.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground hover:underline"
+          >
+            What&apos;s new
+          </a>
           <button
             type="button"
             onClick={() => setPromptModalOpen(true)}
