@@ -32,7 +32,7 @@ export function applyReviewFilters<Q extends Chain>(
   if (filters.subTheme !== "all") q = q.contains("sub_themes", [filters.subTheme]) as Q;
   if (filters.subSubTheme !== "all") q = q.contains("sub_sub_themes", [filters.subSubTheme]) as Q;
   if (filters.tag !== "all") q = q.contains("shopify_tags", [filters.tag]) as Q;
-  if (filters.productType !== "all") q = q.contains("product_types", [filters.productType]) as Q;
+  if (filters.productType !== "all") q = q.contains("shopify_product_types", [filters.productType]) as Q;
   if (filters.manufacturer !== "all") q = q.eq("manufacturer", filters.manufacturer) as Q;
   return q;
 }

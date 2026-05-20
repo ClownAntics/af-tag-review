@@ -37,7 +37,7 @@ export async function GET(): Promise<Response> {
     const { data, error } = await supabase
       .from("designs")
       .select(
-        "theme_names,sub_themes,sub_sub_themes,shopify_tags,product_types,manufacturer",
+        "theme_names,sub_themes,sub_sub_themes,shopify_tags,shopify_product_types,manufacturer",
       )
       .range(offset, offset + pageSize - 1);
     if (error) {
@@ -48,14 +48,14 @@ export async function GET(): Promise<Response> {
     }
     const rows = (data || []) as Pick<
       Design,
-      "theme_names" | "sub_themes" | "sub_sub_themes" | "shopify_tags" | "product_types" | "manufacturer"
+      "theme_names" | "sub_themes" | "sub_sub_themes" | "shopify_tags" | "shopify_product_types" | "manufacturer"
     >[];
     for (const r of rows) {
       for (const v of r.theme_names || []) sets.themeNames.add(v);
       for (const v of r.sub_themes || []) sets.subThemes.add(v);
       for (const v of r.sub_sub_themes || []) sets.subSubThemes.add(v);
       for (const v of r.shopify_tags || []) sets.tags.add(v);
-      for (const v of r.product_types || []) sets.productTypes.add(v);
+      for (const v of r.shopify_product_types || []) sets.productTypes.add(v);
       if (r.manufacturer) sets.manufacturers.add(r.manufacturer);
     }
     if (rows.length < pageSize) break;
