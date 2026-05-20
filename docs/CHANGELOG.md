@@ -9,8 +9,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 ## 2026-05 — Excluded status, Shopify product type / variant SKUs / images, bulk exclude
 
 ### Added (continued)
-- **Bulk-exclude accessories** in Settings. Preview shows the count + first 10 matching designs with their product_types; one click moves them all to the Excluded tile. Uses the rule in `lib/accessory-rules.ts` — a design is only flagged if **every** entry in `shopify_product_types` matches accessory keywords (poles, brackets, finials, stakes, gift cards, etc.). Mixed flag+accessory families are intentionally left alone. Per-card ↩ Include reverses individual decisions.
+- **Bulk-exclude accessories** in Settings. Preview shows the count + first 10 matching designs with their product_types; one click moves them all to the Excluded tile. Per-card ↩ Include reverses individual decisions.
 - Audit event `bulk_excluded` is written per design with the offending `product_types` and prior status in the payload, so the action is fully reviewable from the history.
+
+**Accessory rule** (`lib/accessory-rules.ts`): a product_type counts as accessory if it literally contains the word **"Accessories"** OR is exactly **"Gift Card"**. A design family is flagged only if **every** entry in `shopify_product_types` matches — Garden Flag families that happen to bundle a pole / bracket / stake product as a secondary type stay in the review pipeline.
+
+Catalog audit at ship time: **99 of 9,713 non-excluded designs** match. Standalone "Pole" / "Bracket" / "Stake" categories that aren't inside an Accessories sub-tree are NOT auto-excluded — use the per-card × button for those.
 
 ---
 

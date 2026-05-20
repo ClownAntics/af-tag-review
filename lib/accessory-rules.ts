@@ -1,13 +1,19 @@
 /**
  * Heuristics for classifying a design as an "accessory" — something that
- * shouldn't go through the vision review pipeline (poles, brackets, stakes,
- * finials, gift cards, etc.). Used by the Settings → Bulk exclude flow.
+ * shouldn't go through the vision review pipeline. Used by the Settings →
+ * Bulk exclude flow.
+ *
+ * Rule (strict, per Blake): a product_type counts as accessory if it
+ * literally contains the word "Accessories" OR is exactly "Gift Card".
+ * Everything else — including standalone "Pole" / "Stake" / "Bracket"
+ * categories that aren't already inside an Accessories sub-tree — stays in
+ * the review pipeline and can be excluded per-card with the × button.
  *
  * Source signal: `shopify_product_types` (the text[] column populated by
  * shopify-pull from Shopify's native product_type field). A design family
- * is treated as an accessory only if EVERY type in the array matches the
- * accessory pattern — that way a Garden Flag that happens to also have an
- * accessory product attached doesn't get excluded incorrectly.
+ * is flagged only if EVERY type in the array matches — that way a Garden
+ * Flag that happens to also have an accessory product attached doesn't get
+ * excluded incorrectly.
  *
  * Empty types[] is treated as "unknown" → not an accessory (fall back to
  * manual review). Misconfigured EV-prefixed values are NOT treated as
@@ -15,8 +21,9 @@
  * see scripts/export-ev-product-types.ts for the fix-up CSV.
  */
 
-const ACCESSORY_RE =
-  /\b(accessor|pole|bracket|finial|arbor|stake|gift card)/i;
+// Word-boundary on "Accessories" (covers "X: Accessories", "X: Accessories: Y",
+// "Stakes & Accessories", etc.) + exact match on the "Gift Card" category.
+const ACCESSORY_RE = /\bAccessories\b|^Gift Card$/i;
 
 /** True iff this single product_type value looks like an accessory. */
 export function isAccessoryType(t: string): boolean {
