@@ -6,7 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 
 ---
 
-## 2026-05 — Excluded status, Shopify product type / variant SKUs / images, bulk exclude
+## 2026-05 — Excluded status, Shopify product type / variant SKUs / images, bulk exclude, duplicate consolidation
+
+### Fixed (continued)
+- **AF SKU parser was case-sensitive.** Variants like `AFhFSP0677` (the house version of `AFSP0677`, with a lowercase `h`) were being treated as separate design families instead of merging with their garden sibling. Result: two review rows for the same artwork. Fixed in `lib/shopify.ts#skuToAfDesignFamily` (uppercase the SKU before matching). Existing orphans cleaned up via `scripts/consolidate-design-families.ts` — 11 merges on first run (all `AFhFSP06xx` cardinals/flowers series). The script handles both merge (canonical row exists) and rename (no canonical) cases, re-points events for full audit-trail preservation, and writes a `merged_duplicate` event for each consolidation.
+- **Vision pipeline now uses Shopify's image_url.** `primaryImageUrl()` and the vision-run route's SELECT were stuck on the old SKU-pattern derivation, producing 404 URLs for non-standard SKUs. Vision now prefers stored `image_url`, then first `variant_sku`, then derivation as last resort.
 
 ### Added (continued)
 - **Bulk-exclude accessories** in Settings. Preview shows the count + first 10 matching designs with their product_types; one click moves them all to the Excluded tile. Per-card ↩ Include reverses individual decisions.
