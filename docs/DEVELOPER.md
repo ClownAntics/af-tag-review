@@ -110,6 +110,7 @@ All under `/api/review/*` plus `/api/taxonomy/*`.
 | `/api/review/vision/debug` | GET | Dump the currently-built system prompt (for HMR debugging) |
 | `/api/review/push` | POST | Push approved_tags to Shopify for `readytosend` designs. Streams NDJSON. Respects URL filter params when no `design_families` array is provided. |
 | `/api/review/reset-all` | POST | Nuclear reset: every design → `novision`, then re-pull Shopify. Streams NDJSON. Body must be `{"confirm":"RESET"}`. |
+| `/api/review/bulk-exclude` | GET / POST | GET returns `{count, sample[]}` of designs matching the accessory rule. POST applies (body `{"confirm":"EXCLUDE"}`), writes `bulk_excluded` audit events per design. |
 | `/api/taxonomy` | GET | Serve baked `lib/taxonomy.json` (legacy / unauthenticated reads) |
 | `/api/taxonomy/status` | GET | Connection status + entry counts + last_synced_at. Powers the Settings → Taxonomy info panel. |
 | `/api/taxonomy/refresh?phase=plan\|apply` | POST | Pull current FL Themes from TeamDesk and diff against persisted state. Plan returns the diff; apply (when wired) writes to `taxonomy_entries` and migrates affected designs. |

@@ -178,6 +178,17 @@ Two buttons:
 - **↻ Refresh from TeamDesk** — pulls the current FL Themes table from TeamDesk and diffs against local. Shows a confirmation dialog summarizing additions / renames / deletions, then applies (when wired). Renames auto-migrate existing tags on tagged designs; deletions flag affected designs for re-review.
 - **Open TeamDesk table ↗** — opens the TeamDesk view for hand-editing.
 
+### Bulk exclude accessories
+A one-shot way to flush every accessory-shaped design out of the review pipeline. When you open Settings, this section automatically scans the catalog and shows:
+
+- **Count** of designs that match the accessory rule (e.g. *"99 designs match the accessory rule."*)
+- **Sample list** — first 10 matching designs with family code, name, and product_types so you can sanity-check the rule
+- **One button**: **Exclude N designs** — moves them all to the Excluded tile in a single server-side UPDATE
+
+**The rule** (`lib/accessory-rules.ts`): a design is bulk-excluded only when *every* entry in its `shopify_product_types` contains the word **"Accessories"** OR is exactly **"Gift Card"**. Design families that mix flag products with accessory products (e.g. a Garden Flag bundled with a pole) stay in the review pipeline — only pure-accessory families are touched. The Carson EV-prefixed misconfigured products are NOT auto-excluded; those are reviewable products with a wrong field, and the per-card × is the right tool for them.
+
+Each bulk-excluded design gets a `bulk_excluded` audit event with the offending product_types in the payload. Per-card **↩ Include** in the Excluded tile reverses any individual exclusion.
+
 ### Sync from Shopify
 Nuclear reset. Moves every design back to **No vision yet** and refreshes Shopify tags / product types / variant SKUs / images for the whole catalog. History (events) is preserved — only review-state columns get wiped. Confirmation requires typing `RESET` exactly.
 

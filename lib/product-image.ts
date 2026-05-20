@@ -92,6 +92,13 @@ export function primaryImageSku(design: Design): string {
  * Server-side convenience: build the primary image URL from the minimal set
  * of design fields. Used by the vision pipeline, which fetches just a few
  * Supabase columns per family (not a full Design row).
+ *
+ * Preferred: the Shopify-pulled `image_url` if present — that's the real
+ * CDN URL Claude can fetch. Falls back to SKU-pattern derivation for
+ * pre-migration rows or designs where Shopify had no image. The fallback
+ * is brittle for non-standard SKUs (e.g. `AFhFSP0677` produces a CDN URL
+ * that 404s), so callers that hit "Unable to download the file" errors
+ * should run `shopify-pull --apply` to backfill `image_url`.
  */
 export function primaryImageUrl(design: {
   manufacturer: string | null | undefined;
@@ -99,7 +106,18 @@ export function primaryImageUrl(design: {
   has_monogram?: boolean | null;
   has_personalized?: boolean | null;
   has_preprint?: boolean | null;
+  image_url?: string | null;
+  variant_skus?: string[] | null;
 }): string {
+  if (design.image_url && design.image_url.length > 0) {
+    return design.image_url;
+  }
+  // No stored image_url — try a stored variant SKU before doing AF-pattern
+  // derivation. Covers non-AF rows and pre-migration rows that have
+  // variant_skus populated but image_url null (rare but possible).
+  const firstSku = (design.variant_skus ?? []).find((s) => s && s.length > 0);
+  if (firstSku) return imageUrlForSku(firstSku);
+
   if (design.manufacturer !== "AF") {
     return imageUrlForSku(design.design_family);
   }
