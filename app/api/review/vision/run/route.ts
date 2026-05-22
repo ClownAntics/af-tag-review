@@ -82,28 +82,18 @@ export async function POST(req: NextRequest): Promise<Response> {
           // feed the image URL; approved_tags feeds the post-vision dedup below.
           const { data: existing } = await sb
             .from("designs")
-            .select(
-              "approved_tags,manufacturer,has_monogram,has_personalized,has_preprint,image_url,variant_skus",
-            )
+            .select("approved_tags,image_url,variant_skus")
             .eq("design_family", family)
             .single();
           const d = existing as {
             approved_tags: string[] | null;
-            manufacturer: string | null;
-            has_monogram: boolean | null;
-            has_personalized: boolean | null;
-            has_preprint: boolean | null;
             image_url: string | null;
             variant_skus: string[] | null;
           } | null;
           const result = await tagOne(client, {
             designFamily: family,
             imageUrl: primaryImageUrl({
-              manufacturer: d?.manufacturer,
               design_family: family,
-              has_monogram: d?.has_monogram,
-              has_personalized: d?.has_personalized,
-              has_preprint: d?.has_preprint,
               image_url: d?.image_url,
               variant_skus: d?.variant_skus,
             }),
