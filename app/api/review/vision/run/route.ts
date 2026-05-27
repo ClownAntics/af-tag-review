@@ -64,9 +64,22 @@ export async function POST(req: NextRequest): Promise<Response> {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
+      // Tolerate client disconnect: if the browser navigates away mid-run we
+      // want the Anthropic + Supabase work to keep going on the server so the
+      // designs all end up in Pending. Stop trying to write to the stream
+      // once the socket is closed, but don't abort the loop.
+      let clientConnected = true;
       const emit = (obj: Record<string, unknown>) => {
-        controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
+        if (!clientConnected) return;
+        try {
+          controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
+        } catch {
+          clientConnected = false;
+        }
       };
+      req.signal?.addEventListener("abort", () => {
+        clientConnected = false;
+      });
 
       // Process queue with bounded concurrency.
       const queue = families.slice();
@@ -150,7 +163,11 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
 
       emit({ type: "done", completed, failed });
-      controller.close();
+      try {
+        controller.close();
+      } catch {
+        // already closed (client gone)
+      }
     },
   });
 

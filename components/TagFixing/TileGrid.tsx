@@ -78,6 +78,24 @@ export function TileGrid({
     loadPage(0);
   }, [loadPage]);
 
+  // Warn before unload while a push or vision run is active. The server keeps
+  // working on Vercel even after the tab closes, but the in-flight progress
+  // bar goes away and the user has no way to see what's happening. The
+  // confirm dialog catches accidental navigation; for an intentional leave,
+  // the work still completes and reloading later shows the result.
+  useEffect(() => {
+    if (!pushing && !runningVision) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // Modern browsers ignore the custom string but require returnValue set
+      // to trigger the native confirm. Keep the message anyway for older UAs.
+      e.returnValue = "";
+      return "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [pushing, runningVision]);
+
   const refresh = useCallback(() => {
     loadPage(offset);
     onCountsChanged();
@@ -519,6 +537,14 @@ export function TileGrid({
                 <span className="text-xs text-muted self-center">
                   {pushProgress.done}/{pushProgress.total} pushed
                   {pushProgress.failed > 0 && ` · ${pushProgress.failed} failed`}
+                  {pushing && (
+                    <span
+                      className="ml-2 text-muted-2"
+                      title="The server keeps pushing even if you navigate away or close the tab. Reload later to see the final state."
+                    >
+                      · keeps running if you leave
+                    </span>
+                  )}
                 </span>
               )}
               {designs && designs.length > 0 && !pushing && (

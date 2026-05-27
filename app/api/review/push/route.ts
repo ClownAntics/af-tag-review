@@ -90,9 +90,27 @@ export async function POST(req: NextRequest): Promise<Response> {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
+      // If the browser navigates away mid-push, the underlying socket closes
+      // and any subsequent `controller.enqueue` throws (TypeError: Invalid
+      // state). We don't want that to abort the Shopify-update loop — the
+      // user expects the push to complete server-side even if they close the
+      // tab. Track the connection state and short-circuit emits once it's
+      // dropped; the work continues.
+      let clientConnected = true;
       const emit = (obj: Record<string, unknown>) => {
-        controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
+        if (!clientConnected) return;
+        try {
+          controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
+        } catch {
+          // Stream closed by the client. Stop trying to write, keep working.
+          clientConnected = false;
+        }
       };
+      // Also drop the connected flag if the request itself is aborted (some
+      // Vercel paths fire this slightly before enqueue starts erroring).
+      req.signal?.addEventListener("abort", () => {
+        clientConnected = false;
+      });
 
       let familiesPushed = 0;
       let productsFailed = 0;
@@ -181,7 +199,13 @@ export async function POST(req: NextRequest): Promise<Response> {
       }
 
       emit({ type: "done", families_pushed: familiesPushed, products_failed: productsFailed });
-      controller.close();
+      // Closing an already-closed stream throws; swallow it because the work
+      // is already done.
+      try {
+        controller.close();
+      } catch {
+        // already closed
+      }
     },
   });
 
