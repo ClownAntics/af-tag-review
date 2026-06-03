@@ -55,6 +55,11 @@ export interface Design {
   vision_raw?: { primary?: string | null; reasoning?: string; tags?: string[] } | null;
   // Multi-brand support (migration 003)
   manufacturer?: string | null;
+  /** Timestamp when our DB first inserted this design row (migration 009).
+   *  Distinct from `catalog_created_date` (Shopify's product creation date,
+   *  which may be years old when shopify-pull first discovers it). Used to
+   *  surface "N new since last sync" in the No-vision tile banner. */
+  first_seen_at?: string | null;
 }
 
 /** Filters applied on top of the status-tile scope. */

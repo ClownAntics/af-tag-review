@@ -48,6 +48,11 @@ export function TileGrid({
   // change and after a successful push.
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const abortRef = useRef<AbortController | null>(null);
+  // "N new since last sync" banner state (No-vision tile only). Refreshed
+  // whenever the tile loads or after flag-all-new completes.
+  const [newCount, setNewCount] = useState<number | null>(null);
+  const [flaggingNew, setFlaggingNew] = useState(false);
+  const NEW_WINDOW_DAYS = 7;
 
   const loadPage = useCallback(
     async (newOffset: number) => {
@@ -78,6 +83,62 @@ export function TileGrid({
     setSelected(new Set());
     loadPage(0);
   }, [loadPage]);
+
+  // Refresh the "new since" count whenever the user lands on No-vision.
+  // Other tiles don't need it.
+  useEffect(() => {
+    if (status !== "novision") {
+      setNewCount(null);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/review/new-designs?days=${NEW_WINDOW_DAYS}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
+      .then((d: { count: number }) => {
+        if (!cancelled) setNewCount(d.count);
+      })
+      .catch(() => {
+        if (!cancelled) setNewCount(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [status, filterQs]);
+
+  const flagAllNew = useCallback(async () => {
+    if (status !== "novision" || flaggingNew || !newCount) return;
+    if (
+      !confirm(
+        `Flag all ${newCount} new design${newCount === 1 ? "" : "s"} (added in the last ${NEW_WINDOW_DAYS} days) for vision review?`,
+      )
+    )
+      return;
+    setFlaggingNew(true);
+    try {
+      const res = await fetch(
+        `/api/review/new-designs?days=${NEW_WINDOW_DAYS}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ confirm: "FLAG" }),
+        },
+      );
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? `flag failed (${res.status})`);
+      }
+      // Banner disappears + tiles re-count; the Flagged tile will show the
+      // newly-flagged designs.
+      setNewCount(0);
+      onCountsChanged();
+      loadPage(0);
+    } catch (e) {
+      console.error("flag-all-new failed:", e);
+      alert(`Flag failed: ${(e as Error).message}`);
+    } finally {
+      setFlaggingNew(false);
+    }
+  }, [status, newCount, flaggingNew, onCountsChanged, loadPage]);
 
   // Warn before unload while a push or vision run is active. The server keeps
   // working on Vercel even after the tab closes, but the in-flight progress
@@ -584,6 +645,32 @@ export function TileGrid({
           )}
         </div>
       </div>
+
+      {/* New-since-last-sync banner (No-vision tile only). Shows when at
+          least one design landed in our DB in the last NEW_WINDOW_DAYS via
+          shopify-pull, with a one-click "Flag all new" button to push them
+          through vision. */}
+      {status === "novision" && newCount !== null && newCount > 0 && (
+        <div className="flex items-center justify-between gap-3 bg-[#F0F7FE] border border-[#9BC4F5] rounded-lg px-4 py-3">
+          <div className="text-sm text-[#1A4A87]">
+            ✨{" "}
+            <strong>{newCount}</strong> new design
+            {newCount === 1 ? "" : "s"} added in the last {NEW_WINDOW_DAYS}{" "}
+            days
+            <span className="text-[#1A4A87]/70">
+              {" "}— flag them for vision review?
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={flagAllNew}
+            disabled={flaggingNew}
+            className="text-sm px-3.5 py-1.5 rounded-md bg-[#185FA5] text-white border border-[#185FA5] hover:bg-[#1A4A87] disabled:opacity-60"
+          >
+            {flaggingNew ? "Flagging…" : `⚑ Flag all ${newCount} new`}
+          </button>
+        </div>
+      )}
 
       {/* Progress bar (vision run) */}
       {runProgress && (

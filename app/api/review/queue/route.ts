@@ -35,7 +35,7 @@ export async function GET(req: NextRequest): Promise<Response> {
   const base = supabase
     .from("designs")
     .select(
-      "design_family,design_name,units_total,catalog_created_date,first_sale_date,product_types,shopify_product_types,shopify_tags,approved_tags,vision_tags,vision_raw,theme_names,sub_themes,sub_sub_themes,classification,status,has_monogram,has_personalized,has_preprint,last_reviewed_at,last_pushed_at,manufacturer,variant_skus,image_url",
+      "design_family,design_name,units_total,catalog_created_date,first_sale_date,product_types,shopify_product_types,shopify_tags,approved_tags,vision_tags,vision_raw,theme_names,sub_themes,sub_sub_themes,classification,status,has_monogram,has_personalized,has_preprint,last_reviewed_at,last_pushed_at,manufacturer,variant_skus,image_url,first_seen_at",
       { count: "exact" },
     )
     .eq("status", status) as unknown as Parameters<typeof applyReviewFilters>[0];
