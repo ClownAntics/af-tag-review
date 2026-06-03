@@ -21,6 +21,7 @@ export function parseFiltersFromSearch(sp: URLSearchParams): ReviewFilters {
 type Chain = {
   eq: (col: string, v: string) => Chain;
   contains: (col: string, v: string[]) => Chain;
+  or: (expr: string) => Chain;
 };
 
 export function applyReviewFilters<Q extends Chain>(
@@ -31,7 +32,23 @@ export function applyReviewFilters<Q extends Chain>(
   if (filters.themeName !== "all") q = q.contains("theme_names", [filters.themeName]) as Q;
   if (filters.subTheme !== "all") q = q.contains("sub_themes", [filters.subTheme]) as Q;
   if (filters.subSubTheme !== "all") q = q.contains("sub_sub_themes", [filters.subSubTheme]) as Q;
-  if (filters.tag !== "all") q = q.contains("shopify_tags", [filters.tag]) as Q;
+  if (filters.tag !== "all") {
+    // The dropdown emits the canonical FL Themes Search Term (e.g.
+    // `4th-Of-July`). Match against any of three storage forms:
+    //   1. `approved_tags` — always canonical (curation enforces it).
+    //   2. `shopify_tags` — canonical form (pre-push or hand-curated).
+    //   3. `shopify_tags` — lowercased (Shopify lowercases on store, so
+    //      after a push + re-pull the value comes back as `4th-of-july`).
+    // PostgREST `.or()` builds an `OR` across these three contains-checks.
+    const canon = filters.tag;
+    const lower = canon.toLowerCase();
+    const parts = [
+      `approved_tags.cs.{${canon}}`,
+      `shopify_tags.cs.{${canon}}`,
+    ];
+    if (lower !== canon) parts.push(`shopify_tags.cs.{${lower}}`);
+    q = q.or(parts.join(",")) as Q;
+  }
   if (filters.productType !== "all") q = q.contains("shopify_product_types", [filters.productType]) as Q;
   if (filters.manufacturer !== "all") q = q.eq("manufacturer", filters.manufacturer) as Q;
   return q;
