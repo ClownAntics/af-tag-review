@@ -6,26 +6,34 @@
  *   - bare family:    AFMS0278
  *   - name fragment:  "forever loved", "camel", "shell"
  *
- * Single SKU match → opens the detail modal immediately.
- * Multiple name matches → shows a dropdown, pick one to open its modal.
+ * Single SKU/family match → opens the detail modal immediately (fast path).
+ * Name-fragment search → hands the full match set up to the page via
+ *   `onSearchResults`, which clears the tile + filter selection and renders
+ *   a flat results grid across all statuses. Drops the inline dropdown that
+ *   used to live here.
  */
 import { useEffect, useRef, useState } from "react";
 import type { Design } from "@/lib/types";
 
 interface Props {
+  /** Called when a single exact match resolves (SKU or unique name). */
   onFound: (design: Design) => void;
+  /** Called when a name-fragment search returns 2+ matches — caller is
+   *  expected to clear filters/tile and show the full list as a grid. */
+  onSearchResults?: (matches: Design[], query: string) => void;
 }
 
-export function SkuSearch({ onFound }: Props) {
+export function SkuSearch({ onFound, onSearchResults }: Props) {
   const [value, setValue] = useState("");
-  const [matches, setMatches] = useState<Design[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) setMatches(null);
+      if (!containerRef.current?.contains(e.target as Node)) {
+        // No-op now that there's no inline dropdown to dismiss.
+      }
     };
     window.addEventListener("mousedown", onClick);
     return () => window.removeEventListener("mousedown", onClick);
@@ -36,7 +44,6 @@ export function SkuSearch({ onFound }: Props) {
     if (!q) return;
     setLoading(true);
     setError(null);
-    setMatches(null);
     try {
       const r = await fetch(`/api/review/lookup?q=${encodeURIComponent(q)}`);
       if (!r.ok) {
@@ -48,12 +55,20 @@ export function SkuSearch({ onFound }: Props) {
         matches: Design[];
         kind: "sku" | "name";
       };
-      if (ms.length === 1 || kind === "sku") {
+      if (kind === "sku" || ms.length === 1) {
+        // Exact match (SKU resolution or single name hit) — open it directly.
         onFound(ms[0]);
         setValue("");
-        setMatches(null);
+      } else if (onSearchResults) {
+        // Multi-match name search — hand the list up so the page can clear
+        // filters/tile and show the full grid.
+        onSearchResults(ms, q);
+        setValue("");
       } else {
-        setMatches(ms);
+        // Fallback when the parent hasn't wired onSearchResults — open the
+        // top match so we don't silently swallow the result.
+        onFound(ms[0]);
+        setValue("");
       }
     } catch (e) {
       setError((e as Error).message);
@@ -77,18 +92,10 @@ export function SkuSearch({ onFound }: Props) {
           setValue(e.target.value);
           if (error) setError(null);
         }}
-        onFocus={() => {
-          if (matches && matches.length > 0) {
-            // Reopen the dropdown if user refocuses after clicking outside
-            setMatches(matches);
-          }
-        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
             void submit();
-          } else if (e.key === "Escape") {
-            setMatches(null);
           }
         }}
         disabled={loading}
@@ -101,7 +108,6 @@ export function SkuSearch({ onFound }: Props) {
           onClick={() => {
             setValue("");
             setError(null);
-            setMatches(null);
           }}
           className="absolute right-3 text-muted-2 hover:text-foreground"
           aria-label="Clear search"
@@ -114,36 +120,6 @@ export function SkuSearch({ onFound }: Props) {
       )}
       {error && (
         <span className="ml-2 text-xs text-[#A32D2D] whitespace-nowrap">{error}</span>
-      )}
-
-      {matches && matches.length > 1 && (
-        <ul className="absolute z-30 top-full left-0 mt-1 bg-white border border-border rounded-md shadow-lg w-[360px] max-h-80 overflow-y-auto">
-          <li className="px-3 py-2 text-[11px] text-muted-2 border-b border-border">
-            {matches.length} matches — click to open
-          </li>
-          {matches.map((d) => (
-            <li key={d.design_family}>
-              <button
-                type="button"
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  onFound(d);
-                  setValue("");
-                  setMatches(null);
-                }}
-                className="w-full text-left px-3 py-2 hover:bg-zinc-50 flex justify-between items-center gap-3 border-b border-border/50 last:border-b-0"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm truncate">{d.design_name || d.design_family}</p>
-                  <p className="text-[11px] text-muted-2 font-mono truncate">{d.design_family}</p>
-                </div>
-                <span className="text-[11px] text-muted tabular-nums shrink-0">
-                  {d.units_total.toLocaleString()} units
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
       )}
     </div>
   );

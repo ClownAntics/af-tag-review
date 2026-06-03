@@ -15,6 +15,7 @@ import { PendingReview } from "./PendingReview";
 import { TileGrid } from "./TileGrid";
 import { PasteSkusPanel } from "./PasteSkusPanel";
 import { FilterBar } from "./FilterBar";
+import { DesignCard } from "@/components/DesignCard";
 import {
   EMPTY_REVIEW_FILTERS,
   type Design,
@@ -29,6 +30,11 @@ interface Props {
   // Bumped by the parent when a mutation happens outside this subtree
   // (e.g. flag from DetailModal). Triggers counts + queue re-fetch.
   externalDataVersion?: number;
+  /** Active search — when set, replaces the tile/filter/grid UI with a
+   *  flat results grid scoped to `matches`. Filters and tile selection
+   *  are reset so re-clearing search lands the user on a clean view. */
+  searchState?: { query: string; matches: Design[] } | null;
+  onClearSearch?: () => void;
 }
 
 const LAST_TILE_KEY = "tagReview.lastTile";
@@ -53,7 +59,12 @@ function readStoredTile(): ReviewStatus | null {
   return null;
 }
 
-export function TagFixing({ onOpenDetail, externalDataVersion = 0 }: Props) {
+export function TagFixing({
+  onOpenDetail,
+  externalDataVersion = 0,
+  searchState = null,
+  onClearSearch,
+}: Props) {
   // Default tile = last one the user was on. Initial state must be the same
   // on server and client (Next.js SSR-prerenders "use client" components) —
   // otherwise the localStorage-derived state on the client causes a React
@@ -87,6 +98,18 @@ export function TagFixing({ onOpenDetail, externalDataVersion = 0 }: Props) {
 
   const refreshCounts = useCallback(() => setCountsRev((r) => r + 1), []);
 
+  // Entering search mode resets filters + tile so when the user clears the
+  // search they don't land back in a filtered/staged view that may not
+  // reflect what they want next. The reset doesn't loop because we only
+  // fire when `searchState` flips from null → set.
+  const inSearchMode = !!searchState;
+  useEffect(() => {
+    if (inSearchMode) {
+      setFilters(EMPTY_REVIEW_FILTERS);
+      setTileState("pending");
+    }
+  }, [inSearchMode]);
+
   const filterQs = useMemo(() => toQueryString(filters), [filters]);
 
   useEffect(() => {
@@ -108,6 +131,46 @@ export function TagFixing({ onOpenDetail, externalDataVersion = 0 }: Props) {
   // The filter querystring is part of child `key` so PendingReview/TileGrid
   // remount when filters change, re-firing their own fetches.
   const childKey = `${tile}-${externalDataVersion}-${filterQs}`;
+
+  if (searchState) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-3 bg-zinc-50 border border-border rounded-lg px-4 py-3">
+          <div className="text-sm">
+            <span className="text-muted-2">Search:</span>{" "}
+            <span className="font-medium">&ldquo;{searchState.query}&rdquo;</span>
+            <span className="text-muted-2"> · </span>
+            <span className="tabular-nums">
+              {searchState.matches.length} match
+              {searchState.matches.length === 1 ? "" : "es"}
+            </span>
+            <span className="text-muted-2"> across all statuses</span>
+          </div>
+          <button
+            type="button"
+            onClick={onClearSearch}
+            className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-zinc-50"
+          >
+            ← Clear search
+          </button>
+        </div>
+
+        {searchState.matches.length === 0 ? (
+          <div className="text-sm text-muted px-2">No matches.</div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {searchState.matches.map((d) => (
+              <DesignCard
+                key={d.design_family}
+                design={d}
+                onOpenDetail={onOpenDetail}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

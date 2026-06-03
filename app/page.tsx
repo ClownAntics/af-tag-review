@@ -25,6 +25,12 @@ export default function Home() {
   const [promptModalOpen, setPromptModalOpen] = useState(false);
   const [quickStartOpen, setQuickStartOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // Search mode — when non-null, the tile/filter UI is hidden and TagFixing
+  // shows a flat grid of `matches` across every status. Cleared via the
+  // banner's "Clear search" button.
+  const [searchState, setSearchState] = useState<
+    { query: string; matches: Design[] } | null
+  >(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -62,7 +68,12 @@ export default function Home() {
               review Pending, push cleaned tags to Shopify.
             </p>
           </div>
-          <SkuSearch onFound={setDetail} />
+          <SkuSearch
+            onFound={setDetail}
+            onSearchResults={(matches, query) =>
+              setSearchState({ matches, query })
+            }
+          />
         </div>
         <nav className="flex gap-4 text-xs text-muted shrink-0 pt-1">
           <button
@@ -113,7 +124,12 @@ export default function Home() {
         </nav>
       </header>
 
-      <TagFixing onOpenDetail={setDetail} externalDataVersion={dataVersion} />
+      <TagFixing
+        onOpenDetail={setDetail}
+        externalDataVersion={dataVersion}
+        searchState={searchState}
+        onClearSearch={() => setSearchState(null)}
+      />
 
       {detail && (
         <DetailModal

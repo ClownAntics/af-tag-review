@@ -41,13 +41,16 @@ export async function GET(req: NextRequest): Promise<Response> {
     }
   }
 
-  // Name fallback (also used when SKU didn't resolve).
+  // Name fallback (also used when SKU didn't resolve). Bumped to 200 so
+  // search-as-grid shows the full result set; the header search switched
+  // from a dropdown picker to a "clear filters and show everything"
+  // flat-grid view that needs the complete list.
   const { data, error } = await supabase
     .from("designs")
     .select(SELECT)
     .ilike("design_name", `%${q}%`)
     .order("units_total", { ascending: false })
-    .limit(10);
+    .limit(200);
 
   if (error) return errorResponse(500, error.message);
   if (!data || data.length === 0) {
