@@ -16,6 +16,7 @@ import { TileGrid } from "./TileGrid";
 import { PasteSkusPanel } from "./PasteSkusPanel";
 import { FilterBar } from "./FilterBar";
 import { DesignCard } from "@/components/DesignCard";
+import { CardImageOverlay } from "./CardImageOverlay";
 import {
   EMPTY_REVIEW_FILTERS,
   type Design,
@@ -134,41 +135,12 @@ export function TagFixing({
 
   if (searchState) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between gap-3 bg-zinc-50 border border-border rounded-lg px-4 py-3">
-          <div className="text-sm">
-            <span className="text-muted-2">Search:</span>{" "}
-            <span className="font-medium">&ldquo;{searchState.query}&rdquo;</span>
-            <span className="text-muted-2"> · </span>
-            <span className="tabular-nums">
-              {searchState.matches.length} match
-              {searchState.matches.length === 1 ? "" : "es"}
-            </span>
-            <span className="text-muted-2"> across all statuses</span>
-          </div>
-          <button
-            type="button"
-            onClick={onClearSearch}
-            className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-zinc-50"
-          >
-            ← Clear search
-          </button>
-        </div>
-
-        {searchState.matches.length === 0 ? (
-          <div className="text-sm text-muted px-2">No matches.</div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {searchState.matches.map((d) => (
-              <DesignCard
-                key={d.design_family}
-                design={d}
-                onOpenDetail={onOpenDetail}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <SearchResultsGrid
+        searchState={searchState}
+        onOpenDetail={onOpenDetail}
+        onClearSearch={onClearSearch}
+        onCountsChanged={refreshCounts}
+      />
     );
   }
 
@@ -213,6 +185,166 @@ export function TagFixing({
           />
         )}
       </div>
+    </div>
+  );
+}
+
+// ─── Search-mode grid ─────────────────────────────────────────────────────
+// Renders the search-result matches as a flat grid of cards, each carrying
+// the No-vision 3-button overlay (✓ Mark as fine · ⚑ Flag · × Exclude).
+// `× Exclude` swaps to `↩ Include` when the design is already excluded.
+// Tag chips reflect each design's current state (shopify_tags for
+// novision/flagged, approved_tags for readytosend/updated/excluded).
+
+interface SearchResultsGridProps {
+  searchState: { query: string; matches: Design[] };
+  onOpenDetail: (d: Design) => void;
+  onClearSearch?: () => void;
+  onCountsChanged: () => void;
+}
+
+function SearchResultsGrid({
+  searchState,
+  onOpenDetail,
+  onClearSearch,
+  onCountsChanged,
+}: SearchResultsGridProps) {
+  // Local mirror of the matches array so per-card actions can mutate the
+  // visible state without re-fetching the entire search. Reset when the
+  // parent supplies a new query.
+  const [rows, setRows] = useState<Design[]>(searchState.matches);
+  const [actedOn, setActedOn] = useState<Map<string, string>>(new Map());
+  useEffect(() => {
+    setRows(searchState.matches);
+    setActedOn(new Map());
+  }, [searchState]);
+
+  const post = useCallback(
+    async (family: string, action: string, label: string) => {
+      try {
+        const res = await fetch(
+          `/api/review/design/${encodeURIComponent(family)}/action`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action }),
+          },
+        );
+        if (!res.ok) throw new Error(await res.text());
+      } catch (e) {
+        console.error(`${action} failed for ${family}:`, e);
+        return;
+      }
+      // Mark the card as actioned so the user sees what happened. The card
+      // stays visible (search results are reference; we don't yank rows out
+      // from under the user) but its action buttons hide and a "✓ done"
+      // badge replaces them.
+      setActedOn((prev) => {
+        const next = new Map(prev);
+        next.set(family, label);
+        return next;
+      });
+      onCountsChanged();
+    },
+    [onCountsChanged],
+  );
+
+  const onFlag = (f: string) => post(f, "flag", "flagged");
+  const onMarkFine = (f: string) => post(f, "mark_fine", "marked fine");
+  const onExclude = (f: string) => post(f, "exclude", "excluded");
+  const onInclude = (f: string) => post(f, "include", "included");
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 bg-zinc-50 border border-border rounded-lg px-4 py-3">
+        <div className="text-sm">
+          <span className="text-muted-2">Search:</span>{" "}
+          <span className="font-medium">&ldquo;{searchState.query}&rdquo;</span>
+          <span className="text-muted-2"> · </span>
+          <span className="tabular-nums">
+            {rows.length} match{rows.length === 1 ? "" : "es"}
+          </span>
+          <span className="text-muted-2"> across all statuses</span>
+        </div>
+        <button
+          type="button"
+          onClick={onClearSearch}
+          className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-zinc-50"
+        >
+          ← Clear search
+        </button>
+      </div>
+
+      {rows.length === 0 ? (
+        <div className="text-sm text-muted px-2">No matches.</div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          {rows.map((d) => {
+            const acted = actedOn.get(d.design_family);
+            // Chip tags reflect the design's current state — shopify_tags for
+            // designs that haven't been curated yet, approved_tags otherwise.
+            const isCurated =
+              d.status === "readytosend" ||
+              d.status === "updated" ||
+              d.status === "excluded";
+            const chipTags = isCurated
+              ? d.approved_tags ?? []
+              : d.shopify_tags ?? [];
+            const chipColor = isCurated
+              ? "bg-[#EAF3DE] border-[#C0DD97] text-[#27500A]"
+              : "bg-transparent border-zinc-300 text-muted-2 border-dashed";
+            const isExcluded = d.status === "excluded";
+            return (
+              <DesignCard
+                key={d.design_family}
+                design={d}
+                onOpenDetail={onOpenDetail}
+                imageOverlay={
+                  acted ? (
+                    <span className="absolute top-1.5 left-1.5 text-[10px] px-2 py-0.5 rounded-full bg-[#0F6E56] text-white font-medium pointer-events-none">
+                      ✓ {acted}
+                    </span>
+                  ) : (
+                    <CardImageOverlay
+                      state="neutral"
+                      showRemove={false}
+                      showFlagBtn={!isExcluded}
+                      showCheckbox={false}
+                      showMarkFineBtn={!isExcluded}
+                      showExcludeBtn={!isExcluded}
+                      showIncludeBtn={isExcluded}
+                      isSelected={false}
+                      onRemove={() => {}}
+                      onFlag={() => onFlag(d.design_family)}
+                      onToggleSelect={() => {}}
+                      onMarkFine={() => onMarkFine(d.design_family)}
+                      onExclude={() => onExclude(d.design_family)}
+                      onInclude={() => onInclude(d.design_family)}
+                    />
+                  )
+                }
+                bodyExtra={
+                  chipTags.length > 0 ? (
+                    <div
+                      className="flex flex-wrap gap-1 mt-1"
+                      title={chipTags.join(", ")}
+                    >
+                      {chipTags.map((t) => (
+                        <span
+                          key={t}
+                          className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border ${chipColor} leading-none lowercase`}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null
+                }
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
