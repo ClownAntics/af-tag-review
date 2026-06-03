@@ -54,6 +54,16 @@ export function TileGrid({
   const [flaggingNew, setFlaggingNew] = useState(false);
   const NEW_WINDOW_DAYS = 7;
 
+  // Random sample mode (audit-style spot-check). Available on Ready-to-send
+  // + Updated tiles where browsing thousands sequentially is impractical.
+  // When active, paginated browsing is suspended and clicking the button
+  // re-shuffles the sample.
+  const [sampleMode, setSampleMode] = useState(false);
+  const [sampleTotal, setSampleTotal] = useState<number | null>(null);
+  const SAMPLE_SIZE = 20;
+  const SAMPLE_TILES: ReviewStatus[] = ["readytosend", "updated"];
+  const sampleAvailable = SAMPLE_TILES.includes(status);
+
   const loadPage = useCallback(
     async (newOffset: number) => {
       setLoading(true);
@@ -75,12 +85,35 @@ export function TileGrid({
     [status, filterQs],
   );
 
+  const loadSample = useCallback(async () => {
+    setLoading(true);
+    try {
+      const r = await fetch(
+        `/api/review/queue?status=${status}&sample=${SAMPLE_SIZE}${filterQs ? `&${filterQs}` : ""}`,
+      );
+      if (!r.ok) throw new Error(await r.text());
+      const d = (await r.json()) as { designs: Design[]; total: number };
+      setDesigns(d.designs);
+      setSampleTotal(d.total);
+      setOffset(0);
+    } catch (e) {
+      console.error("sample load failed:", e);
+      setDesigns([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [status, filterQs]);
+
   useEffect(() => {
     setDesigns(null);
     setOffset(0);
     setProcessingFamilies(new Set());
     setDoneFamilies(new Set());
     setSelected(new Set());
+    // A status / filter change exits sample mode automatically — the
+    // shuffle was scoped to that tile's filtered set.
+    setSampleMode(false);
+    setSampleTotal(null);
     loadPage(0);
   }, [loadPage]);
 
@@ -573,6 +606,37 @@ export function TileGrid({
           </p>
         </div>
         <div className="flex gap-2">
+          {sampleAvailable && (
+            <button
+              type="button"
+              onClick={() => {
+                setSampleMode(true);
+                void loadSample();
+              }}
+              disabled={loading}
+              title={
+                sampleMode
+                  ? "Reshuffle to see a different 20"
+                  : `Show 20 random ${cfg.titleNoun.split(" ")[0]} designs for spot-check audit`
+              }
+              className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-50"
+            >
+              🎲 {sampleMode ? "Reshuffle" : "Random 20"}
+            </button>
+          )}
+          {sampleMode && (
+            <button
+              type="button"
+              onClick={() => {
+                setSampleMode(false);
+                setSampleTotal(null);
+                loadPage(0);
+              }}
+              className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50"
+            >
+              ← Exit sample
+            </button>
+          )}
           {status === "flagged" && (
             <>
               <button
@@ -669,6 +733,24 @@ export function TileGrid({
           >
             {flaggingNew ? "Flagging…" : `⚑ Flag all ${newCount} new`}
           </button>
+        </div>
+      )}
+
+      {/* Sample-mode banner — replaces normal pagination when active */}
+      {sampleMode && (
+        <div className="flex items-center justify-between gap-3 bg-zinc-50 border border-border rounded-lg px-4 py-2 text-xs">
+          <span className="text-muted-2">
+            🎲 Showing{" "}
+            <strong className="text-foreground tabular-nums">
+              {designs?.length ?? 0}
+            </strong>{" "}
+            random of{" "}
+            <strong className="text-foreground tabular-nums">
+              {sampleTotal?.toLocaleString() ?? "?"}
+            </strong>{" "}
+            {cfg.titleNoun.split(" ")[0]}{" "}
+            <span className="text-muted-2">— click 🎲 Reshuffle for a different batch</span>
+          </span>
         </div>
       )}
 
@@ -841,8 +923,8 @@ export function TileGrid({
         onDismiss={() => setPushToast(null)}
       />
 
-      {/* Pager */}
-      {total > PAGE_SIZE && (
+      {/* Pager — hidden in sample mode since the result set is randomized */}
+      {!sampleMode && total > PAGE_SIZE && (
         <div className="flex justify-center items-center gap-3 pt-4 text-xs text-muted">
           <button
             type="button"

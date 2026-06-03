@@ -82,6 +82,27 @@ type BulkExcludeState =
   | { kind: "applying"; total: number }
   | { kind: "applied"; excluded: number };
 
+interface MistagSuspect {
+  family: string;
+  design_name: string | null;
+  image_url: string | null;
+  approved_tags: string[] | null;
+  stored_primary: string | null;
+  new_primary: string | null;
+  new_tags: string[];
+  new_reasoning?: string;
+}
+interface MistagProgress {
+  done: number;
+  total: number;
+  matched: number;
+  suspects: number;
+  errored: number;
+  suspectList: MistagSuspect[];
+  flaggedFamilies: Set<string>;
+  finished: boolean;
+}
+
 interface ShopifySyncSummary {
   ok: boolean;
   productsSeen: number;
@@ -128,7 +149,12 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   const [syncResult, setSyncResult] = useState<ShopifySyncSummary | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<LastShopifySync | null>(null);
+  const [mistagCount, setMistagCount] = useState(20);
+  const [mistagRunning, setMistagRunning] = useState(false);
+  const [mistagProgress, setMistagProgress] = useState<MistagProgress | null>(null);
+  const [mistagError, setMistagError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const mistagAbortRef = useRef<AbortController | null>(null);
 
   // Lightweight count fetch so the warning text shows the real catalog size.
   useEffect(() => {
@@ -197,8 +223,13 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
       setSyncing(false);
       setSyncResult(null);
       setSyncError(null);
+      setMistagRunning(false);
+      setMistagProgress(null);
+      setMistagError(null);
       abortRef.current?.abort();
       abortRef.current = null;
+      mistagAbortRef.current?.abort();
+      mistagAbortRef.current = null;
     }
   }, [open]);
 
@@ -307,6 +338,125 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
       setBulkExclude({ kind: "error", message: (e as Error).message });
     }
   }, [onResetComplete]);
+
+  const runMistagAudit = useCallback(async () => {
+    if (mistagRunning) return;
+    setMistagRunning(true);
+    setMistagError(null);
+    setMistagProgress({
+      done: 0,
+      total: mistagCount,
+      matched: 0,
+      suspects: 0,
+      errored: 0,
+      suspectList: [],
+      flaggedFamilies: new Set(),
+      finished: false,
+    });
+    mistagAbortRef.current = new AbortController();
+    try {
+      const res = await fetch(
+        `/api/review/mistag-audit?count=${mistagCount}`,
+        { signal: mistagAbortRef.current.signal },
+      );
+      if (!res.ok || !res.body) {
+        const txt = await res.text();
+        throw new Error(`${res.status}: ${txt.slice(0, 400)}`);
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          let evt: Record<string, unknown>;
+          try {
+            evt = JSON.parse(line) as Record<string, unknown>;
+          } catch {
+            continue;
+          }
+          setMistagProgress((prev) => {
+            if (!prev) return prev;
+            const next = { ...prev };
+            if (evt.type === "ok") {
+              next.done = prev.done + 1;
+              if (evt.match === false) {
+                next.suspects = prev.suspects + 1;
+                next.suspectList = [
+                  ...prev.suspectList,
+                  {
+                    family: evt.family as string,
+                    design_name: (evt.design_name ?? null) as string | null,
+                    image_url: (evt.image_url ?? null) as string | null,
+                    approved_tags: (evt.approved_tags ?? null) as
+                      | string[]
+                      | null,
+                    stored_primary: (evt.stored_primary ?? null) as
+                      | string
+                      | null,
+                    new_primary: (evt.new_primary ?? null) as string | null,
+                    new_tags: (evt.new_tags ?? []) as string[],
+                    new_reasoning: evt.new_reasoning as string | undefined,
+                  },
+                ];
+              } else {
+                next.matched = prev.matched + 1;
+              }
+            } else if (evt.type === "error") {
+              next.done = prev.done + 1;
+              next.errored = prev.errored + 1;
+            } else if (evt.type === "done") {
+              next.finished = true;
+              next.total = (evt.total as number) ?? prev.total;
+              next.matched = (evt.matched as number) ?? prev.matched;
+              next.suspects = (evt.suspects as number) ?? prev.suspects;
+              next.errored = (evt.errored as number) ?? prev.errored;
+            }
+            return next;
+          });
+        }
+      }
+    } catch (e) {
+      const msg = (e as Error).message;
+      if (msg !== "The user aborted a request.")
+        setMistagError(msg);
+    } finally {
+      setMistagRunning(false);
+    }
+  }, [mistagCount, mistagRunning]);
+
+  const flagMistagSuspect = useCallback(
+    async (family: string) => {
+      try {
+        const res = await fetch(
+          `/api/review/design/${encodeURIComponent(family)}/action`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "flag" }),
+          },
+        );
+        if (!res.ok) throw new Error(await res.text());
+        setMistagProgress((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev };
+          next.flaggedFamilies = new Set(prev.flaggedFamilies);
+          next.flaggedFamilies.add(family);
+          return next;
+        });
+        // Bubble up so the counts tile refreshes.
+        onResetComplete?.();
+      } catch (e) {
+        console.error(`flag ${family} failed:`, e);
+      }
+    },
+    [onResetComplete],
+  );
 
   const syncNow = useCallback(async () => {
     if (syncing) return;
@@ -667,6 +817,160 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
                     Note: {syncResult.orphansSkippedSafety}
                   </div>
                 )}
+              </div>
+            )}
+          </section>
+
+          <div className="border-t border-border -mx-6" />
+
+          {/* ─── Mistag audit ──────────────────────────────────────────── */}
+          <section className="space-y-3">
+            <h3 className="text-sm font-medium">Mistag audit</h3>
+            <p className="text-xs text-muted">
+              Re-run Claude vision on a random sample of <em>Updated</em>{" "}
+              designs and surface ones where the fresh primary tag
+              disagrees with the stored one. Catches designs whose curation
+              pre-dates a taxonomy edit or prompt change. ~$0.006 / design
+              (≈ $0.12 for 20). This route is read-only — flagging
+              suspects below is an explicit per-design action.
+            </p>
+
+            {!mistagRunning && !mistagProgress && (
+              <div className="flex items-center gap-2">
+                <label className="text-xs flex items-center gap-2">
+                  Sample size:
+                  <input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={mistagCount}
+                    onChange={(e) => setMistagCount(Number(e.target.value) || 20)}
+                    className="w-16 px-2 py-1 text-sm border border-border rounded-md"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={runMistagAudit}
+                  className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background hover:bg-zinc-800"
+                >
+                  Run audit
+                </button>
+              </div>
+            )}
+
+            {mistagProgress && !mistagProgress.finished && (
+              <div className="text-xs space-y-1 bg-[#FAEEDA] border border-[#FAC775] text-[#633806] px-3 py-2 rounded-md">
+                <div>
+                  Analyzing {mistagProgress.done}/{mistagProgress.total} ·{" "}
+                  {mistagProgress.suspects} suspect
+                  {mistagProgress.suspects === 1 ? "" : "s"} so far ·{" "}
+                  {mistagProgress.matched} matched
+                  {mistagProgress.errored > 0 &&
+                    ` · ${mistagProgress.errored} errored`}
+                </div>
+                <div className="h-1 bg-[#633806]/15 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#BA7517] transition-all"
+                    style={{
+                      width: `${
+                        mistagProgress.total
+                          ? (mistagProgress.done / mistagProgress.total) * 100
+                          : 0
+                      }%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {mistagError && (
+              <div className="text-xs bg-[#FDECEC] border border-[#A32D2D]/30 text-[#A32D2D] px-3 py-2 rounded-md">
+                ✗ {mistagError}
+              </div>
+            )}
+
+            {mistagProgress && mistagProgress.finished && (
+              <div className="space-y-2">
+                <div className="text-xs bg-[#E8F5EE] border border-[#0F6E56]/30 text-[#0F6E56] px-3 py-2 rounded-md flex items-center justify-between gap-3">
+                  <span>
+                    ✓ Audit done · {mistagProgress.matched} matched ·{" "}
+                    <strong>{mistagProgress.suspects} suspect{mistagProgress.suspects === 1 ? "" : "s"}</strong>
+                    {mistagProgress.errored > 0 &&
+                      ` · ${mistagProgress.errored} errored`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setMistagProgress(null)}
+                    className="text-xs px-2.5 py-1 rounded-md border border-border bg-white hover:bg-zinc-50 text-foreground"
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                {mistagProgress.suspectList.length === 0 && (
+                  <div className="text-xs text-muted italic">
+                    No suspects — every sampled design's stored primary
+                    still matches what Claude sees now.
+                  </div>
+                )}
+
+                {mistagProgress.suspectList.map((s) => {
+                  const flagged = mistagProgress.flaggedFamilies.has(s.family);
+                  return (
+                    <div
+                      key={s.family}
+                      className="border-l-4 border-[#FAC775] bg-zinc-50 px-3 py-2 rounded-md flex gap-3"
+                    >
+                      {s.image_url && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={s.image_url}
+                          alt={s.design_name ?? s.family}
+                          className="w-16 h-16 object-cover rounded border border-border shrink-0"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0 text-xs space-y-1">
+                        <div className="font-medium truncate">
+                          {s.design_name || s.family}
+                        </div>
+                        <div className="font-mono text-[10px] text-muted-2">
+                          {s.family}
+                        </div>
+                        <div>
+                          Stored primary:{" "}
+                          <code className="px-1 bg-zinc-100 rounded">
+                            {s.stored_primary ?? "—"}
+                          </code>
+                          {" → "}
+                          New primary:{" "}
+                          <code className="px-1 bg-[#FAEEDA] text-[#633806] rounded">
+                            {s.new_primary ?? "—"}
+                          </code>
+                        </div>
+                        {s.new_reasoning && (
+                          <div className="text-muted-2 italic line-clamp-2">
+                            “{s.new_reasoning}”
+                          </div>
+                        )}
+                        <div className="pt-1">
+                          {flagged ? (
+                            <span className="text-[#0F6E56] text-[11px]">
+                              ✓ Flagged for re-review
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => flagMistagSuspect(s.family)}
+                              className="text-[11px] px-2.5 py-1 rounded-md border border-[#A32D2D]/40 bg-white hover:bg-[#FDECEC] text-[#A32D2D]"
+                            >
+                              ⚑ Flag for re-review
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </section>

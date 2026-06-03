@@ -19,6 +19,9 @@ const ALL_STATUSES: ReviewStatus[] = [
 
 // Returns designs at a given status, paginated + filtered. The review UI loads
 // ~100 at a time and advances through them; larger queues should paginate.
+const SELECT_FIELDS =
+  "design_family,design_name,units_total,catalog_created_date,first_sale_date,product_types,shopify_product_types,shopify_tags,approved_tags,vision_tags,vision_raw,theme_names,sub_themes,sub_sub_themes,classification,status,has_monogram,has_personalized,has_preprint,last_reviewed_at,last_pushed_at,manufacturer,variant_skus,image_url,first_seen_at";
+
 export async function GET(req: NextRequest): Promise<Response> {
   const sp = req.nextUrl.searchParams;
   const status = sp.get("status");
@@ -29,15 +32,23 @@ export async function GET(req: NextRequest): Promise<Response> {
   const limit = Math.min(parseInt(sp.get("limit") || "100", 10), 500);
   const filters = parseFiltersFromSearch(sp);
 
+  // Random sample mode: ?sample=N returns N random rows from the matching
+  // set. PostgREST can't `ORDER BY random()`, so we fetch all keys first,
+  // shuffle, slice, then fetch the full rows by `in()`. The Updated tile's
+  // "🎲 Random 20" audit pattern is the main use case — also helpful on
+  // any tile with thousands of rows where date-sorted pagination is slow.
+  const sampleRaw = sp.get("sample");
+  if (sampleRaw) {
+    const n = Math.min(Math.max(parseInt(sampleRaw, 10) || 0, 1), 100);
+    return handleSample({ status: status as ReviewStatus, n, filters });
+  }
+
   const supabase = getSupabase();
   // Cast through `unknown` so applyReviewFilters' structural type doesn't
   // tangle with PostgREST's deeply-nested generics (TS2589).
   const base = supabase
     .from("designs")
-    .select(
-      "design_family,design_name,units_total,catalog_created_date,first_sale_date,product_types,shopify_product_types,shopify_tags,approved_tags,vision_tags,vision_raw,theme_names,sub_themes,sub_sub_themes,classification,status,has_monogram,has_personalized,has_preprint,last_reviewed_at,last_pushed_at,manufacturer,variant_skus,image_url,first_seen_at",
-      { count: "exact" },
-    )
+    .select(SELECT_FIELDS, { count: "exact" })
     .eq("status", status) as unknown as Parameters<typeof applyReviewFilters>[0];
 
   const filtered = applyReviewFilters(base, filters) as unknown as ReturnType<
@@ -101,5 +112,70 @@ function errorResponse(status: number, msg: string): Response {
   return new Response(JSON.stringify({ error: msg }), {
     status,
     headers: { "Content-Type": "application/json" },
+  });
+}
+
+/**
+ * Random sample handler. Two round-trips:
+ *   1. Fetch design_family keys matching status + filters (no SELECT *)
+ *   2. Shuffle, slice to N, fetch full rows by `in()`
+ *
+ * Cheaper than streaming all 9k rows on every reshuffle, and works with
+ * the existing filter logic without needing a Postgres view.
+ */
+async function handleSample({
+  status,
+  n,
+  filters,
+}: {
+  status: ReviewStatus;
+  n: number;
+  filters: ReturnType<typeof parseFiltersFromSearch>;
+}): Promise<Response> {
+  const supabase = getSupabase();
+
+  // Step 1: keys only.
+  const keysBase = supabase
+    .from("designs")
+    .select("design_family")
+    .eq("status", status) as unknown as Parameters<typeof applyReviewFilters>[0];
+  const keysFiltered = applyReviewFilters(
+    keysBase,
+    filters,
+  ) as unknown as Parameters<typeof applyReviewFilters>[0];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: keys, error: keysErr } = await (keysFiltered as any);
+  if (keysErr) return errorResponse(500, keysErr.message);
+  const allKeys = (keys ?? []).map(
+    (r: { design_family: string }) => r.design_family,
+  );
+  if (allKeys.length === 0) {
+    return Response.json({
+      designs: [],
+      total: 0,
+      sample: true,
+      sampled: 0,
+    });
+  }
+
+  // Step 2: Fisher-Yates shuffle, take N.
+  for (let i = allKeys.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allKeys[i], allKeys[j]] = [allKeys[j], allKeys[i]];
+  }
+  const sampleKeys = allKeys.slice(0, n);
+
+  // Step 3: hydrate the sample.
+  const { data, error } = await supabase
+    .from("designs")
+    .select(SELECT_FIELDS)
+    .in("design_family", sampleKeys);
+  if (error) return errorResponse(500, error.message);
+
+  return Response.json({
+    designs: (data || []) as unknown as Design[],
+    total: allKeys.length,
+    sample: true,
+    sampled: sampleKeys.length,
   });
 }
