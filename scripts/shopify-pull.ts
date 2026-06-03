@@ -324,6 +324,106 @@ async function main() {
     }
   }
   console.log(`[pull] applied: +${inserts.length} new, ~${updates.length} updates (tag and/or product-id refresh).`);
+
+  // ─── Orphan detection ──────────────────────────────────────────────
+  // A design becomes "orphaned" when EVERY one of its
+  // `shopify_product_ids` references a product Shopify no longer returns.
+  // That means the products got deleted/unpublished on the Shopify side
+  // and a `push` would 404. Auto-exclude these so they stop appearing in
+  // the No-vision / Ready-to-send queues. Recoverable via the per-card
+  // ↩ Include button on the Excluded tile if Shopify ever restores them.
+  //
+  // SAFETY: only run if the pull found at least 1000 families. If we got
+  // fewer, the most likely cause is a partial pagination failure that
+  // would otherwise cause us to mass-exclude live designs.
+  const SAFE_MIN_FAMILIES = 1000;
+  if (byFamily.size < SAFE_MIN_FAMILIES) {
+    console.warn(
+      `[pull] only ${byFamily.size} families found — skipping orphan check (safety threshold ${SAFE_MIN_FAMILIES}).`,
+    );
+    return;
+  }
+
+  const currentShopifyIds = new Set<number>();
+  for (const agg of byFamily.values())
+    for (const id of agg.productIds) currentShopifyIds.add(id);
+
+  console.log(`\n[pull] scanning for orphaned designs (products deleted from Shopify)…`);
+  const orphans: Array<{ design_family: string; lost_product_ids: number[]; status: string }> = [];
+  const orphanScanChunk = 1000;
+  for (let offset = 0; ; offset += orphanScanChunk) {
+    const { data, error: orphErr } = await sb
+      .from("designs")
+      .select("design_family,shopify_product_ids,status")
+      .neq("status", "excluded")
+      .not("shopify_product_ids", "is", null)
+      .order("design_family")
+      .range(offset, offset + orphanScanChunk - 1);
+    if (orphErr) throw new Error(`orphan scan select: ${orphErr.message}`);
+    const rows = (data ?? []) as Array<{
+      design_family: string;
+      shopify_product_ids: number[] | null;
+      status: string;
+    }>;
+    for (const r of rows) {
+      const ids = r.shopify_product_ids ?? [];
+      if (ids.length === 0) continue;
+      const live = ids.filter((id) => currentShopifyIds.has(id));
+      if (live.length === 0) {
+        orphans.push({
+          design_family: r.design_family,
+          lost_product_ids: ids,
+          status: r.status,
+        });
+      }
+    }
+    if (rows.length < orphanScanChunk) break;
+  }
+  console.log(`[pull] found ${orphans.length} orphaned designs.`);
+  if (orphans.length > 0) {
+    for (const o of orphans.slice(0, 10)) {
+      console.log(`  ${o.design_family.padEnd(20)} [${o.status}] lost=[${o.lost_product_ids.join(", ")}]`);
+    }
+    if (orphans.length > 10) console.log(`  …and ${orphans.length - 10} more.`);
+  }
+
+  if (orphans.length === 0) return;
+
+  // Hard cap to prevent runaway exclusion if something pathological happens.
+  // 5% of the catalog is a reasonable upper bound for a single sync.
+  const totalNonExcluded = byFamily.size;
+  const orphanCap = Math.max(50, Math.floor(totalNonExcluded * 0.05));
+  if (orphans.length > orphanCap) {
+    console.warn(
+      `[pull] ${orphans.length} orphans exceeds safety cap of ${orphanCap} (5% of ${totalNonExcluded}). Skipping auto-exclude — investigate manually.`,
+    );
+    return;
+  }
+
+  console.log(`\n[pull] auto-excluding ${orphans.length} orphans…`);
+  let excluded = 0;
+  for (const o of orphans) {
+    const { error: updErr } = await sb
+      .from("designs")
+      .update({ status: "excluded" })
+      .eq("design_family", o.design_family);
+    if (updErr) {
+      console.warn(`  ${o.design_family}: failed — ${updErr.message}`);
+      continue;
+    }
+    await sb.from("events").insert({
+      design_family: o.design_family,
+      event_type: "excluded",
+      actor: "system",
+      payload: {
+        reason: "shopify_deleted",
+        from_status: o.status,
+        lost_product_ids: o.lost_product_ids,
+      },
+    });
+    excluded++;
+  }
+  console.log(`[pull] excluded ${excluded}/${orphans.length} orphans.`);
 }
 
 main().catch((e) => {
