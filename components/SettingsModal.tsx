@@ -10,9 +10,13 @@
  *   - Bulk exclude accessories — preview + one-click exclude of every design
  *     whose Shopify product_type matches the accessory rule. Per-card
  *     ↩ Include reverses individual exclusions from the Excluded tile.
- *   - Sync from Shopify — "Reset everything and re-pull from Shopify" button.
- *     Streams NDJSON progress from `/api/review/reset-all`. Requires typing
- *     RESET to confirm.
+ *   - Sync from Shopify — non-destructive "Sync now" button that runs the
+ *     same job as the 3am cron (insert new families, update drift,
+ *     auto-exclude Shopify-deleted orphans). Shows "Last synced X ago" from
+ *     `shopify_sync_log` so you know if the cron is firing.
+ *   - Reset everything (danger zone) — nuclear `/api/review/reset-all`
+ *     stream that wipes review state back to No-vision and re-pulls. Requires
+ *     typing RESET to confirm.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -78,6 +82,40 @@ type BulkExcludeState =
   | { kind: "applying"; total: number }
   | { kind: "applied"; excluded: number };
 
+interface ShopifySyncSummary {
+  ok: boolean;
+  productsSeen: number;
+  productsMatched: number;
+  families: number;
+  inserted: number;
+  updated: number;
+  excluded: number;
+  orphansFound: number;
+  orphansSkippedSafety: string | null;
+  durationMs: number;
+}
+
+interface LastShopifySync {
+  finished_at: string;
+  trigger: string | null;
+  inserted: number | null;
+  updated: number | null;
+  excluded: number | null;
+  duration_ms: number | null;
+}
+
+function timeAgo(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  if (ms < 0) return "just now";
+  const min = Math.floor(ms / 60_000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.floor(hr / 24);
+  return `${day}d ago`;
+}
+
 export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   const [confirmText, setConfirmText] = useState("");
   const [running, setRunning] = useState(false);
@@ -86,6 +124,10 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   const [taxonomyStatus, setTaxonomyStatus] = useState<TaxonomyStatus | null>(null);
   const [taxonomyState, setTaxonomyState] = useState<TaxonomyRefreshState>({ kind: "idle" });
   const [bulkExclude, setBulkExclude] = useState<BulkExcludeState>({ kind: "idle" });
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<ShopifySyncSummary | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [lastSync, setLastSync] = useState<LastShopifySync | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   // Lightweight count fetch so the warning text shows the real catalog size.
@@ -152,10 +194,31 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
       setRunning(false);
       setTaxonomyState({ kind: "idle" });
       setBulkExclude({ kind: "idle" });
+      setSyncing(false);
+      setSyncResult(null);
+      setSyncError(null);
       abortRef.current?.abort();
       abortRef.current = null;
     }
   }, [open]);
+
+  // Load "last synced X ago" line. Refetches after a manual sync so the
+  // line updates without closing+reopening the modal.
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    fetch("/api/sync/last")
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
+      .then((d: { last: LastShopifySync | null }) => {
+        if (!cancelled) setLastSync(d.last);
+      })
+      .catch(() => {
+        if (!cancelled) setLastSync(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, syncResult]);
 
   // Load taxonomy status whenever the modal opens.
   useEffect(() => {
@@ -244,6 +307,33 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
       setBulkExclude({ kind: "error", message: (e as Error).message });
     }
   }, [onResetComplete]);
+
+  const syncNow = useCallback(async () => {
+    if (syncing) return;
+    setSyncing(true);
+    setSyncError(null);
+    setSyncResult(null);
+    try {
+      // /api/sync/shopify is the browser-facing proxy that forwards to
+      // /api/cron/shopify-sync with the server-side CRON_SECRET — same
+      // body the nightly cron sees.
+      const r = await fetch("/api/sync/shopify", { method: "POST" });
+      const body = (await r.json()) as ShopifySyncSummary & {
+        error?: string;
+      };
+      if (!r.ok || !body.ok) {
+        throw new Error(body.error ?? `HTTP ${r.status}`);
+      }
+      setSyncResult(body);
+      // Bubble up — parent re-fetches tile counts so any newly-inserted
+      // novision rows surface immediately.
+      onResetComplete?.();
+    } catch (e) {
+      setSyncError((e as Error).message);
+    } finally {
+      setSyncing(false);
+    }
+  }, [syncing, onResetComplete]);
 
   const runReset = useCallback(async () => {
     if (confirmText !== "RESET" || running) return;
@@ -519,17 +609,84 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
 
           <div className="border-t border-border -mx-6" />
 
-          {/* ─── Sync from Shopify ─────────────────────────────────────── */}
+          {/* ─── Sync from Shopify (incremental, non-destructive) ──────── */}
           <section className="space-y-3">
             <h3 className="text-sm font-medium">Sync from Shopify</h3>
             <p className="text-xs text-muted">
-              This will move{" "}
+              Pull the current Shopify catalog: insert new designs as{" "}
+              <em>No vision</em>, refresh stale product IDs / tags / images,
+              and auto-exclude designs whose Shopify products were deleted.
+              Non-destructive — review state is preserved. The nightly cron
+              runs this same job at 3am ET; click below to run it on demand.
+            </p>
+
+            {lastSync && (
+              <div className="text-[11px] text-muted">
+                Last synced{" "}
+                <strong className="text-foreground">
+                  {timeAgo(lastSync.finished_at)}
+                </strong>
+                {lastSync.trigger && (
+                  <span> · {lastSync.trigger} trigger</span>
+                )}
+                {(lastSync.inserted ?? 0) > 0 && (
+                  <span> · +{lastSync.inserted} new</span>
+                )}
+                {(lastSync.updated ?? 0) > 0 && (
+                  <span> · {lastSync.updated} updated</span>
+                )}
+                {(lastSync.excluded ?? 0) > 0 && (
+                  <span> · {lastSync.excluded} excluded</span>
+                )}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={syncNow}
+              disabled={syncing}
+              className="w-full text-sm px-3.5 py-2 rounded-md bg-foreground text-background hover:bg-zinc-800 disabled:opacity-60"
+            >
+              {syncing ? "Syncing… (takes 2–3 min)" : "↻ Sync now"}
+            </button>
+
+            {syncError && (
+              <div className="text-xs bg-[#FDECEC] border border-[#A32D2D]/30 text-[#A32D2D] px-3 py-2 rounded-md">
+                ✗ {syncError}
+              </div>
+            )}
+
+            {syncResult && (
+              <div className="text-xs bg-[#E8F5EE] border border-[#0F6E56]/30 text-[#0F6E56] px-3 py-2 rounded-md">
+                ✓ Synced {syncResult.families.toLocaleString()} families ·{" "}
+                +{syncResult.inserted} new ·{" "}
+                {syncResult.updated} updated ·{" "}
+                {syncResult.excluded} auto-excluded orphans
+                {syncResult.orphansSkippedSafety && (
+                  <div className="mt-1 text-[10px] text-[#A32D2D]">
+                    Note: {syncResult.orphansSkippedSafety}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+
+          <div className="border-t border-border -mx-6" />
+
+          {/* ─── Reset everything (danger zone) ────────────────────────── */}
+          <section className="space-y-3">
+            <h3 className="text-sm font-medium text-[#A32D2D]">
+              Reset everything (danger zone)
+            </h3>
+            <p className="text-xs text-muted">
+              Use the <strong>Sync now</strong> button above for normal
+              refreshes. This option is the nuclear path: move{" "}
               <strong className="text-foreground">
                 {totalDesigns?.toLocaleString() ?? "all"}
               </strong>{" "}
-              design{totalDesigns === 1 ? "" : "s"} back to <em>No vision yet</em> and
-              re-pull current Shopify tags. History is preserved. In-flight work
-              (Flagged, Pending, Ready to send) will be lost.
+              design{totalDesigns === 1 ? "" : "s"} back to <em>No vision yet</em>{" "}
+              and re-pull current Shopify tags. History is preserved.
+              In-flight work (Flagged, Pending, Ready to send) will be lost.
             </p>
 
             {!running && !p?.done && !p?.error && (
