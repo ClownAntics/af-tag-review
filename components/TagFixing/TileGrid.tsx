@@ -756,6 +756,17 @@ export function TileGrid({
               onAction={(action, label, verb) => bulkApply(action, label, verb)}
             />
           )}
+          {/* Export — separate from Bulk actions because it's read-only and
+              the natural scope is "all matching" not "visible page". One
+              row per variant SKU. */}
+          {designs && designs.length > 0 && (
+            <ExportMenu
+              status={status}
+              filterQs={filterQs}
+              visibleDesigns={designs}
+              totalMatching={count ?? designs.length}
+            />
+          )}
         </div>
       </div>
 
@@ -1112,6 +1123,158 @@ function BulkActionsMenu({
                 </button>
               </li>
             ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Export menu ──────────────────────────────────────────────────────────
+//
+// Per-tile CSV export. One row per Shopify variant SKU; columns are
+//   sku, design_family, design_name, approved_tags
+// (approved_tags pipe-joined inside a single quoted CSV cell). Two scopes:
+//   - "all matching" pages through the queue endpoint until done
+//   - "visible page" just dumps the already-loaded array
+// Read-only, no server-side endpoint needed.
+
+function ExportMenu({
+  status,
+  filterQs,
+  visibleDesigns,
+  totalMatching,
+}: {
+  status: ReviewStatus;
+  filterQs: string;
+  visibleDesigns: Design[];
+  totalMatching: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const [running, setRunning] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const downloadCsv = (designs: Design[], filenameSuffix: string) => {
+    const esc = (s: string) => `"${s.replace(/"/g, '""')}"`;
+    const lines = ["sku,design_family,design_name,approved_tags"];
+    for (const d of designs) {
+      const tagCell = esc((d.approved_tags ?? []).join(" | "));
+      const nameCell = esc(d.design_name ?? "");
+      const familyCell = esc(d.design_family);
+      const variants = (d.variant_skus ?? []).filter((s) => s && s.length > 0);
+      // Fall back to design_family if no variant_skus stored (legacy rows).
+      const skus = variants.length > 0 ? variants : [d.design_family];
+      for (const sku of skus) {
+        lines.push(`${esc(sku)},${familyCell},${nameCell},${tagCell}`);
+      }
+    }
+    const blob = new Blob([lines.join("\n")], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${status}-${filenameSuffix}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportVisible = () => {
+    setOpen(false);
+    downloadCsv(visibleDesigns, "visible");
+  };
+
+  const exportAll = async () => {
+    setOpen(false);
+    setRunning(true);
+    try {
+      const all: Design[] = [];
+      const LIMIT = 500;
+      for (let offset = 0; ; offset += LIMIT) {
+        const r = await fetch(
+          `/api/review/queue?status=${status}&offset=${offset}&limit=${LIMIT}${filterQs ? `&${filterQs}` : ""}`,
+        );
+        if (!r.ok) throw new Error(await r.text());
+        const d = (await r.json()) as { designs: Design[]; total: number };
+        all.push(...d.designs);
+        if (d.designs.length < LIMIT) break;
+        if (all.length >= d.total) break;
+      }
+      downloadCsv(all, `all-${all.length}`);
+    } catch (e) {
+      alert(`Export failed: ${(e as Error).message}`);
+    } finally {
+      setRunning(false);
+    }
+  };
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        disabled={running}
+        className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-60"
+        title="Export to CSV"
+      >
+        {running ? "Exporting…" : "↓ Export ▾"}
+      </button>
+      {open && (
+        <div className="absolute z-20 top-full right-0 mt-1 w-72 bg-white border border-border rounded-md shadow-lg overflow-hidden text-sm">
+          <div className="px-3 py-2 text-[11px] text-muted-2 border-b border-border">
+            One row per variant SKU
+          </div>
+          <ul>
+            <li>
+              <button
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  exportAll();
+                }}
+                className="w-full text-left px-3 py-2 hover:bg-zinc-50"
+              >
+                <div>CSV — all matching</div>
+                <div className="text-[11px] text-muted-2">
+                  {totalMatching.toLocaleString()} design
+                  {totalMatching === 1 ? "" : "s"} (paginates queue endpoint)
+                </div>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  exportVisible();
+                }}
+                className="w-full text-left px-3 py-2 hover:bg-zinc-50 border-t border-border"
+              >
+                <div>CSV — visible page</div>
+                <div className="text-[11px] text-muted-2">
+                  {visibleDesigns.length} design
+                  {visibleDesigns.length === 1 ? "" : "s"} (just what's on screen)
+                </div>
+              </button>
+            </li>
           </ul>
         </div>
       )}

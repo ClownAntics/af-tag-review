@@ -13,6 +13,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 - **`scripts/backfill-conflicting-decoration.ts`** — one-off backfill that applies the same rule to existing `vision_tags`, scoped by stored `vision_raw.primary`. Cheap (no Anthropic calls); writes a `vision_tags_filtered` audit event per design.
 
 ### Added (continued)
+- **CSV export menu on every tile.** A separate `↓ Export ▾` button next to Bulk actions opens a small dropdown with two options:
+  - **CSV — all matching (N)** — pages through `/api/review/queue` (500 at a time) until the full filtered set is in memory, then triggers a CSV download. Bypasses pagination.
+  - **CSV — visible page (40)** — dumps the already-loaded array.
+  
+  One row per Shopify variant SKU; columns are `sku, design_family, design_name, approved_tags` (pipe-joined inside the cell). Kept separate from Bulk actions on purpose — different semantics (read-only vs mutating) and different natural scope (filter-wide vs page).
+
 - **Bulk-actions menu on every tile.** The old "Flag all N visible" button on No-vision is replaced by a `Bulk actions (N) ▾` dropdown that surfaces every per-card action that makes sense for that tile, applied to all currently-visible designs in one click:
   - **No-vision** → Flag · Mark fine · Exclude
   - **Flagged** → Remove (back to No-vision)
