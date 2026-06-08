@@ -13,6 +13,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 - **`scripts/backfill-conflicting-decoration.ts`** — one-off backfill that applies the same rule to existing `vision_tags`, scoped by stored `vision_raw.primary`. Cheap (no Anthropic calls); writes a `vision_tags_filtered` audit event per design.
 
 ### Added (continued)
+- **Bulk-actions menu on every tile.** The old "Flag all N visible" button on No-vision is replaced by a `Bulk actions (N) ▾` dropdown that surfaces every per-card action that makes sense for that tile, applied to all currently-visible designs in one click:
+  - **No-vision** → Flag · Mark fine · Exclude
+  - **Flagged** → Remove (back to No-vision)
+  - **Ready to send** → Re-flag · Exclude
+  - **Updated** → Re-flag · Exclude
+  - **Excluded** → Include (back to No-vision)
+
+  Each action confirms with a count before running, fires in parallel via the existing per-design `/api/review/design/[family]/action` endpoint, and toasts a "Applied to N/M (X failed)" summary when done. Pending tile is intentionally bulk-free — the whole point of Pending is the per-card vision-suggestion review. Same destructive-style red text on actions that move designs backward in the pipeline.
+
 - **Filter dropdowns are search-as-you-type comboboxes.** Native `<select>` doesn't scale to 500+ canonical tags post-canonicalize — even the type-to-jump behavior only matches the first character. Replaced all six FilterBar selects (Manufacturer, Theme, Sub, Sub-sub, Tag, Type) with a `Combobox` that opens a popover with a search input + filtered list. Substring match is case-insensitive and multi-word — `eas christ` matches `Seasonal: Easter` AND filters out `Seasonal: Christmas` (both terms must appear). Keyboard navigation: arrow keys + enter; Esc / click-outside closes. Selected option gets a bolded border so dirty filters are obvious at a glance.
 - **Review tools for catalog audits: random sample mode + mistag detector.**
   - **🎲 Random N button** on the Ready-to-send and Updated tile headers. Swaps the date-sorted feed for `N` random cards; click again to reshuffle. `/api/review/queue?sample=N` does a two-step random fetch (keys → shuffle → hydrate) since PostgREST can't `ORDER BY random()`. Banner above the grid shows "Showing N random of M" and pagination is suppressed while in sample mode. Exit via the `← Exit sample` button.

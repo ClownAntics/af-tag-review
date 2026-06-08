@@ -536,19 +536,66 @@ export function TileGrid({
     refresh();
   }, [designs, runningVision, refresh]);
 
-  const bulkFlagVisible = useCallback(async () => {
-    if (!designs) return;
-    await Promise.all(
-      designs.map((d) =>
-        fetch(`/api/review/design/${encodeURIComponent(d.design_family)}/action`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "flag" }),
-        }),
-      ),
-    );
-    refresh();
-  }, [designs, refresh]);
+  // Generic bulk-action helper. Hits the per-design action endpoint in
+  // parallel for every visible design. Returns a count of successes so
+  // the caller can surface "Done — N of M succeeded" if it cares.
+  const [bulkRunning, setBulkRunning] = useState<string | null>(null);
+  const bulkApply = useCallback(
+    async (
+      action: string,
+      label: string,
+      verb: string,
+    ): Promise<void> => {
+      if (!designs || designs.length === 0 || bulkRunning) return;
+      const count = designs.length;
+      if (
+        !confirm(
+          `${verb} all ${count} visible design${count === 1 ? "" : "s"}?\n\n` +
+            `Action: ${label}.\n\nThis can't be undone with a single click — you'd need to act on each card individually.`,
+        )
+      ) {
+        return;
+      }
+      setBulkRunning(action);
+      try {
+        const results = await Promise.allSettled(
+          designs.map((d) =>
+            fetch(
+              `/api/review/design/${encodeURIComponent(d.design_family)}/action`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action }),
+              },
+            ),
+          ),
+        );
+        const ok = results.filter(
+          (r) => r.status === "fulfilled" && (r.value as Response).ok,
+        ).length;
+        const failed = count - ok;
+        setPushToast({
+          message:
+            failed > 0
+              ? `${label} applied to ${ok}/${count} (${failed} failed)`
+              : `${label} applied to ${ok} design${ok === 1 ? "" : "s"}`,
+          variant: failed > 0 ? "error" : "success",
+        });
+      } catch (e) {
+        setPushToast({
+          message: `Bulk ${action} failed: ${(e as Error).message}`,
+          variant: "error",
+        });
+      } finally {
+        setBulkRunning(null);
+        refresh();
+      }
+    },
+    [designs, bulkRunning, refresh],
+  );
+
+  // bulkApply is now wired through the generic BulkActionsMenu dropdown
+  // rendered in the tile header — no more single-purpose wrappers.
 
   const toggleSelected = useCallback((family: string) => {
     setSelected((prev) => {
@@ -698,14 +745,16 @@ export function TileGrid({
               </button>
             </>
           )}
-          {status === "novision" && designs && designs.length > 0 && (
-            <button
-              type="button"
-              onClick={bulkFlagVisible}
-              className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50"
-            >
-              ⚑ Flag all {designs.length} visible
-            </button>
+          {/* Bulk actions on every tile. Acts on the currently-visible page
+              (designs.length, capped at PAGE_SIZE = 40). Each button confirms
+              before applying; results land in a toast at the bottom. */}
+          {designs && designs.length > 0 && (
+            <BulkActionsMenu
+              status={status}
+              count={designs.length}
+              running={bulkRunning}
+              onAction={(action, label, verb) => bulkApply(action, label, verb)}
+            />
           )}
         </div>
       </div>
@@ -945,6 +994,125 @@ export function TileGrid({
           >
             next →
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Bulk-actions menu ────────────────────────────────────────────────────
+//
+// Per-tile dropdown of bulk actions you can apply to every visible card in
+// one click. Different statuses get different action sets — only the
+// transitions that make sense for that stage are offered. Each action goes
+// through the same /api/review/design/[family]/action endpoint (parallel
+// per-design fetches in `bulkApply`).
+
+interface BulkAction {
+  action: string;   // matches the action route's case names
+  icon: string;     // single-char glyph for the button label
+  label: string;    // toast / confirm description
+  verb: string;     // confirm-dialog verb ("Flag", "Exclude", "Mark fine")
+  tone?: "danger";  // styles a red border when destructive-ish
+}
+
+const BULK_ACTIONS: Partial<Record<ReviewStatus, BulkAction[]>> = {
+  novision: [
+    { action: "flag", icon: "⚑", label: "Flag for vision review", verb: "Flag" },
+    { action: "mark_fine", icon: "✓", label: "Mark as fine (current Shopify tags → approved)", verb: "Mark fine" },
+    { action: "exclude", icon: "×", label: "Exclude from review pipeline", verb: "Exclude", tone: "danger" },
+  ],
+  flagged: [
+    { action: "unflag", icon: "↩", label: "Remove from flagged (back to No-vision)", verb: "Remove" },
+  ],
+  // Pending review has its own per-card accept/reject workflow with
+  // approve, accept_vision, reject_vision actions — bulk-approving without
+  // looking at vision suggestions defeats the point of review, so we don't
+  // surface a bulk action here.
+  readytosend: [
+    { action: "flag", icon: "⚑", label: "Re-flag for vision review", verb: "Flag", tone: "danger" },
+    { action: "exclude", icon: "×", label: "Exclude from review pipeline", verb: "Exclude", tone: "danger" },
+  ],
+  updated: [
+    { action: "flag", icon: "⚑", label: "Re-flag for vision review", verb: "Re-flag", tone: "danger" },
+    { action: "exclude", icon: "×", label: "Exclude from review pipeline", verb: "Exclude", tone: "danger" },
+  ],
+  excluded: [
+    { action: "include", icon: "↩", label: "Include back in the review pipeline (→ No-vision)", verb: "Include" },
+  ],
+};
+
+function BulkActionsMenu({
+  status,
+  count,
+  running,
+  onAction,
+}: {
+  status: ReviewStatus;
+  count: number;
+  running: string | null;
+  onAction: (action: string, label: string, verb: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const actions = BULK_ACTIONS[status] ?? [];
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  if (actions.length === 0) return null;
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        disabled={!!running}
+        className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-60"
+        title={`Apply an action to all ${count} visible designs`}
+      >
+        {running
+          ? `Applying ${running}…`
+          : `Bulk actions (${count}) ▾`}
+      </button>
+      {open && (
+        <div className="absolute z-20 top-full right-0 mt-1 w-72 bg-white border border-border rounded-md shadow-lg overflow-hidden text-sm">
+          <div className="px-3 py-2 text-[11px] text-muted-2 border-b border-border">
+            Apply to all {count} visible
+          </div>
+          <ul>
+            {actions.map((a) => (
+              <li key={a.action}>
+                <button
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setOpen(false);
+                    onAction(a.action, a.label, a.verb);
+                  }}
+                  className={`w-full text-left px-3 py-2 hover:bg-zinc-50 flex items-center gap-2 ${
+                    a.tone === "danger" ? "text-[#A32D2D]" : ""
+                  }`}
+                >
+                  <span className="w-5 text-center">{a.icon}</span>
+                  <span>{a.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
