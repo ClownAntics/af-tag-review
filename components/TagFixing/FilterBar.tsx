@@ -7,8 +7,12 @@
  *
  * Changing any filter triggers a full refresh of both counts and the active
  * tile's queue (via the externalDataVersion bump in the parent).
+ *
+ * The dropdowns are search-as-you-type comboboxes — native <select> doesn't
+ * scale to 500+ canonical taxonomy tags. Substring match is case-insensitive
+ * and multi-word (each whitespace-separated term must appear).
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   EMPTY_REVIEW_FILTERS,
   type FilterOptions,
@@ -78,7 +82,7 @@ export function FilterBar({ filters, onChange }: Props) {
 
   return (
     <div className="flex flex-wrap gap-2 items-center text-xs text-muted">
-      <Select
+      <Combobox
         label="Manufacturer"
         value={filters.manufacturer}
         onChange={(v) => update({ manufacturer: v })}
@@ -87,7 +91,7 @@ export function FilterBar({ filters, onChange }: Props) {
           ...(options?.manufacturers || []).map((m) => ({ value: m, label: m })),
         ]}
       />
-      <Select
+      <Combobox
         label="Theme"
         value={filters.themeName}
         onChange={(v) =>
@@ -98,7 +102,7 @@ export function FilterBar({ filters, onChange }: Props) {
           ...(options?.themeNames || []).map((t) => ({ value: t, label: t })),
         ]}
       />
-      <Select
+      <Combobox
         label="Sub"
         value={filters.subTheme}
         onChange={(v) => update({ subTheme: v, subSubTheme: "all" })}
@@ -110,7 +114,7 @@ export function FilterBar({ filters, onChange }: Props) {
           })),
         ]}
       />
-      <Select
+      <Combobox
         label="Sub-sub"
         value={filters.subSubTheme}
         onChange={(v) => update({ subSubTheme: v })}
@@ -122,7 +126,7 @@ export function FilterBar({ filters, onChange }: Props) {
           })),
         ]}
       />
-      <Select
+      <Combobox
         label="Tag"
         value={filters.tag}
         onChange={(v) => update({ tag: v })}
@@ -131,7 +135,7 @@ export function FilterBar({ filters, onChange }: Props) {
           ...(options?.tags || []).map((t) => ({ value: t, label: t })),
         ]}
       />
-      <Select
+      <Combobox
         label="Type"
         value={filters.productType}
         onChange={(v) => update({ productType: v })}
@@ -153,7 +157,20 @@ export function FilterBar({ filters, onChange }: Props) {
   );
 }
 
-function Select({
+interface ComboOption {
+  value: string;
+  label: string;
+}
+
+/**
+ * Search-as-you-type filter dropdown. Native <select> falls over at
+ * 500+ tags (the Tag dropdown's case post-canonicalize) and even at
+ * 30+ the type-to-jump only matches the first character. Click the
+ * trigger → popover with an input you can type into + filtered list.
+ * Substring match, case-insensitive, multi-word (each whitespace-
+ * separated term must appear in the label).
+ */
+function Combobox({
   label,
   value,
   onChange,
@@ -162,22 +179,148 @@ function Select({
   label: string;
   value: string;
   onChange: (v: string) => void;
-  options: { value: string; label: string }[];
+  options: ComboOption[];
 }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const selected =
+    options.find((o) => o.value === value) ?? { value: "all", label: "" };
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return options;
+    const terms = q.split(/\s+/).filter(Boolean);
+    return options.filter((o) => {
+      const hay = o.label.toLowerCase();
+      return terms.every((t) => hay.includes(t));
+    });
+  }, [options, query]);
+
+  // Close on outside click + ESC. Reset query when reopening.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("keydown", onKey);
+    // Focus the input on open so typing immediately filters.
+    setTimeout(() => inputRef.current?.focus(), 0);
+    return () => {
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  // Clamp the keyboard cursor when the filter changes.
+  useEffect(() => {
+    if (activeIndex >= filtered.length) setActiveIndex(0);
+  }, [filtered.length, activeIndex]);
+
+  // Scroll the active row into view as the user arrow-keys through.
+  useEffect(() => {
+    const el = listRef.current?.children[activeIndex] as HTMLElement | undefined;
+    el?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex]);
+
+  const select = (opt: ComboOption) => {
+    onChange(opt.value);
+    setOpen(false);
+    setQuery("");
+    setActiveIndex(0);
+  };
+
   return (
-    <label className="flex items-center gap-1.5">
+    <div ref={wrapRef} className="relative flex items-center gap-1.5">
       <span>{label}:</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="bg-card border border-border rounded px-2 py-1 text-xs text-foreground focus:outline-none focus:border-foreground max-w-[200px]"
+      <button
+        type="button"
+        onClick={() => {
+          setOpen((o) => !o);
+          setQuery("");
+          setActiveIndex(0);
+        }}
+        className={`bg-card border rounded px-2 py-1 text-xs text-foreground hover:border-foreground/40 focus:outline-none focus:border-foreground max-w-[200px] truncate text-left ${
+          value !== "all"
+            ? "border-foreground/60 font-medium"
+            : "border-border"
+        }`}
+        title={selected.label}
       >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </label>
+        {selected.label || "—"}{" "}
+        <span className="text-muted-2">▾</span>
+      </button>
+
+      {open && (
+        <div className="absolute z-20 top-full left-[calc(var(--label-width,0px)+0.375rem)] mt-1 w-64 bg-white border border-border rounded-md shadow-lg overflow-hidden">
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                setActiveIndex((i) => Math.min(i + 1, filtered.length - 1));
+              } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                setActiveIndex((i) => Math.max(i - 1, 0));
+              } else if (e.key === "Enter") {
+                e.preventDefault();
+                const opt = filtered[activeIndex];
+                if (opt) select(opt);
+              }
+            }}
+            placeholder={`Filter ${label.toLowerCase()}… (${options.length - 1} options)`}
+            className="w-full px-3 py-2 text-xs border-b border-border focus:outline-none focus:bg-zinc-50"
+            autoComplete="off"
+            spellCheck={false}
+          />
+          {filtered.length === 0 ? (
+            <div className="px-3 py-3 text-xs text-muted italic">
+              No matches.
+            </div>
+          ) : (
+            <ul
+              ref={listRef}
+              className="max-h-72 overflow-y-auto py-1"
+            >
+              {filtered.map((o, i) => {
+                const isSelected = o.value === value;
+                const isActive = i === activeIndex;
+                return (
+                  <li key={o.value}>
+                    <button
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        select(o);
+                      }}
+                      onMouseEnter={() => setActiveIndex(i)}
+                      className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between gap-2 ${
+                        isActive ? "bg-zinc-100" : "hover:bg-zinc-50"
+                      } ${isSelected ? "font-medium" : ""}`}
+                    >
+                      <span className="truncate">{o.label}</span>
+                      {isSelected && (
+                        <span className="text-[#0F6E56] shrink-0">✓</span>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
