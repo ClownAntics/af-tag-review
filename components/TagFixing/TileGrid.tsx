@@ -291,6 +291,42 @@ export function TileGrid({
     [refresh],
   );
 
+  // ─── Updated-tile: Staff Pick toggle ───────────────────────────────────
+  // Clicking ★ on an Updated card adds (or removes) the `Staff-Pick` tag
+  // and moves the design to Ready-to-send so the change pushes to Shopify.
+  // The design then disappears from the Updated tile until the next push
+  // lands it back here.
+  const starOne = useCallback(
+    async (family: string, currentlyStarred: boolean) => {
+      try {
+        const res = await fetch(
+          `/api/review/design/${encodeURIComponent(family)}/action`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: currentlyStarred ? "unstar" : "star",
+            }),
+          },
+        );
+        if (!res.ok) throw new Error(await res.text());
+        setPushToast({
+          message: currentlyStarred
+            ? `Removed Staff Pick · ${family} moved to Ready-to-send`
+            : `★ Staff Pick added · ${family} moved to Ready-to-send`,
+          variant: "success",
+        });
+        refresh();
+      } catch (e) {
+        setPushToast({
+          message: `Star toggle failed: ${(e as Error).message}`,
+          variant: "error",
+        });
+      }
+    },
+    [refresh],
+  );
+
   // ─── Flagged-tile actions ──────────────────────────────────────────────
   const removeFromFlagged = useCallback(
     async (family: string) => {
@@ -890,6 +926,10 @@ export function TileGrid({
             const showIncludeBtn = status === "excluded";
             const showCheckbox =
               status === "readytosend" && !pushing && state === "approved";
+            // Staff Pick ★ toggle — Updated tile only. Fill state is
+            // driven by whether `Staff-Pick` is already in approved_tags.
+            const showStarBtn = status === "updated";
+            const isStarred = (d.approved_tags ?? []).includes("Staff-Pick");
             const isSelected = selected.has(d.design_family);
             // Which tag list to chip under each card:
             //   flagged  / novision → shopify_tags (Shopify's current state)
@@ -920,6 +960,8 @@ export function TileGrid({
                     showMarkFineBtn={showMarkFineBtn}
                     showExcludeBtn={showExcludeBtn}
                     showIncludeBtn={showIncludeBtn}
+                    showStarBtn={showStarBtn}
+                    isStarred={isStarred}
                     isSelected={isSelected}
                     onRemove={() => removeFromFlagged(d.design_family)}
                     onFlag={() => flagOne(d.design_family)}
@@ -927,6 +969,7 @@ export function TileGrid({
                     onMarkFine={() => markFine(d.design_family)}
                     onExclude={() => excludeOne(d.design_family)}
                     onInclude={() => includeOne(d.design_family)}
+                    onStar={() => starOne(d.design_family, isStarred)}
                   />
                 }
                 hoverOverlay={

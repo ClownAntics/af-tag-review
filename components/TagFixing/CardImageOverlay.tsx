@@ -25,6 +25,12 @@ export interface CardImageOverlayProps {
   showMarkFineBtn: boolean;
   showExcludeBtn: boolean;
   showIncludeBtn: boolean;
+  /** Show the Staff-Pick toggle star. Currently only the Updated tile.
+   *  Filled ⭐ when `isStarred`, empty ☆ otherwise. Click → POSTs
+   *  star/unstar to the action endpoint; the design moves to
+   *  Ready-to-send so the change pushes to Shopify. */
+  showStarBtn?: boolean;
+  isStarred?: boolean;
   isSelected: boolean;
   onRemove: () => void;
   onFlag: () => void;
@@ -32,6 +38,7 @@ export interface CardImageOverlayProps {
   onMarkFine: () => void;
   onExclude: () => void;
   onInclude: () => void;
+  onStar?: () => void;
 }
 
 export function CardImageOverlay({
@@ -42,6 +49,8 @@ export function CardImageOverlay({
   showMarkFineBtn,
   showExcludeBtn,
   showIncludeBtn,
+  showStarBtn = false,
+  isStarred = false,
   isSelected,
   onRemove,
   onFlag,
@@ -49,6 +58,7 @@ export function CardImageOverlay({
   onMarkFine,
   onExclude,
   onInclude,
+  onStar,
 }: CardImageOverlayProps) {
   const flagBtnPosition = "top-1.5 right-1.5";
   return (
@@ -93,6 +103,29 @@ export function CardImageOverlay({
           className="absolute top-1.5 left-1.5 w-5 h-5 rounded-sm border-2 border-[#0F6E56] bg-white hover:bg-[#0F6E56] text-[#0F6E56] hover:text-white flex items-center justify-center text-[11px] font-bold leading-none z-10 shadow-sm transition-colors"
         >
           ✓
+        </button>
+      )}
+      {showStarBtn && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onStar?.();
+          }}
+          title={
+            isStarred
+              ? "Remove Staff Pick — moves to Ready-to-send to push the change"
+              : "Mark as Staff Pick — adds the Staff-Pick tag and queues for push"
+          }
+          aria-label={isStarred ? "Remove Staff Pick" : "Mark as Staff Pick"}
+          aria-pressed={isStarred}
+          className={`absolute top-1.5 left-1.5 w-7 h-7 rounded-full flex items-center justify-center text-base leading-none z-10 shadow-sm transition-colors ${
+            isStarred
+              ? "bg-[#F5C518] border border-[#B59010] text-white hover:bg-[#D9AC10]"
+              : "bg-white/90 border border-border text-muted-2 hover:text-[#B59010] hover:border-[#F5C518]"
+          }`}
+        >
+          {isStarred ? "★" : "☆"}
         </button>
       )}
       {showRemove && (

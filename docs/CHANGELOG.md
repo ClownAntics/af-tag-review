@@ -13,6 +13,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 - **`scripts/backfill-conflicting-decoration.ts`** — one-off backfill that applies the same rule to existing `vision_tags`, scoped by stored `vision_raw.primary`. Cheap (no Anthropic calls); writes a `vision_tags_filtered` audit event per design.
 
 ### Added (continued)
+- **Staff Picks (★ star toggle on Updated tile).** A new curatorial tag `Staff-Pick` plus a per-card star button on the Updated tile so the team can promote pushed designs to a "Staff Picks" Shopify collection. Click the empty ☆ → adds `Staff-Pick` to `approved_tags`, recomputes theme columns, moves status → `readytosend` so the change pushes to Shopify on the next batch. Click a filled ⭐ → removes the tag and same re-queue. Both write `staff_picked` / `staff_unpicked` audit events. The taxonomy needs a `Staff-Pick` Search Term added in TeamDesk (Name: `Staff Picks`, no Sub) and refreshed via Settings before the Tag filter dropdown will list it; the star button itself works regardless because it bypasses typeahead validation. Two new actions on `/api/review/design/[family]/action`: `star` and `unstar`.
+
 - **CSV export menu on every tile.** A separate `↓ Export ▾` button next to Bulk actions opens a small dropdown with two options:
   - **CSV — all matching (N)** — pages through `/api/review/queue` (500 at a time) until the full filtered set is in memory, then triggers a CSV download. Bypasses pagination.
   - **CSV — visible page (40)** — dumps the already-loaded array.

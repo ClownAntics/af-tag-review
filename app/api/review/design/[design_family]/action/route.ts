@@ -37,6 +37,8 @@ type Body =
   | { action: "mark_fine" }
   | { action: "exclude"; reason?: string }
   | { action: "include" }
+  | { action: "star" }
+  | { action: "unstar" }
   | { action: "reset" };
 
 export async function POST(
@@ -197,6 +199,55 @@ export async function POST(
       patch = { status: "novision" satisfies ReviewStatus };
       eventType = "included";
       eventPayload = { from_status: state.status };
+      break;
+    }
+    case "star": {
+      // Add the `Staff-Pick` curatorial tag and queue the design for push.
+      // Staff-Pick is a curation marker (featured by the team), not a
+      // content theme — it's its own taxonomy row but doesn't fit under
+      // any Name parent, so mapTagsToThemes just no-ops on it. Idempotent:
+      // if the tag is already there, this still re-queues to readytosend
+      // so a stalled push gets unstuck.
+      const STAFF_PICK = "Staff-Pick";
+      const existing = new Set(state.approved_tags ?? []);
+      existing.add(STAFF_PICK);
+      const approved = [...existing].sort();
+      patch = await withThemes(
+        {
+          status: "readytosend" satisfies ReviewStatus,
+          approved_tags: approved,
+          last_reviewed_at: now,
+        },
+        approved,
+      );
+      eventType = "staff_picked";
+      eventPayload = {
+        from_status: state.status,
+        tag_count: approved.length,
+      };
+      break;
+    }
+    case "unstar": {
+      // Remove Staff-Pick and re-queue for push. Mirror of `star` — the
+      // change has to push to Shopify so the storefront's "Staff Picks"
+      // collection drops the design.
+      const STAFF_PICK = "Staff-Pick";
+      const approved = (state.approved_tags ?? []).filter(
+        (t) => t !== STAFF_PICK,
+      );
+      patch = await withThemes(
+        {
+          status: "readytosend" satisfies ReviewStatus,
+          approved_tags: approved,
+          last_reviewed_at: now,
+        },
+        approved,
+      );
+      eventType = "staff_unpicked";
+      eventPayload = {
+        from_status: state.status,
+        tag_count: approved.length,
+      };
       break;
     }
     case "mark_fine": {
