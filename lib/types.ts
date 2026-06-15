@@ -65,6 +65,16 @@ export interface Design {
    *  TeamDesk `isFlag_Reversible?` flag — AF flags are double-sided but NOT
    *  reversible. Maintained in Supabase via scripts/set-double-sided.ts. */
   is_double_sided?: boolean;
+  /** Storefront "Features" filter flags (migration 012), loaded family-level
+   *  from the FL Product Export CSV via scripts/set-features-from-csv.ts.
+   *  `is_reversible` is force-false for AF families (AF flags are double-sided
+   *  but not reversible) even though the CSV/TeamDesk marks them true. */
+  is_reversible?: boolean;
+  is_suede_reflections?: boolean;
+  is_premiersoft?: boolean;
+  is_glittertrends?: boolean;
+  is_printed_in_usa?: boolean;
+  is_envirofriendly?: boolean;
 }
 
 /** Filters applied on top of the status-tile scope. */

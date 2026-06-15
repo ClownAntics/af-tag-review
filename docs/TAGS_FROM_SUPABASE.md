@@ -47,6 +47,12 @@ non-AF (Carson, Evergreen, etc.) products are one-row-per-product.
 | `first_seen_at` | timestamptz | When our DB first inserted this row. |
 | `last_pushed_at` | timestamptz | When tags were last pushed to Shopify. |
 | `is_double_sided` | boolean | Storefront "Double Sided" feature. `true` for AF flags (sublimated print reads through). Default `false`. **Distinct from reversible** — AF flags are double-sided but NOT reversible. Filter with `.eq("is_double_sided", true)`. |
+| `is_reversible` | boolean | Feature flag. Loaded from the FL Product Export CSV, family-level. **Force-false for AF** (AF flags are double-sided, not reversible) — so this is the genuinely-reversible non-AF lines (~746). |
+| `is_suede_reflections` | boolean | Feature flag from CSV. |
+| `is_premiersoft` | boolean | Feature flag from CSV. |
+| `is_glittertrends` | boolean | Feature flag from CSV (also surfaces as a Material/Type leaf `Glittertrends`). |
+| `is_printed_in_usa` | boolean | Feature flag from CSV. |
+| `is_envirofriendly` | boolean | Feature flag from CSV (the storefront "Eco-Friendly" facet). |
 
 ### Status values
 
