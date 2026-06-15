@@ -60,6 +60,11 @@ export interface Design {
    *  which may be years old when shopify-pull first discovers it). Used to
    *  surface "N new since last sync" in the No-vision tile banner. */
   first_seen_at?: string | null;
+  /** Storefront "Double Sided" feature (migration 011). True for AF flags
+   *  (sublimated print reads through to the back). Distinct from the
+   *  TeamDesk `isFlag_Reversible?` flag — AF flags are double-sided but NOT
+   *  reversible. Maintained in Supabase via scripts/set-double-sided.ts. */
+  is_double_sided?: boolean;
 }
 
 /** Filters applied on top of the status-tile scope. */
