@@ -46,7 +46,7 @@ non-AF (Carson, Evergreen, etc.) products are one-row-per-product.
 | `units_total` | int | Lifetime units sold across all channels. |
 | `first_seen_at` | timestamptz | When our DB first inserted this row. |
 | `last_pushed_at` | timestamptz | When tags were last pushed to Shopify. |
-| `is_double_sided` | boolean | Storefront "Double Sided" feature. `true` for AF flags (sublimated print reads through). Default `false`. **Distinct from reversible** — AF flags are double-sided but NOT reversible. Filter with `.eq("is_double_sided", true)`. |
+| `is_double_sided` | boolean | Storefront "Double Sided" feature. `true` for **Sublimated (Printed)** flags (print reads through), **all manufacturers** — ~6,400. Burlap/Appliqué/Lustre/Moire/Linen are NOT double-sided. **Distinct from reversible.** Filter with `.eq("is_double_sided", true)`. |
 | `is_reversible` | boolean | Feature flag. Loaded from the FL Product Export CSV, family-level. **Force-false for AF** (AF flags are double-sided, not reversible) — so this is the genuinely-reversible non-AF lines (~746). |
 | `is_suede_reflections` | boolean | Feature flag from CSV. |
 | `is_premiersoft` | boolean | Feature flag from CSV. |

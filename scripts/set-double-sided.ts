@@ -1,4 +1,8 @@
 /**
+ * SUPERSEDED by scripts/fix-double-sided.ts. This used the wrong rule
+ * (manufacturer='AF'); the correct rule is "Sublimated (Printed)" across
+ * all manufacturers. Kept for history only — do not run.
+ *
  * Set `designs.is_double_sided = true` for every AF flag family.
  *
  * Rule: manufacturer = 'AF', status != 'excluded', and at least one
