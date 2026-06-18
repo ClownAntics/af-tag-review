@@ -1,0 +1,617 @@
+Id,Label,Search Term,Notes,Name,Sub Theme,Sub Sub Theme,Level,IsHoliday?,isOccasion?,isSeason?,isBusinessTheme?,ConflictsWith,Related FL Theme (ref),Related Parent FL Theme Label,isSpring?,isSummer?,isFall?,isWinter?,isXmas?,GF_Total,GF_Spring,GF_Summer,GF_Fall,GF_Winter,GF_Christmas
+523,Beaches & Nautical,Beaches-Nautical,,Beaches & Nautical,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,136,1,33,6,1,8
+181,Beaches & Nautical: Beach,Beach,,Beaches & Nautical,Beach,,2,FALSE,FALSE,FALSE,FALSE,,523,Beaches & Nautical,TRUE,TRUE,TRUE,TRUE,TRUE,114,0,22,5,1,7
+944,Beaches & Nautical: Beach: Coastal,Coastal,,Beaches & Nautical,Beach,Coastal,3,FALSE,FALSE,FALSE,FALSE,,181,Beaches & Nautical: Beach,FALSE,TRUE,TRUE,FALSE,TRUE,6,0,3,2,0,2
+188,Beaches & Nautical: Lighthouses,Lighthouses,,Beaches & Nautical,Lighthouses,,2,FALSE,FALSE,FALSE,FALSE,,523,Beaches & Nautical,TRUE,TRUE,TRUE,TRUE,FALSE,12,0,2,0,0,0
+185,Beaches & Nautical: Nautical,Nautical,,Beaches & Nautical,Nautical,,2,FALSE,FALSE,FALSE,FALSE,,523,Beaches & Nautical,TRUE,TRUE,FALSE,FALSE,TRUE,19,1,11,0,0,2
+971,Beaches & Nautical: Nautical: Anchor,Anchor,,Beaches & Nautical,Nautical,Anchor,3,FALSE,FALSE,FALSE,FALSE,,185,Beaches & Nautical: Nautical,FALSE,TRUE,FALSE,FALSE,FALSE,2,0,2,0,0,0
+283,Birds,Birds,,Birds,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,340,6,9,38,61,62
+372,Birds: Blue Jays,Blue-Jays,,Birds,Blue Jays,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,14,2,2,1,3,2
+366,Birds: Bluebirds,Bluebirds,,Birds,Bluebirds,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,78,15,17,4,1,1
+364,Birds: Cardinals,Cardinals,,Birds,Cardinals,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,260,19,21,20,56,54
+367,Birds: Chickadees,Chickadees,,Birds,Chickadees,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,115,9,9,15,19,16
+303,Birds: Chicks,Chicks,,Birds,Chicks,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,FALSE,FALSE,FALSE,FALSE,22,5,0,0,0,0
+390,Birds: Cranes,Cranes,,Birds,Cranes,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+343,Birds: Crows,Crows,,Birds,Crows,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,FALSE,FALSE,TRUE,FALSE,FALSE,25,0,0,4,0,0
+306,Birds: Doves,Doves,,Birds,Doves,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,28,0,0,0,2,2
+378,Birds: Ducks,Ducks,,Birds,Ducks,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,7,1,1,0,0,0
+108,Birds: Eagles,Eagles,,Birds,Eagles,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,FALSE,33,0,1,0,0,0
+738,Birds: Egrets,Egrets,,Birds,Egrets,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+664,Birds: Exotic Birds,Exotic-birds,,Birds,Exotic Birds,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,TRUE,53,0,4,0,0,3
+23,Birds: Flamingos,Flamingos,,Birds,Flamingos,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,TRUE,24,0,5,0,0,4
+382,Birds: Geese,Geese,,Birds,Geese,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+371,Birds: Goldfinches,Goldfinches,,Birds,Goldfinches,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,52,17,18,6,2,1
+740,Birds: Grosbeaks,Grosbeaks,,Birds,Grosbeaks,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+374,Birds: Herons,Herons,,Birds,Herons,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,4,0,0,0,0,0
+373,Birds: House Martins,House-Martins,,Birds,House Martins,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+365,Birds: Hummingbirds,Hummingbirds,,Birds,Hummingbirds,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,TRUE,FALSE,48,14,12,0,1,0
+394,Birds: Kingfishers,Kingfishers,,Birds,Kingfishers,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+379,Birds: Loons,Loons,,Birds,Loons,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+220,Birds: Love Birds,Love-Birds,,Birds,Love Birds,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,0,0,0
+389,Birds: Mockingbirds,Mockingbirds,,Birds,Mockingbirds,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+718,Birds: Orioles,Orioles,,Birds,Orioles,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+300,Birds: Owls,Owls,,Birds,Owls,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,44,0,0,3,4,2
+376,Birds: Parrots,Parrots,,Birds,Parrots,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,24,0,1,0,0,0
+395,Birds: Partridges,Partridges,,Birds,Partridges,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,FALSE,FALSE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+302,Birds: Peacocks,Peacocks,,Birds,Peacocks,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,4,0,0,0,0,0
+380,Birds: Pelicans,Pelicans,,Birds,Pelicans,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+301,Birds: Penguins,Penguins,,Birds,Penguins,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,FALSE,FALSE,FALSE,TRUE,TRUE,7,0,0,0,0,0
+385,Birds: Pheasants,Pheasants,,Birds,Pheasants,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,FALSE,FALSE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+715,Birds: Phoebes,Phoebes,,Birds,Phoebes,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+493,Birds: Puffins,Puffins,,Birds,Puffins,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+370,Birds: Robins,Robins,,Birds,Robins,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,10,1,3,2,1,1
+243,Birds: Roosters,Roosters,,Birds,Roosters,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,24,0,1,2,1,3
+381,Birds: Sandpipers,Sandpipers,,Birds,Sandpipers,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,2,0,0,0,0,0
+369,Birds: Seagulls,Seagulls,,Birds,Seagulls,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,18,0,2,1,0,0
+386,Birds: Sparrows,Sparrows,,Birds,Sparrows,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,FALSE,4,1,2,0,0,0
+388,Birds: Swans,Swans,,Birds,Swans,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,FALSE,5,1,0,0,0,0
+735,Birds: Tanagers,Tanagers,,Birds,Tanagers,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+736,Birds: Titmouses,Titmouses,,Birds,Titmouses,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,FALSE,FALSE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+393,Birds: Toucans,Toucans,,Birds,Toucans,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+304,Birds: Turkeys,Turkeys,,Birds,Turkeys,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,FALSE,FALSE,TRUE,FALSE,FALSE,32,0,0,3,0,0
+391,Birds: Warblers,Warblers,,Birds,Warblers,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+666,Birds: Water Birds,Water-Birds,,Birds,Water Birds,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,38,1,1,0,0,0
+387,Birds: Woodpeckers,Woodpeckers,,Birds,Woodpeckers,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,TRUE,TRUE,3,0,0,0,2,2
+720,Birds: Wrens,Wrens,,Birds,Wrens,,2,FALSE,FALSE,FALSE,FALSE,,283,Birds,TRUE,TRUE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+996,Business,Business,Ignore for Theme Selection,Business,,,1,FALSE,FALSE,FALSE,TRUE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+999,Business: Charity Usa,charity-usa,Ignore for Theme Selection,Business,Charity Usa,,2,FALSE,FALSE,FALSE,TRUE,,996,Business,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+1655,Business: Community Favorites,community-favorites,Ignore for Theme Selection,Business,Community Favorites,,2,FALSE,FALSE,FALSE,TRUE,,996,Business,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1654,Business: Featured Designs,featured-designs,Ignore for Theme Selection,Business,Featured Designs,,2,FALSE,FALSE,FALSE,TRUE,,996,Business,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1000,Business: Fire Sale,fire-sale,Ignore for Theme Selection,Business,Fire Sale,,2,FALSE,FALSE,FALSE,TRUE,,996,Business,FALSE,FALSE,FALSE,FALSE,FALSE,18,0,0,0,0,0
+1001,Business: In Stock,in-stock,Ignore for Theme Selection,Business,In Stock,,2,FALSE,FALSE,FALSE,TRUE,,996,Business,FALSE,FALSE,FALSE,FALSE,FALSE,3930,212,259,169,107,142
+1002,Business: Monthly,monthly,Ignore for Theme Selection,Business,Monthly,,2,FALSE,FALSE,FALSE,TRUE,,996,Business,FALSE,FALSE,FALSE,FALSE,FALSE,10,0,0,0,0,0
+1003,Business: New Product,new-product,Ignore for Theme Selection,Business,New Product,,2,FALSE,FALSE,FALSE,TRUE,,996,Business,FALSE,FALSE,FALSE,FALSE,FALSE,47,23,26,5,0,0
+679,Butterflies & Insects,Butterflies-Insects,,Butterflies & Insects,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,FALSE,FALSE,394,102,97,12,0,0
+307,Butterflies & Insects: Bees,Bees,,Butterflies & Insects,Bees,,2,FALSE,FALSE,FALSE,FALSE,,679,Butterflies & Insects,TRUE,TRUE,FALSE,FALSE,FALSE,64,17,16,0,0,0
+103,Butterflies & Insects: Butterflies,Butterflies,,Butterflies & Insects,Butterflies,,2,FALSE,FALSE,FALSE,FALSE,,679,Butterflies & Insects,TRUE,TRUE,TRUE,FALSE,FALSE,361,74,70,7,0,0
+26,Butterflies & Insects: Dragonflies,Dragonflies,,Butterflies & Insects,Dragonflies,,2,FALSE,FALSE,FALSE,FALSE,,679,Butterflies & Insects,TRUE,TRUE,TRUE,FALSE,FALSE,32,11,12,2,0,0
+808,Butterflies & Insects: Fireflies,Fireflies,,Butterflies & Insects,Fireflies,,2,FALSE,FALSE,FALSE,FALSE,,679,Butterflies & Insects,FALSE,TRUE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+101,Butterflies & Insects: Ladybugs,Ladybugs,,Butterflies & Insects,Ladybugs,,2,FALSE,FALSE,FALSE,FALSE,,679,Butterflies & Insects,TRUE,TRUE,TRUE,FALSE,FALSE,45,6,5,2,0,0
+8,Country Living,Country-Living,,Country Living,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,332,37,53,65,43,50
+190,Country Living: Americana,Americana,,Country Living,Americana,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,32,2,12,3,2,2
+57,Country Living: Barn Stars,Barn-Stars,,Country Living,Barn Stars,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,15,0,1,0,1,1
+346,Country Living: Country Music,Country-Music,,Country Living,Country Music,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+186,Country Living: Farm Country,Farm,,Country Living,Farm Country,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,163,14,21,25,18,22
+948,Country Living: Farmhouse,Farmhouses,,Country Living,Farmhouse,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,29,2,4,15,12,14
+53,Country Living: Houses,Farm-House,,Country Living,Houses,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,52,6,5,5,3,3
+810,Country Living: Mason Jars,Mason-Jars,,Country Living,Mason Jars,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,FALSE,31,1,5,1,0,0
+179,Country Living: Pineapples,Pineapples,,Country Living,Pineapples,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,FALSE,FALSE,FALSE,11,0,0,0,0,0
+959,Country Living: Red Truck,Red-Truck,,Country Living,Red Truck,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,12,0,1,4,6,7
+244,Country Living: Scarecrows,Scarecrows,,Country Living,Scarecrows,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,FALSE,FALSE,TRUE,FALSE,FALSE,24,0,0,8,0,0
+967,Country Living: Truck,Truck,,Country Living,Truck,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,8,0,1,4,1,1
+189,Country Living: Western,Western,,Country Living,Western,,2,FALSE,FALSE,FALSE,FALSE,,8,Country Living,TRUE,TRUE,TRUE,TRUE,TRUE,19,2,4,1,2,2
+882,Earth,Earth,,Earth,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+795,Everything Else,Everything-Else,,Everything Else,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,FALSE,24,0,0,0,0,0
+525,Family & Friends,Family-Friends,,Family & Friends,,,1,FALSE,FALSE,FALSE,FALSE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,83,18,18,4,4,4
+906,Family & Friends: Anniversary,Anniversary,,Family & Friends,Anniversary,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,6,0,0,0,0,0
+322,Family & Friends: Anniversary: Forever,Forever,,Family & Friends,Anniversary,Forever,3,FALSE,FALSE,FALSE,FALSE,,906,Family & Friends: Anniversary,FALSE,FALSE,FALSE,FALSE,FALSE,19,0,0,0,0,0
+166,Family & Friends: Anniversary: Happy Anniversary,Happy-Anniversary,,Family & Friends,Anniversary,Happy Anniversary,3,FALSE,FALSE,FALSE,FALSE,,906,Family & Friends: Anniversary,FALSE,FALSE,FALSE,FALSE,FALSE,2,0,0,0,0,0
+910,Family & Friends: Baby & Kids,Baby-And-Kids,,Family & Friends,Baby & Kids,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,19,6,3,1,1,1
+979,Family & Friends: Baby & Kids: Babies,Babies,,Family & Friends,Baby & Kids,Babies,3,FALSE,FALSE,FALSE,FALSE,,910,Family & Friends: Baby & Kids,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+172,Family & Friends: Baby & Kids: Storks,Storks,,Family & Friends,Baby & Kids,Storks,3,FALSE,FALSE,FALSE,FALSE,,910,Family & Friends: Baby & Kids,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+353,Family & Friends: Baby & Kids: Teddy Bears,Teddy-Bears,,Family & Friends,Baby & Kids,Teddy Bears,3,FALSE,FALSE,FALSE,FALSE,,910,Family & Friends: Baby & Kids,FALSE,FALSE,FALSE,FALSE,FALSE,5,0,0,0,0,0
+908,Family & Friends: Back to School,Back-To-School,,Family & Friends,Back to School,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,4,0,1,0,0,0
+990,Family & Friends: Baptism,Baptism,,Family & Friends,Baptism,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+907,Family & Friends: Birthday,Birthday,,Family & Friends,Birthday,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,19,0,1,0,0,0
+983,Family & Friends: Family,Family,,Family & Friends,Family,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,28,6,7,4,5,5
+982,Family & Friends: First Communion,First-Communion,,Family & Friends,First Communion,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+977,Family & Friends: Friends,Friends,,Family & Friends,Friends,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,8,1,1,1,2,1
+912,Family & Friends: Graduation,Graduation,,Family & Friends,Graduation,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+291,Family & Friends: Graduation: Celebrate,Celebrate,,Family & Friends,Graduation,Celebrate,3,FALSE,FALSE,FALSE,FALSE,,912,Family & Friends: Graduation,FALSE,FALSE,FALSE,FALSE,FALSE,6,0,1,0,0,0
+475,Family & Friends: Graduation: Congrats,Congrats,,Family & Friends,Graduation,Congrats,3,FALSE,FALSE,FALSE,FALSE,,912,Family & Friends: Graduation,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+976,Family & Friends: Grandparents,Grandparents,,Family & Friends,Grandparents,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,22,3,4,0,1,1
+909,Family & Friends: Wedding,Wedding,,Family & Friends,Wedding,,2,FALSE,TRUE,FALSE,FALSE,,525,Family & Friends,FALSE,FALSE,FALSE,FALSE,FALSE,11,0,0,0,0,0
+784,Fantasy,Fantasy,,Fantasy,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,20,2,3,5,1,2
+856,Fantasy: Fairies,Fairies,,Fantasy,Fairies,,2,FALSE,FALSE,FALSE,FALSE,,784,Fantasy,TRUE,TRUE,TRUE,FALSE,TRUE,11,1,2,1,0,1
+731,Fantasy: Mermaids,Mermaids,,Fantasy,Mermaids,,2,FALSE,FALSE,FALSE,FALSE,,784,Fantasy,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+987,Fantasy: Moon,Moon,,Fantasy,Moon,,2,FALSE,FALSE,FALSE,FALSE,,784,Fantasy,TRUE,TRUE,TRUE,TRUE,FALSE,5,0,0,2,1,0
+786,Fantasy: Unicorns,Unicorns,,Fantasy,Unicorns,,2,FALSE,FALSE,FALSE,FALSE,,784,Fantasy,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+997,Features,Features,Ignore for Theme Selection,Features,,,1,FALSE,FALSE,FALSE,TRUE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+1656,Features: Environmentally Friendly,environmentally-friendly,Ignore for Theme Selection,Features,Environmentally Friendly,,2,FALSE,FALSE,FALSE,TRUE,,997,Features,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+1004,Features: Glittertrends,glittertrends,Ignore for Theme Selection,Features,Glittertrends,,2,FALSE,FALSE,FALSE,TRUE,,997,Features,TRUE,TRUE,TRUE,TRUE,TRUE,34,0,0,0,0,0
+1005,Features: Premiersoft,premiersoft,Ignore for Theme Selection,Features,Premiersoft,,2,FALSE,FALSE,FALSE,TRUE,,997,Features,TRUE,TRUE,TRUE,TRUE,TRUE,2,0,0,0,0,0
+1006,Features: Printed In The Usa,printed-in-the-usa,Ignore for Theme Selection,Features,Printed In The Usa,,2,FALSE,FALSE,FALSE,TRUE,,997,Features,TRUE,TRUE,TRUE,TRUE,TRUE,233,16,29,33,17,31
+1007,Features: Reversible,reversible,Ignore for Theme Selection,Features,Reversible,,2,FALSE,FALSE,FALSE,TRUE,,997,Features,TRUE,TRUE,TRUE,TRUE,TRUE,3145,91,93,21,37,46
+1008,Features: Suedereflections,suedereflections,Ignore for Theme Selection,Features,Suedereflections,,2,FALSE,FALSE,FALSE,TRUE,,997,Features,TRUE,TRUE,TRUE,TRUE,TRUE,145,10,25,38,39,67
+936,First Responders,First-Responders,,First Responders,,,1,FALSE,FALSE,FALSE,FALSE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,6,0,2,0,0,0
+863,First Responders: Correctional Officers,Correctional,,First Responders,Correctional Officers,,2,FALSE,FALSE,FALSE,FALSE,,936,First Responders,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+866,First Responders: Dispatchers,Dispatcher,,First Responders,Dispatchers,,2,FALSE,FALSE,FALSE,FALSE,,936,First Responders,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+864,First Responders: Emergency Medical Services,Emergency,,First Responders,Emergency Medical Services,,2,FALSE,FALSE,FALSE,FALSE,,936,First Responders,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+191,First Responders: Fire Department,Fire-fighter,,First Responders,Fire Department,,2,FALSE,FALSE,FALSE,FALSE,,936,First Responders,FALSE,FALSE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+726,First Responders: Police Department,Police-officer,,First Responders,Police Department,,2,FALSE,FALSE,FALSE,FALSE,,936,First Responders,FALSE,FALSE,FALSE,FALSE,FALSE,9,0,0,0,0,0
+865,First Responders: Security Professionals,Security,,First Responders,Security Professionals,,2,FALSE,FALSE,FALSE,FALSE,,936,First Responders,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+861,First Responders: Women in Emergency Services,Women-first-responder,,First Responders,Women in Emergency Services,,2,FALSE,FALSE,FALSE,FALSE,,936,First Responders,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+445,Flowers,Flowers,,Flowers,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,829,83,85,62,15,23
+940,Flowers: Holiday Flowers,Holiday-Flowers,,Flowers,Holiday Flowers,,2,FALSE,FALSE,FALSE,FALSE,,445,Flowers,FALSE,FALSE,FALSE,TRUE,TRUE,24,0,0,0,15,23
+447,Flowers: Holiday Flowers: Amaryllis,Amaryllis,,Flowers,Holiday Flowers,Amaryllis,3,FALSE,FALSE,FALSE,FALSE,,940,Flowers: Holiday Flowers,FALSE,FALSE,FALSE,TRUE,TRUE,1,0,0,0,1,1
+667,Flowers: Holiday Flowers: Christmas Flowers,Christmas-Flowers,,Flowers,Holiday Flowers,Christmas Flowers,3,FALSE,FALSE,FALSE,FALSE,,940,Flowers: Holiday Flowers,FALSE,FALSE,FALSE,TRUE,TRUE,73,0,0,0,6,11
+627,Flowers: Holiday Flowers: Easter Lilies,Easter-Lilies,,Flowers,Holiday Flowers,Easter Lilies,3,FALSE,FALSE,FALSE,FALSE,,940,Flowers: Holiday Flowers,TRUE,FALSE,FALSE,FALSE,FALSE,9,7,0,0,0,0
+232,Flowers: Holiday Flowers: Poinsettias,Poinsettias,,Flowers,Holiday Flowers,Poinsettias,3,FALSE,FALSE,FALSE,FALSE,,940,Flowers: Holiday Flowers,FALSE,FALSE,FALSE,TRUE,TRUE,90,0,0,0,13,24
+937,Flowers: Spring Flowers,Spring-Flowers,,Flowers,Spring Flowers,,2,FALSE,FALSE,FALSE,FALSE,,445,Flowers,TRUE,TRUE,TRUE,TRUE,TRUE,204,88,36,1,1,1
+611,Flowers: Spring Flowers: Apple Blossoms,Apple-Blossoms,,Flowers,Spring Flowers,Apple Blossoms,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,FALSE,FALSE,FALSE,FALSE,11,1,0,0,0,0
+441,Flowers: Spring Flowers: Azaleas,Azaleas,,Flowers,Spring Flowers,Azaleas,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+614,Flowers: Spring Flowers: Bluebells,Bluebells,,Flowers,Spring Flowers,Bluebells,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+620,Flowers: Spring Flowers: Cherry Blossoms,Cherry-Blossoms,,Flowers,Spring Flowers,Cherry Blossoms,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,FALSE,FALSE,FALSE,FALSE,9,1,0,0,0,0
+623,Flowers: Spring Flowers: Crocuses,Crocuses,,Flowers,Spring Flowers,Crocuses,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+412,Flowers: Spring Flowers: Daffodils,Daffodils,,Flowers,Spring Flowers,Daffodils,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,FALSE,FALSE,FALSE,FALSE,23,3,0,0,0,0
+628,Flowers: Spring Flowers: Forget Me Nots,Forget-Me-Nots,,Flowers,Spring Flowers,Forget Me Nots,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,2,1,1,0,0,0
+435,Flowers: Spring Flowers: Hibiscus,Hibiscus,,Flowers,Spring Flowers,Hibiscus,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,FALSE,TRUE,FALSE,FALSE,FALSE,23,0,2,0,0,0
+440,Flowers: Spring Flowers: Hyacinths,Hyacinths,,Flowers,Spring Flowers,Hyacinths,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,FALSE,FALSE,FALSE,FALSE,4,2,0,0,0,0
+431,Flowers: Spring Flowers: Hydrangeas,Hydrangeas,,Flowers,Spring Flowers,Hydrangeas,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,TRUE,FALSE,FALSE,37,13,13,1,0,0
+409,Flowers: Spring Flowers: Irises,Irises,,Flowers,Spring Flowers,Irises,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,4,2,1,0,0,0
+426,Flowers: Spring Flowers: Lilacs,Lilacs,,Flowers,Spring Flowers,Lilacs,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,12,4,1,0,0,0
+410,Flowers: Spring Flowers: Lilies,Lilies,,Flowers,Spring Flowers,Lilies,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,29,3,3,0,0,0
+425,Flowers: Spring Flowers: Magnolias,Magnolias,,Flowers,Spring Flowers,Magnolias,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,6,2,1,0,0,0
+432,Flowers: Spring Flowers: Pansies,Pansies,,Flowers,Spring Flowers,Pansies,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,9,4,3,0,0,0
+438,Flowers: Spring Flowers: Peonies,Peonies,,Flowers,Spring Flowers,Peonies,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,TRUE,FALSE,FALSE,9,7,5,1,0,0
+421,Flowers: Spring Flowers: Roses,Roses,,Flowers,Spring Flowers,Roses,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,TRUE,TRUE,TRUE,110,12,9,1,1,1
+411,Flowers: Spring Flowers: Tulips,Tulips,,Flowers,Spring Flowers,Tulips,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,73,18,2,0,0,0
+646,Flowers: Spring Flowers: Violets,Violets,,Flowers,Spring Flowers,Violets,3,FALSE,FALSE,FALSE,FALSE,,937,Flowers: Spring Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,2,2,1,0,0,0
+938,Flowers: Summer & Fall Flowers,Summer-Fall-Flowers,,Flowers,Summer & Fall Flowers,,2,FALSE,FALSE,FALSE,FALSE,,445,Flowers,TRUE,TRUE,TRUE,FALSE,FALSE,416,51,91,93,0,0
+612,Flowers: Summer & Fall Flowers: Asters,Asters,,Flowers,Summer & Fall Flowers,Asters,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,TRUE,FALSE,FALSE,2,0,0,1,0,0
+613,Flowers: Summer & Fall Flowers: Black-Eyed Susans,Black-Eyed-Susans,,Flowers,Summer & Fall Flowers,Black-Eyed Susans,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,TRUE,FALSE,FALSE,4,1,2,1,0,0
+617,Flowers: Summer & Fall Flowers: Butterfly Bush,Butterfly-Bush,,Flowers,Summer & Fall Flowers,Butterfly Bush,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+619,Flowers: Summer & Fall Flowers: Carnations,Carnations,,Flowers,Summer & Fall Flowers,Carnations,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,TRUE,FALSE,FALSE,FALSE,1,0,1,0,0,0
+419,Flowers: Summer & Fall Flowers: Clematis,Clematis,,Flowers,Summer & Fall Flowers,Clematis,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+429,Flowers: Summer & Fall Flowers: Cone Flowers,Cone-Flowers,,Flowers,Summer & Fall Flowers,Cone Flowers,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,12,3,6,0,0,0
+713,Flowers: Summer & Fall Flowers: Cosmos,Cosmos,,Flowers,Summer & Fall Flowers,Cosmos,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,4,1,1,0,0,0
+436,Flowers: Summer & Fall Flowers: Dahlias,Dahlias,,Flowers,Summer & Fall Flowers,Dahlias,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,TRUE,FALSE,FALSE,15,0,0,4,0,0
+408,Flowers: Summer & Fall Flowers: Daisies,Daisies,,Flowers,Summer & Fall Flowers,Daisies,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,TRUE,FALSE,FALSE,209,43,49,6,0,0
+625,Flowers: Summer & Fall Flowers: Daylilies,Daylilies,,Flowers,Summer & Fall Flowers,Daylilies,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+418,Flowers: Summer & Fall Flowers: Delphines,Delphines,,Flowers,Summer & Fall Flowers,Delphines,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+716,Flowers: Summer & Fall Flowers: Fuchsias,Fuchsias,,Flowers,Summer & Fall Flowers,Fuchsias,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,1,1,1,0,0,0
+415,Flowers: Summer & Fall Flowers: Geraniums,Geraniums,,Flowers,Summer & Fall Flowers,Geraniums,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,32,8,10,0,0,0
+406,Flowers: Summer & Fall Flowers: Gerberas,Gerberas,,Flowers,Summer & Fall Flowers,Gerberas,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,TRUE,FALSE,FALSE,7,2,2,1,0,0
+630,Flowers: Summer & Fall Flowers: Globe Amaranth,Globe-Amaranth,,Flowers,Summer & Fall Flowers,Globe Amaranth,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+632,Flowers: Summer & Fall Flowers: Hollyhocks,Hollyhocks,,Flowers,Summer & Fall Flowers,Hollyhocks,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,1,1,1,0,0,0
+633,Flowers: Summer & Fall Flowers: Hummingbird Flowers,Hummingbird-and-Flowers,,Flowers,Summer & Fall Flowers,Hummingbird Flowers,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+635,Flowers: Summer & Fall Flowers: Impatiens,Impatiens,,Flowers,Summer & Fall Flowers,Impatiens,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+637,Flowers: Summer & Fall Flowers: Larkspur,Larkspur,,Flowers,Summer & Fall Flowers,Larkspur,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+638,Flowers: Summer & Fall Flowers: Lavender,Lavender,,Flowers,Summer & Fall Flowers,Lavender,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+782,Flowers: Summer & Fall Flowers: Marigolds,Marigolds,,Flowers,Summer & Fall Flowers,Marigolds,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+729,Flowers: Summer & Fall Flowers: Morning Glories,Morning-Glories,,Flowers,Summer & Fall Flowers,Morning Glories,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,2,2,2,0,0,0
+433,Flowers: Summer & Fall Flowers: Mums,Mums,,Flowers,Summer & Fall Flowers,Mums,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,TRUE,FALSE,FALSE,27,0,0,17,0,0
+641,Flowers: Summer & Fall Flowers: Pentas,Pentas,,Flowers,Summer & Fall Flowers,Pentas,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+422,Flowers: Summer & Fall Flowers: Petunias,Petunias,,Flowers,Summer & Fall Flowers,Petunias,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+413,Flowers: Summer & Fall Flowers: Ranunculus,Ranunculus,,Flowers,Summer & Fall Flowers,Ranunculus,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,1,1,1,0,0,0
+404,Flowers: Summer & Fall Flowers: Sunflowers,Sunflowers,,Flowers,Summer & Fall Flowers,Sunflowers,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,TRUE,FALSE,FALSE,280,16,49,78,0,0
+644,Flowers: Summer & Fall Flowers: Verbena,Verbena,,Flowers,Summer & Fall Flowers,Verbena,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+710,Flowers: Summer & Fall Flowers: Veronica,Veronica,,Flowers,Summer & Fall Flowers,Veronica,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+645,Flowers: Summer & Fall Flowers: Vinca,Vincas,,Flowers,Summer & Fall Flowers,Vinca,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+420,Flowers: Summer & Fall Flowers: Zinnias,Zinnias,,Flowers,Summer & Fall Flowers,Zinnias,3,FALSE,FALSE,FALSE,FALSE,,938,Flowers: Summer & Fall Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,5,3,3,0,0,0
+941,Flowers: Tropical & Exotic Flowers,Tropical-Flowers,,Flowers,Tropical & Exotic Flowers,,2,FALSE,FALSE,FALSE,FALSE,,445,Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,3,0,3,0,0,0
+618,Flowers: Tropical & Exotic Flowers: Calla Lilies,Calla-Lilies,,Flowers,Tropical & Exotic Flowers,Calla Lilies,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+742,Flowers: Tropical & Exotic Flowers: Cattails,Cattails,,Flowers,Tropical & Exotic Flowers,Cattails,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+669,Flowers: Tropical & Exotic Flowers: Exotic Flowers,Exotic-Flowers,,Flowers,Tropical & Exotic Flowers,Exotic Flowers,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,5,1,2,0,0,0
+443,Flowers: Tropical & Exotic Flowers: Lotus,Lotus,,Flowers,Tropical & Exotic Flowers,Lotus,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,5,1,2,0,0,0
+442,Flowers: Tropical & Exotic Flowers: Orchids,Orchids,,Flowers,Tropical & Exotic Flowers,Orchids,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+649,Flowers: Tropical & Exotic Flowers: Tropical Flowers,Tropical-Flowers,,Flowers,Tropical & Exotic Flowers,Tropical Flowers,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,FALSE,TRUE,FALSE,FALSE,FALSE,4,0,4,0,0,0
+942,Flowers: Tropical & Exotic Flowers: Water Flowers,Water-Flowers,,Flowers,Tropical & Exotic Flowers,Water Flowers,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+647,Flowers: Tropical & Exotic Flowers: Water Lilies,Water-Lilies,,Flowers,Tropical & Exotic Flowers,Water Lilies,3,FALSE,FALSE,FALSE,FALSE,,941,Flowers: Tropical & Exotic Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,3,2,2,0,0,0
+939,Flowers: Wild Flowers,Wild-Flowers,,Flowers,Wild Flowers,,2,FALSE,FALSE,FALSE,FALSE,,445,Flowers,TRUE,TRUE,TRUE,TRUE,FALSE,32,21,22,3,1,0
+434,Flowers: Wild Flowers: Bluebonnets,Bluebonnets,,Flowers,Wild Flowers,Bluebonnets,3,FALSE,FALSE,FALSE,FALSE,,939,Flowers: Wild Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,2,0,0,0,0,0
+616,Flowers: Wild Flowers: Buttercups,Buttercups,,Flowers,Wild Flowers,Buttercups,3,FALSE,FALSE,FALSE,FALSE,,939,Flowers: Wild Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+621,Flowers: Wild Flowers: Clovers,Clovers,,Flowers,Wild Flowers,Clovers,3,FALSE,FALSE,FALSE,FALSE,,939,Flowers: Wild Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+427,Flowers: Wild Flowers: Columbines,Columbines,,Flowers,Wild Flowers,Columbines,3,FALSE,FALSE,FALSE,FALSE,,939,Flowers: Wild Flowers,TRUE,FALSE,TRUE,FALSE,FALSE,1,1,0,1,0,0
+417,Flowers: Wild Flowers: Poppies,Poppies,,Flowers,Wild Flowers,Poppies,3,FALSE,FALSE,FALSE,FALSE,,939,Flowers: Wild Flowers,TRUE,TRUE,FALSE,FALSE,FALSE,25,7,7,0,0,0
+416,Flowers: Wild Flowers: Thistles,Thistles,,Flowers,Wild Flowers,Thistles,3,FALSE,FALSE,FALSE,FALSE,,939,Flowers: Wild Flowers,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+279,Food & Wine,Food-Wine,,Food & Wine,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,168,4,14,11,1,3
+449,Food & Wine: Apples,Apples,,Food & Wine,Apples,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,FALSE,FALSE,TRUE,FALSE,FALSE,53,0,0,4,0,0
+318,Food & Wine: BBQ,BBQ,,Food & Wine,BBQ,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,FALSE,TRUE,FALSE,FALSE,FALSE,1,0,1,0,0,0
+945,Food & Wine: Citrus,Citrus,,Food & Wine,Citrus,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,TRUE,FALSE,FALSE,2,1,1,1,0,0
+29,Food & Wine: Coffee,Coffee,,Food & Wine,Coffee,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,TRUE,TRUE,TRUE,5,0,0,1,1,1
+271,Food & Wine: Fruits,Fruits,,Food & Wine,Fruits,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,TRUE,FALSE,FALSE,16,2,7,3,0,0
+1019,Food & Wine: General Pumpkins,General-Pumpkins,,Food & Wine,General Pumpkins,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,FALSE,FALSE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+451,Food & Wine: Grapes,Grapes,,Food & Wine,Grapes,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,FALSE,TRUE,TRUE,FALSE,FALSE,25,0,0,1,0,0
+460,Food & Wine: Ice Cream,Ice-Cream,,Food & Wine,Ice Cream,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,FALSE,TRUE,FALSE,FALSE,FALSE,8,0,3,0,0,0
+461,Food & Wine: Lemonade,Lemonade,,Food & Wine,Lemonade,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,FALSE,FALSE,FALSE,7,0,1,0,0,0
+821,Food & Wine: Lemons,Lemons,,Food & Wine,Lemons,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,FALSE,FALSE,FALSE,13,1,4,0,0,0
+263,Food & Wine: Strawberries,Strawberries,,Food & Wine,Strawberries,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,FALSE,FALSE,FALSE,11,1,4,0,0,0
+245,Food & Wine: Sweets,Sweets,,Food & Wine,Sweets,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,TRUE,TRUE,TRUE,23,0,3,1,1,3
+264,Food & Wine: Watermelon,Watermelon,,Food & Wine,Watermelon,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,FALSE,TRUE,FALSE,FALSE,FALSE,21,0,8,0,0,0
+176,Food & Wine: Wine & Drinks,Wine-Drinks,,Food & Wine,Wine & Drinks,,2,FALSE,FALSE,FALSE,FALSE,,279,Food & Wine,TRUE,TRUE,TRUE,TRUE,FALSE,59,0,0,1,0,0
+519,For The Cause,For-The-Cause,,For The Cause,,,1,FALSE,FALSE,FALSE,FALSE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,131,2,2,0,0,0
+707,For The Cause: Animals,Animals,,For The Cause,Animals,,2,FALSE,FALSE,FALSE,FALSE,,519,For The Cause,FALSE,FALSE,FALSE,FALSE,FALSE,12,1,1,0,0,0
+819,For The Cause: Autism Awareness,Autism-Awareness,,For The Cause,Autism Awareness,,2,FALSE,FALSE,FALSE,FALSE,,519,For The Cause,FALSE,FALSE,FALSE,FALSE,FALSE,4,0,0,0,0,0
+858,For The Cause: Awareness,Awareness,,For The Cause,Awareness,,2,FALSE,FALSE,FALSE,FALSE,,519,For The Cause,FALSE,FALSE,FALSE,FALSE,FALSE,26,0,0,0,0,0
+527,For The Cause: Breast Cancer Awareness,Breast-Cancer-Awareness,,For The Cause,Breast Cancer Awareness,,2,FALSE,FALSE,FALSE,FALSE,,519,For The Cause,FALSE,FALSE,FALSE,FALSE,FALSE,7,0,0,0,0,0
+825,For The Cause: Coronavirus,Coronavirus,,For The Cause,Coronavirus,,2,FALSE,FALSE,FALSE,FALSE,,519,For The Cause,FALSE,FALSE,FALSE,FALSE,FALSE,52,0,0,0,0,0
+528,For The Cause: Gay Pride,Gay-Pride,,For The Cause,Gay Pride,,2,FALSE,FALSE,FALSE,FALSE,,519,For The Cause,FALSE,FALSE,FALSE,FALSE,FALSE,9,0,0,0,0,0
+530,For The Cause: Peace,Peace,,For The Cause,Peace,,2,FALSE,FALSE,FALSE,FALSE,,519,For The Cause,FALSE,FALSE,FALSE,FALSE,FALSE,20,1,1,0,1,1
+928,Gardens,Gardens,,Gardens,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,146,21,23,41,23,24
+984,Gardens: Baskets,Baskets,,Gardens,Baskets,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,TRUE,TRUE,6,0,0,4,2,3
+277,Gardens: Birdhouses,Birdhouses,,Gardens,Birdhouses,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,TRUE,TRUE,90,9,13,9,6,6
+325,Gardens: Bless My Garden,Bless-My-Garden,,Gardens,Bless My Garden,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,FALSE,FALSE,10,6,6,0,0,0
+424,Gardens: Dogwood,Dogwood,,Gardens,Dogwood,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,FALSE,FALSE,FALSE,FALSE,7,5,0,0,0,0
+516,Gardens: Garden Gnomes,Garden-Gnomes,,Gardens,Garden Gnomes,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,TRUE,TRUE,99,4,5,1,1,1
+957,Gardens: Potted Floral,Potted-Floral,,Gardens,Potted Floral,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,FALSE,FALSE,8,2,3,6,0,0
+921,Gardens: Rain Boots,Rain-Boots,,Gardens,Rain Boots,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,FALSE,FALSE,FALSE,1,1,1,0,0,0
+672,Gardens: Shrubs,Shrubs,,Gardens,Shrubs,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+341,Gardens: Trees,Trees,,Gardens,Trees,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,TRUE,TRUE,65,1,2,9,11,12
+273,Gardens: Watering Cans,Watering-Cans,,Gardens,Watering Cans,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,FALSE,FALSE,43,3,5,1,0,0
+970,Gardens: Wheelbarrow,Wheelbarrow,,Gardens,Wheelbarrow,,2,FALSE,FALSE,FALSE,FALSE,,928,Gardens,TRUE,TRUE,TRUE,FALSE,FALSE,1,0,0,1,0,0
+468,Great Outdoors,Great-Outdoors,,Great Outdoors,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,103,11,17,11,7,5
+40,Great Outdoors: Camping,Camping,,Great Outdoors,Camping,,2,FALSE,FALSE,FALSE,FALSE,,468,Great Outdoors,TRUE,TRUE,TRUE,FALSE,FALSE,31,0,2,1,0,0
+121,Great Outdoors: Fishing,Fishing,,Great Outdoors,Fishing,,2,FALSE,FALSE,FALSE,FALSE,,468,Great Outdoors,TRUE,TRUE,TRUE,FALSE,FALSE,17,3,4,0,0,0
+454,Great Outdoors: Hunting,Hunting,,Great Outdoors,Hunting,,2,FALSE,FALSE,FALSE,FALSE,,468,Great Outdoors,FALSE,FALSE,TRUE,TRUE,FALSE,1,0,0,1,0,0
+33,Great Outdoors: Lake,Lakes,,Great Outdoors,Lake,,2,FALSE,FALSE,FALSE,FALSE,,468,Great Outdoors,TRUE,TRUE,TRUE,FALSE,FALSE,36,6,8,2,0,0
+496,Great Outdoors: Outdoors,Outdoors,,Great Outdoors,Outdoors,,2,FALSE,FALSE,FALSE,FALSE,,468,Great Outdoors,TRUE,TRUE,TRUE,TRUE,TRUE,13,3,5,3,4,3
+812,Great Outdoors: Rivers,Rivers,,Great Outdoors,Rivers,,2,FALSE,FALSE,FALSE,FALSE,,468,Great Outdoors,TRUE,TRUE,TRUE,FALSE,FALSE,5,4,4,0,0,0
+869,Humor,Humor,,Humor,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,84,6,19,7,7,16
+118,Love & Happiness,Love-Happiness,,Love & Happiness,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,192,42,41,14,6,6
+328,Love & Happiness: Bless Your Heart,Bless-Your-Heart,,Love & Happiness,Bless Your Heart,,2,FALSE,FALSE,FALSE,FALSE,,118,Love & Happiness,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+950,Love & Happiness: Hello,Hello,,Love & Happiness,Hello,,2,FALSE,FALSE,FALSE,FALSE,,118,Love & Happiness,TRUE,TRUE,TRUE,TRUE,TRUE,5,2,3,1,1,1
+289,Love & Happiness: Home Sweet Home,Home-Sweet-Home,,Love & Happiness,Home Sweet Home,,2,FALSE,FALSE,FALSE,FALSE,,118,Love & Happiness,TRUE,TRUE,TRUE,TRUE,TRUE,77,13,16,5,4,3
+323,Love & Happiness: Live/Laugh/Love,Live-Laugh-Love,,Love & Happiness,Live/Laugh/Love,,2,FALSE,FALSE,FALSE,FALSE,,118,Love & Happiness,TRUE,TRUE,TRUE,TRUE,FALSE,24,2,3,0,0,0
+929,Military,Military,,Military,,,1,FALSE,FALSE,FALSE,FALSE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,7,0,0,0,0,0
+930,Military: Air Force,Air-Force,,Military,Air Force,,2,FALSE,FALSE,FALSE,FALSE,,929,Military,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+931,Military: Army,Army,,Military,Army,,2,FALSE,FALSE,FALSE,FALSE,,929,Military,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+932,Military: Coast Guard,Coast-Guard,,Military,Coast Guard,,2,FALSE,FALSE,FALSE,FALSE,,929,Military,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+933,Military: Marines,Marines,,Military,Marines,,2,FALSE,FALSE,FALSE,FALSE,,929,Military,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+934,Military: Navy,Navy,,Military,Navy,,2,FALSE,FALSE,FALSE,FALSE,,929,Military,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+58,Military: Support Our Troops,Support-Our-Troops,,Military,Support Our Troops,,2,FALSE,FALSE,FALSE,FALSE,,929,Military,FALSE,FALSE,FALSE,FALSE,FALSE,32,0,0,0,0,0
+708,Military: Veterans,Veterans,,Military,Veterans,,2,FALSE,FALSE,FALSE,FALSE,,929,Military,FALSE,FALSE,FALSE,FALSE,FALSE,9,0,0,0,0,0
+124,MLB Baseball: 2,Sports & Recreation,,MLB Baseball,,2,3,FALSE,FALSE,FALSE,FALSE,,Sports & Recreation,,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+13,Monogrammed,Monogrammed,,Monogrammed,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,FALSE,87,1,2,1,0,0
+131,Monogrammed: Letter A,Letter-A,,Monogrammed,Letter A,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,99,1,1,0,0,0
+132,Monogrammed: Letter B,Letter-B,,Monogrammed,Letter B,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+133,Monogrammed: Letter C,Letter-C,,Monogrammed,Letter C,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,2,0,1,1,0,0
+134,Monogrammed: Letter D,Letter-D,,Monogrammed,Letter D,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+135,Monogrammed: Letter E,Letter-E,,Monogrammed,Letter E,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+136,Monogrammed: Letter F,Letter-F,,Monogrammed,Letter F,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+137,Monogrammed: Letter G,Letter-G,,Monogrammed,Letter G,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+138,Monogrammed: Letter H,Letter-H,,Monogrammed,Letter H,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+139,Monogrammed: Letter I,Letter-I,,Monogrammed,Letter I,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+140,Monogrammed: Letter J,Letter-J,,Monogrammed,Letter J,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+141,Monogrammed: Letter K,Letter-K,,Monogrammed,Letter K,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+142,Monogrammed: Letter L,Letter-L,,Monogrammed,Letter L,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+143,Monogrammed: Letter M,Letter-M,,Monogrammed,Letter M,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+144,Monogrammed: Letter N,Letter-N,,Monogrammed,Letter N,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+145,Monogrammed: Letter O,Letter-O,,Monogrammed,Letter O,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+146,Monogrammed: Letter P,Letter-P,,Monogrammed,Letter P,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+147,Monogrammed: Letter Q,Letter-Q,,Monogrammed,Letter Q,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+148,Monogrammed: Letter R,Letter-R,,Monogrammed,Letter R,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+149,Monogrammed: Letter S,Letter-S,,Monogrammed,Letter S,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+150,Monogrammed: Letter T,Letter-T,,Monogrammed,Letter T,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+151,Monogrammed: Letter U,Letter-U,,Monogrammed,Letter U,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+152,Monogrammed: Letter V,Letter-V,,Monogrammed,Letter V,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+153,Monogrammed: Letter W,Letter-W,,Monogrammed,Letter W,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+154,Monogrammed: Letter X,Letter-X,,Monogrammed,Letter X,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+155,Monogrammed: Letter Y,Letter-Y,,Monogrammed,Letter Y,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+156,Monogrammed: Letter Z,Letter-Z,,Monogrammed,Letter Z,,2,FALSE,FALSE,FALSE,FALSE,,13,Monogrammed,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+125,Nascar: 2,Sports & Recreation,,Nascar,,2,3,FALSE,FALSE,FALSE,FALSE,,Sports & Recreation,,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+126,NBA Basketball: 2,Sports & Recreation,,NBA Basketball,,2,3,FALSE,FALSE,FALSE,FALSE,,Sports & Recreation,,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+127,NCAA: 2,Sports & Recreation,,NCAA,,2,3,FALSE,FALSE,FALSE,FALSE,,Sports & Recreation,,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+128,NFL Football: 2,Sports & Recreation,,NFL Football,,2,3,FALSE,FALSE,FALSE,FALSE,,Sports & Recreation,,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+129,NHL Hockey: 2,Sports & Recreation,,NHL Hockey,,2,3,FALSE,FALSE,FALSE,FALSE,,Sports & Recreation,,FALSE,FALSE,FALSE,FALSE,FALSE,154,0,0,0,0,0
+6,Open & Sale,Open-Sale,,Open & Sale,,,1,FALSE,FALSE,FALSE,FALSE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,5,0,0,0,0,0
+521,Party Time,Party-Time,,Party Time,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,FALSE,74,0,9,2,0,0
+657,Party Time: 5 O Clock Somewhere,5-O-Clock-Somewhere,,Party Time,5 O Clock Somewhere,,2,FALSE,FALSE,FALSE,FALSE,,521,Party Time,TRUE,TRUE,FALSE,FALSE,FALSE,14,0,1,0,0,0
+656,Party Time: Balloons,Balloons,,Party Time,Balloons,,2,FALSE,FALSE,FALSE,FALSE,,521,Party Time,TRUE,TRUE,TRUE,TRUE,FALSE,9,0,0,0,0,0
+653,Party Time: Beer,Beer,,Party Time,Beer,,2,FALSE,FALSE,FALSE,FALSE,,521,Party Time,TRUE,TRUE,TRUE,TRUE,FALSE,30,1,1,1,0,0
+658,Party Time: Girls Night,Girls-Night,,Party Time,Girls Night,,2,FALSE,FALSE,FALSE,FALSE,,521,Party Time,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+654,Party Time: Margaritas,Margaritas,,Party Time,Margaritas,,2,FALSE,FALSE,FALSE,FALSE,,521,Party Time,TRUE,TRUE,FALSE,FALSE,FALSE,2,0,1,0,0,0
+660,Party Time: Pool Party,Pool-Party,,Party Time,Pool Party,,2,FALSE,FALSE,FALSE,FALSE,,521,Party Time,FALSE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+655,Party Time: The Party is Here,The-Party-is-Here,,Party Time,The Party is Here,,2,FALSE,FALSE,FALSE,FALSE,,521,Party Time,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,1,0,0
+7,Patriotic,Patriotic,,Patriotic,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,FALSE,266,5,51,4,1,0
+47,Patriotic: American Flags,American-Flags,,Patriotic,American Flags,,2,FALSE,FALSE,FALSE,FALSE,,7,Patriotic,TRUE,TRUE,TRUE,TRUE,TRUE,184,3,23,2,2,1
+453,Patriotic: God Bless America,God-Bless-America,,Patriotic,God Bless America,,2,FALSE,FALSE,FALSE,FALSE,,7,Patriotic,TRUE,TRUE,TRUE,TRUE,FALSE,18,0,1,0,0,0
+52,Patriotic: Hearts and Stripes,Hearts-and-Stripes,,Patriotic,Hearts and Stripes,,2,FALSE,FALSE,FALSE,FALSE,,7,Patriotic,TRUE,TRUE,TRUE,TRUE,FALSE,7,0,2,0,0,0
+54,Patriotic: Liberty & Freedom,Liberty-Freedom,,Patriotic,Liberty & Freedom,,2,FALSE,FALSE,FALSE,FALSE,,7,Patriotic,TRUE,TRUE,TRUE,TRUE,FALSE,25,0,8,0,0,0
+59,Patriotic: Uncle Sam,Uncle-Sam,,Patriotic,Uncle Sam,,2,FALSE,FALSE,FALSE,FALSE,,7,Patriotic,FALSE,TRUE,FALSE,FALSE,FALSE,4,0,0,0,0,0
+398,Patterns,Patterns,,Patterns,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,89,4,9,28,23,28
+485,Patterns: Camo,Camo,,Patterns,Camo,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,1,0,0
+985,Patterns: Checkered,Checkered,,Patterns,Checkered,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,TRUE,15,0,1,8,5,6
+399,Patterns: Chevron,Chevron,,Patterns,Chevron,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,1,0
+947,Patterns: Diamonds,Diamonds,,Patterns,Diamonds,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,1,0,0
+817,Patterns: Lattice,Lattice,,Patterns,Lattice,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,TRUE,2,1,1,0,1,1
+956,Patterns: Plaid,Plaid,,Patterns,Plaid,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,TRUE,29,1,0,10,16,19
+400,Patterns: Polka Dots,Polka-Dots,,Patterns,Polka Dots,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,TRUE,19,1,3,5,1,1
+489,Patterns: Quatrefoil,Quatrefoil,,Patterns,Quatrefoil,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+965,Patterns: Stained Glass,Stained-Glass,,Patterns,Stained Glass,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,TRUE,4,4,1,0,0,0
+487,Patterns: Stripes,Stripes,,Patterns,Stripes,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,TRUE,25,0,3,5,2,4
+966,Patterns: Tie Dye,Tie-Dye,,Patterns,Tie Dye,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+483,Patterns: Zebra Stripes,Zebra-Stripes,,Patterns,Zebra Stripes,,2,FALSE,FALSE,FALSE,FALSE,,398,Patterns,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+1,Pets & Animals,Pets-Animals,,Pets & Animals,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,659,62,59,41,43,52
+674,Pets & Animals: Aquatic Life,Aquatic-Life,,Pets & Animals,Aquatic Life,,2,FALSE,FALSE,FALSE,FALSE,,1,Pets & Animals,TRUE,TRUE,TRUE,FALSE,TRUE,74,6,20,4,0,3
+773,Pets & Animals: Aquatic Life: Beavers,Beavers,,Pets & Animals,Aquatic Life,Beavers,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+357,Pets & Animals: Aquatic Life: Crabs,Crabs,,Pets & Animals,Aquatic Life,Crabs,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,TRUE,FALSE,FALSE,5,0,1,1,0,0
+361,Pets & Animals: Aquatic Life: Dolphins,Dolphins,,Pets & Animals,Aquatic Life,Dolphins,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+359,Pets & Animals: Aquatic Life: Fish,Fish,,Pets & Animals,Aquatic Life,Fish,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,5,1,3,0,0,0
+109,Pets & Animals: Aquatic Life: Frogs,Frogs,,Pets & Animals,Aquatic Life,Frogs,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,14,6,7,0,0,0
+952,Pets & Animals: Aquatic Life: Koi,Koi,,Pets & Animals,Aquatic Life,Koi,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+360,Pets & Animals: Aquatic Life: Lobsters,Lobsters,,Pets & Animals,Aquatic Life,Lobsters,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+781,Pets & Animals: Aquatic Life: Octopuses,Octopuses,,Pets & Animals,Aquatic Life,Octopuses,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+356,Pets & Animals: Aquatic Life: Sea Shells,Sea-Shells,,Pets & Animals,Aquatic Life,Sea Shells,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,TRUE,FALSE,TRUE,35,0,7,4,0,3
+362,Pets & Animals: Aquatic Life: Seahorses,Seahorses,,Pets & Animals,Aquatic Life,Seahorses,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,3,0,2,0,0,0
+358,Pets & Animals: Aquatic Life: Starfish,Starfish,,Pets & Animals,Aquatic Life,Starfish,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,TRUE,FALSE,TRUE,33,0,7,2,0,2
+326,Pets & Animals: Aquatic Life: Turtles,Turtles,,Pets & Animals,Aquatic Life,Turtles,3,FALSE,FALSE,FALSE,FALSE,,674,Pets & Animals: Aquatic Life,TRUE,TRUE,FALSE,FALSE,FALSE,8,0,3,0,0,0
+102,Pets & Animals: Bunnies,Bunnies,,Pets & Animals,Bunnies,,2,FALSE,FALSE,FALSE,FALSE,,1,Pets & Animals,TRUE,TRUE,TRUE,TRUE,TRUE,124,31,5,2,4,4
+104,Pets & Animals: Cats,Cats,,Pets & Animals,Cats,,2,FALSE,FALSE,FALSE,FALSE,,1,Pets & Animals,TRUE,TRUE,TRUE,TRUE,TRUE,177,2,4,3,3,7
+744,Pets & Animals: Cats: Black,Black-Cats,,Pets & Animals,Cats,Black,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,TRUE,FALSE,FALSE,4,0,0,1,0,0
+749,Pets & Animals: Cats: Black & White,Black-and-White-Cats,,Pets & Animals,Cats,Black & White,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+751,Pets & Animals: Cats: Brown,Brown-Cats,,Pets & Animals,Cats,Brown,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+750,Pets & Animals: Cats: Brown Tabby,Brown-Tabby,,Pets & Animals,Cats,Brown Tabby,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,TRUE,TRUE,TRUE,3,0,0,1,1,1
+764,Pets & Animals: Cats: Brown w/White,Brown-White-Cats,,Pets & Animals,Cats,Brown w/White,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+752,Pets & Animals: Cats: Calico,Calico-Cats,,Pets & Animals,Cats,Calico,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,TRUE,FALSE,TRUE,FALSE,FALSE,2,1,0,1,0,0
+753,Pets & Animals: Cats: Cream,Cream-Cats,,Pets & Animals,Cats,Cream,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+759,Pets & Animals: Cats: Cream Tabby,Cream-Tabby,,Pets & Animals,Cats,Cream Tabby,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+754,Pets & Animals: Cats: Gray Tuxedo,Gray-Tuxedo,,Pets & Animals,Cats,Gray Tuxedo,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,TRUE,FALSE,FALSE,2,0,0,1,0,0
+755,Pets & Animals: Cats: Grey,Grey-Cats,,Pets & Animals,Cats,Grey,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,TRUE,FALSE,FALSE,2,0,0,1,0,0
+756,Pets & Animals: Cats: Grey Tabby,Grey-Tabby,,Pets & Animals,Cats,Grey Tabby,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,TRUE,TRUE,FALSE,TRUE,TRUE,3,1,1,0,1,1
+974,Pets & Animals: Cats: Memorial,Cats-Memorial,,Pets & Animals,Cats,Memorial,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+757,Pets & Animals: Cats: Orange,Orange-Cats,,Pets & Animals,Cats,Orange,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,TRUE,FALSE,FALSE,FALSE,2,0,1,0,0,0
+758,Pets & Animals: Cats: Orange Tabby,Orange-Tabby,,Pets & Animals,Cats,Orange Tabby,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,TRUE,TRUE,TRUE,FALSE,FALSE,9,1,3,1,0,0
+765,Pets & Animals: Cats: Orange w/White,Orange-White-Cats,,Pets & Animals,Cats,Orange w/White,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,TRUE,FALSE,FALSE,FALSE,FALSE,1,1,0,0,0,0
+746,Pets & Animals: Cats: Paws,Cats-Paw-Print,,Pets & Animals,Cats,Paws,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,TRUE,FALSE,FALSE,25,0,0,1,0,0
+761,Pets & Animals: Cats: Ragdoll,Ragdoll-Cats,,Pets & Animals,Cats,Ragdoll,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+760,Pets & Animals: Cats: Siamese,Siamese-Cats,,Pets & Animals,Cats,Siamese,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+762,Pets & Animals: Cats: Tuxedo,Tuxedo-Cats,,Pets & Animals,Cats,Tuxedo,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+763,Pets & Animals: Cats: White,White-Cats,,Pets & Animals,Cats,White,3,FALSE,FALSE,FALSE,FALSE,,104,Pets & Animals: Cats,FALSE,FALSE,FALSE,FALSE,FALSE,2,0,0,0,0,0
+769,Pets & Animals: Dinosaurs,Dinosaurs,,Pets & Animals,Dinosaurs,,2,FALSE,FALSE,FALSE,FALSE,,1,Pets & Animals,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+107,Pets & Animals: Dogs,Dogs,,Pets & Animals,Dogs,,2,FALSE,FALSE,FALSE,FALSE,,1,Pets & Animals,TRUE,TRUE,TRUE,TRUE,TRUE,213,7,9,6,6,12
+535,Pets & Animals: Dogs: Basset Hounds,Basset-Hounds,,Pets & Animals,Dogs,Basset Hounds,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,2,0,0,0,0,0
+557,Pets & Animals: Dogs: Beagles,Beagles,,Pets & Animals,Dogs,Beagles,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,5,0,0,0,1,1
+687,Pets & Animals: Dogs: Bichon Frise,Bichon-Frise,,Pets & Animals,Dogs,Bichon Frise,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+562,Pets & Animals: Dogs: Border Collies,Border-Collies,,Pets & Animals,Dogs,Border Collies,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+541,Pets & Animals: Dogs: Boston Terriers,Boston-Terriers,,Pets & Animals,Dogs,Boston Terriers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,1,0,0,0,0,0
+534,Pets & Animals: Dogs: Boxers,Boxers,,Pets & Animals,Dogs,Boxers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,1,0,0,0,0,0
+688,Pets & Animals: Dogs: Brittany Spaniels,Brittany-Spaniels,,Pets & Animals,Dogs,Brittany Spaniels,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+533,Pets & Animals: Dogs: Bulldogs,Bulldogs,,Pets & Animals,Dogs,Bulldogs,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,3,0,0,0,0,0
+543,Pets & Animals: Dogs: Chihuahuas,Chihuahuas,,Pets & Animals,Dogs,Chihuahuas,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,3,0,0,0,0,0
+559,Pets & Animals: Dogs: Cocker Spaniels,Cocker-Spaniels,,Pets & Animals,Dogs,Cocker Spaniels,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,1,0,0,0,0,0
+690,Pets & Animals: Dogs: Collies,Collies,,Pets & Animals,Dogs,Collies,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,7,0,0,0,0,0
+538,Pets & Animals: Dogs: Dachshunds,Dachshunds,,Pets & Animals,Dogs,Dachshunds,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,7,0,0,0,1,2
+558,Pets & Animals: Dogs: Dalmatians,Dalmatians,,Pets & Animals,Dogs,Dalmatians,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+545,Pets & Animals: Dogs: Dogsome,Dogsome,,Pets & Animals,Dogs,Dogsome,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,101,0,0,0,0,0
+683,Pets & Animals: Dogs: Flat-coated Retrievers,Flat-coated-Retrievers,,Pets & Animals,Dogs,Flat-coated Retrievers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+686,Pets & Animals: Dogs: Fox Terriers,Fox-Terriers,,Pets & Animals,Dogs,Fox Terriers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+569,Pets & Animals: Dogs: French Bulldogs,French-Bulldogs,,Pets & Animals,Dogs,French Bulldogs,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+550,Pets & Animals: Dogs: German Shepherds,German-Shepherds,,Pets & Animals,Dogs,German Shepherds,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,3,0,0,0,0,0
+561,Pets & Animals: Dogs: German Shorthaired Pointers,German-Shorthaired-Pointers,,Pets & Animals,Dogs,German Shorthaired Pointers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+537,Pets & Animals: Dogs: Golden Retrievers,Golden-Retrievers,,Pets & Animals,Dogs,Golden Retrievers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,20,3,6,1,2,2
+564,Pets & Animals: Dogs: Great Danes,Great-Danes,,Pets & Animals,Dogs,Great Danes,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+684,Pets & Animals: Dogs: Great Pyrenees,Great-Pyrenees,,Pets & Animals,Dogs,Great Pyrenees,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+691,Pets & Animals: Dogs: Hounds,Hounds,,Pets & Animals,Dogs,Hounds,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+692,Pets & Animals: Dogs: Huskies,Huskies,,Pets & Animals,Dogs,Huskies,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+547,Pets & Animals: Dogs: Irish Setters,Irish-Setters,,Pets & Animals,Dogs,Irish Setters,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+544,Pets & Animals: Dogs: Jack Russell Terriers,Jack-Russell-Terriers,,Pets & Animals,Dogs,Jack Russell Terriers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+532,Pets & Animals: Dogs: Labrador Retrievers,Labrador-Retrievers,,Pets & Animals,Dogs,Labrador Retrievers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,20,1,1,2,1,2
+560,Pets & Animals: Dogs: Maltese,Maltese,,Pets & Animals,Dogs,Maltese,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+539,Pets & Animals: Dogs: Mastiffs,Mastiffs,,Pets & Animals,Dogs,Mastiffs,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+973,Pets & Animals: Dogs: Memorial,Dogs-Memorial,,Pets & Animals,Dogs,Memorial,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+886,Pets & Animals: Dogs: Paws,Dog-Paws,,Pets & Animals,Dogs,Paws,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,4,0,0,0,0,1
+699,Pets & Animals: Dogs: Pointers,Pointers,,Pets & Animals,Dogs,Pointers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+565,Pets & Animals: Dogs: Pomeranians,Pomeranians,,Pets & Animals,Dogs,Pomeranians,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+552,Pets & Animals: Dogs: Poodles,Poodles,,Pets & Animals,Dogs,Poodles,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,2,0,0,0,0,0
+540,Pets & Animals: Dogs: Pugs,Pugs,,Pets & Animals,Dogs,Pugs,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,3,0,0,0,0,0
+961,Pets & Animals: Dogs: Rottweilers,Rottweilers,,Pets & Animals,Dogs,Rottweilers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+556,Pets & Animals: Dogs: Schnauzers,Schnauzers,,Pets & Animals,Dogs,Schnauzers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+698,Pets & Animals: Dogs: Sheepdogs,Sheepdogs,,Pets & Animals,Dogs,Sheepdogs,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+566,Pets & Animals: Dogs: Shetland Sheepdogs,Shetland-Sheepdogs,,Pets & Animals,Dogs,Shetland Sheepdogs,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+553,Pets & Animals: Dogs: Shi Tzus,Shi-Tzus,,Pets & Animals,Dogs,Shi Tzus,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,1,0,0,0,0,0
+567,Pets & Animals: Dogs: Siberian Huskies,Siberian-Huskies,,Pets & Animals,Dogs,Siberian Huskies,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+696,Pets & Animals: Dogs: St. Bernards,St-Bernards,,Pets & Animals,Dogs,St. Bernards,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+685,Pets & Animals: Dogs: Terriers,Terriers,,Pets & Animals,Dogs,Terriers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+548,Pets & Animals: Dogs: Weiners,Weiners,,Pets & Animals,Dogs,Weiners,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+551,Pets & Animals: Dogs: Welsh Corgis,Welsh-Corgis,,Pets & Animals,Dogs,Welsh Corgis,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,2,0,0,1,0,0
+689,Pets & Animals: Dogs: Welsh Terriers,Welsh-Terriers,,Pets & Animals,Dogs,Welsh Terriers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+546,Pets & Animals: Dogs: Westies,Westies,,Pets & Animals,Dogs,Westies,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,0,0,0,0,0,0
+554,Pets & Animals: Dogs: Yorkshire Terriers,Yorkshire-Terriers,,Pets & Animals,Dogs,Yorkshire Terriers,3,FALSE,FALSE,FALSE,FALSE,,107,Pets & Animals: Dogs,TRUE,TRUE,TRUE,TRUE,TRUE,3,0,0,0,0,0
+675,Pets & Animals: Farm Animals,Farm-Animals,,Pets & Animals,Farm Animals,,2,FALSE,FALSE,FALSE,FALSE,,1,Pets & Animals,TRUE,TRUE,TRUE,TRUE,TRUE,108,8,11,10,16,20
+402,Pets & Animals: Farm Animals: Cows,Cows,,Pets & Animals,Farm Animals,Cows,3,FALSE,FALSE,FALSE,FALSE,,675,Pets & Animals: Farm Animals,TRUE,TRUE,TRUE,TRUE,TRUE,53,4,9,6,10,9
+349,Pets & Animals: Farm Animals: Donkeys,Donkeys,,Pets & Animals,Farm Animals,Donkeys,3,FALSE,FALSE,FALSE,FALSE,,675,Pets & Animals: Farm Animals,FALSE,FALSE,FALSE,FALSE,TRUE,2,0,0,0,0,1
+986,Pets & Animals: Farm Animals: Goats,Goats,,Pets & Animals,Farm Animals,Goats,3,FALSE,FALSE,FALSE,FALSE,,675,Pets & Animals: Farm Animals,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+111,Pets & Animals: Farm Animals: Horses,Horses,,Pets & Animals,Farm Animals,Horses,3,FALSE,FALSE,FALSE,FALSE,,675,Pets & Animals: Farm Animals,TRUE,TRUE,TRUE,TRUE,TRUE,32,0,1,1,4,4
+470,Pets & Animals: Farm Animals: Pigs,Pigs,,Pets & Animals,Farm Animals,Pigs,3,FALSE,FALSE,FALSE,FALSE,,675,Pets & Animals: Farm Animals,TRUE,TRUE,TRUE,FALSE,FALSE,13,1,2,2,0,0
+21,Pets & Animals: Farm Animals: Sheep,Sheep,,Pets & Animals,Farm Animals,Sheep,3,FALSE,FALSE,FALSE,FALSE,,675,Pets & Animals: Farm Animals,TRUE,TRUE,TRUE,TRUE,TRUE,20,2,2,1,1,3
+676,Pets & Animals: Wildlife,Wildlife,,Pets & Animals,Wildlife,,2,FALSE,FALSE,FALSE,FALSE,,1,Pets & Animals,TRUE,TRUE,TRUE,TRUE,TRUE,104,11,13,14,19,13
+321,Pets & Animals: Wildlife: Bears,Bears,,Pets & Animals,Wildlife,Bears,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,TRUE,TRUE,FALSE,23,4,6,4,1,0
+771,Pets & Animals: Wildlife: Bisons,Bisons,,Pets & Animals,Wildlife,Bisons,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+105,Pets & Animals: Wildlife: Deer,Deer,,Pets & Animals,Wildlife,Deer,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,TRUE,TRUE,TRUE,37,1,3,3,12,10
+776,Pets & Animals: Wildlife: Elephants,Elephants,,Pets & Animals,Wildlife,Elephants,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,2,0,0,0,0,0
+27,Pets & Animals: Wildlife: Foxes,Foxes,,Pets & Animals,Wildlife,Foxes,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,8,0,1,0,0,0
+514,Pets & Animals: Wildlife: Gator,Gator,,Pets & Animals,Wildlife,Gator,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+775,Pets & Animals: Wildlife: Giraffes,Giraffes,,Pets & Animals,Wildlife,Giraffes,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+777,Pets & Animals: Wildlife: Lions,Lions,,Pets & Animals,Wildlife,Lions,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+816,Pets & Animals: Wildlife: Llamas,Llamas,,Pets & Animals,Wildlife,Llamas,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+499,Pets & Animals: Wildlife: Moose,Moose,,Pets & Animals,Wildlife,Moose,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+963,Pets & Animals: Wildlife: Snakes,Snakes,,Pets & Animals,Wildlife,Snakes,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+491,Pets & Animals: Wildlife: Squirrels,Squirrels,,Pets & Animals,Wildlife,Squirrels,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,TRUE,TRUE,TRUE,25,0,0,4,2,2
+778,Pets & Animals: Wildlife: Tigers,Tigers,,Pets & Animals,Wildlife,Tigers,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+113,Pets & Animals: Wildlife: Wild Animals,Wild-Animals,,Pets & Animals,Wildlife,Wild Animals,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,3,3,3,0,0,0
+498,Pets & Animals: Wildlife: Wolves,Wolves,,Pets & Animals,Wildlife,Wolves,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,3,3,0
+779,Pets & Animals: Wildlife: Zebras,Zebras,,Pets & Animals,Wildlife,Zebras,3,FALSE,FALSE,FALSE,FALSE,,676,Pets & Animals: Wildlife,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+831,Political,Political,,Political,,,1,FALSE,FALSE,FALSE,FALSE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,21,0,1,0,0,0
+840,Political: Black Lives Matter,Black-Lives-Matter,,Political,Black Lives Matter,,2,FALSE,FALSE,FALSE,FALSE,,831,Political,FALSE,FALSE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+833,Political: Election,Election,,Political,Election,,2,FALSE,FALSE,FALSE,FALSE,,831,Political,FALSE,FALSE,FALSE,FALSE,FALSE,16,0,0,0,0,0
+838,Political: Election: Pro-Biden,Pro-Biden,,Political,Election,Pro-Biden,3,FALSE,FALSE,FALSE,FALSE,,833,Political: Election,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+988,Political: Election: Pro-Kamala,Pro-Kamala,,Political,Election,Pro-Kamala,3,FALSE,FALSE,FALSE,FALSE,,833,Political: Election,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+837,Political: Election: Pro-Trump,Pro-Trump,,Political,Election,Pro-Trump,3,FALSE,FALSE,FALSE,FALSE,,833,Political: Election,FALSE,FALSE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+839,Political: Election: Vote,Vote,,Political,Election,Vote,3,FALSE,FALSE,FALSE,FALSE,,833,Political: Election,FALSE,FALSE,FALSE,FALSE,FALSE,11,0,0,0,0,0
+969,Political: Political: Guns,Guns,,Political,Political,Guns,3,FALSE,FALSE,FALSE,FALSE,,831,Political,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+968,Political: Political: Trump Flags,Trump-Flags,,Political,Political,Trump Flags,3,FALSE,FALSE,FALSE,FALSE,,831,Political,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+9,Regional,Regional,,Regional,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,FALSE,108,3,5,1,0,0
+943,Regional: Adirondack,Adirondack,,Regional,Adirondack,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,1,0,0,0
+194,Regional: Alaska,Alaska,,Regional,Alaska,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+348,Regional: Asian,Asian,,Regional,Asian,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+844,Regional: California,California,,Regional,California,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,42,0,0,0,0,0
+195,Regional: Canada,Canada,,Regional,Canada,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+843,Regional: Florida,Florida,,Regional,Florida,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,2,0,0,0,0,0
+845,Regional: Georgia,Georgia,,Regional,Georgia,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,0,0,0
+37,Regional: Hawaii,Hawaii,,Regional,Hawaii,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+31,Regional: Ireland,Ireland,,Regional,Ireland,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,12,1,0,0,0,0
+815,Regional: Kentucky,Kentucky,,Regional,Kentucky,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+800,Regional: Maryland,Maryland,,Regional,Maryland,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+846,Regional: Massachusetts,Massachusetts,,Regional,Massachusetts,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,2,0,0,0,0,0
+954,Regional: Mediterranean,Mediterranean,,Regional,Mediterranean,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,1,0,0,0
+351,Regional: Mexican,Mexican,,Regional,Mexican,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,4,0,0,1,0,0
+847,Regional: Michigan,Michigan,,Regional,Michigan,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,2,0,0,0,0,0
+197,Regional: Midwest,Midwest,,Regional,Midwest,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+848,Regional: Missouri,Missouri,,Regional,Missouri,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,0,0,0
+198,Regional: New England,New-England,,Regional,New England,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+849,Regional: New Jersey,New-Jersey,,Regional,New Jersey,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,4,0,0,0,0,0
+24,Regional: New Orleans,New-Orleans,,Regional,New Orleans,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+850,Regional: New York,New-York,,Regional,New York,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,5,0,0,0,0,0
+793,Regional: North Carolina,North-Carolina,,Regional,North Carolina,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,1,0,0,0
+851,Regional: Ohio,Ohio,,Regional,Ohio,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,2,0,0,0,0,0
+38,Regional: Paris,Paris,,Regional,Paris,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+852,Regional: Pennsylvania,Pennsylvania,,Regional,Pennsylvania,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,0,0,0
+962,Regional: Scotland,Scotland,,Regional,Scotland,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+199,Regional: South,South,,Regional,South,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,0,0,0
+792,Regional: South Carolina,South-Carolina,,Regional,South Carolina,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,2,0,0,0,0,0
+964,Regional: Southwest,Southwest,,Regional,Southwest,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+801,Regional: Tennessee,Tennessee,,Regional,Tennessee,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,3,0,0,0,0,0
+200,Regional: Texas,Texas,,Regional,Texas,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,6,1,1,0,0,0
+873,Regional: UK,UK,,Regional,UK,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+1653,Regional: Ukraine,Ukraine,,Regional,Ukraine,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+794,Regional: Virginia,Virginia,,Regional,Virginia,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,4,0,0,0,0,0
+201,Regional: West Coast,West-Coast,,Regional,West Coast,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+202,Regional: Y'all,Yall,,Regional,Y'all,,2,FALSE,FALSE,FALSE,FALSE,,9,Regional,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+10,Religious,Religious,,Religious,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,409,61,36,21,23,39
+270,Religious: Angels,Angels,,Religious,Angels,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,43,3,3,0,3,8
+854,Religious: Bible Scriptures,Bible-Scriptures,,Religious,Bible Scriptures,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,85,10,4,5,0,5
+272,Religious: Churches,Churches,,Religious,Churches,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,21,3,2,0,5,5
+116,Religious: Crosses,Crosses,,Religious,Crosses,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,68,14,1,2,0,1
+120,Religious: Devotional,Devotional,,Religious,Devotional,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,47,9,5,9,1,4
+949,Religious: Heaven,Heaven,,Religious,Heaven,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,1,0,0
+327,Religious: Hope/Faith/Peace/Joy,Hope-Faith-Peace-Joy,,Religious,Hope/Faith/Peace/Joy,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,72,1,0,0,9,11
+324,Religious: Inspirational,Inspirational,,Religious,Inspirational,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,146,31,20,16,6,9
+888,Religious: Memorial,Memorial,,Religious,Memorial,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,TRUE,74,13,11,1,3,3
+958,Religious: Prayer,Prayer,,Religious,Prayer,,2,FALSE,FALSE,FALSE,FALSE,,10,Religious,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+281,Seasonal,Seasonal,,Seasonal,,,1,FALSE,FALSE,FALSE,FALSE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,622,88,90,177,168,226
+896,Seasonal: 4th of July,4th-Of-July,,Seasonal,4th of July,,2,TRUE,FALSE,FALSE,FALSE,"All Holidays, Winter, Fall",281,Seasonal,FALSE,TRUE,FALSE,FALSE,FALSE,265,4,49,2,1,0
+917,Seasonal: 4th of July: Dont Tread On Me,Dont-Tread-On-Me,,Seasonal,4th of July,Dont Tread On Me,3,FALSE,FALSE,FALSE,FALSE,,896,Seasonal: 4th of July,FALSE,TRUE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+51,Seasonal: 4th of July: Fireworks,Fireworks,,Seasonal,4th of July,Fireworks,3,FALSE,FALSE,FALSE,FALSE,,896,Seasonal: 4th of July,FALSE,TRUE,FALSE,FALSE,FALSE,30,0,9,0,0,0
+918,Seasonal: 4th of July: Patriot,Patriot,,Seasonal,4th of July,Patriot,3,FALSE,FALSE,FALSE,FALSE,,896,Seasonal: 4th of July,FALSE,TRUE,FALSE,FALSE,FALSE,2,0,2,0,0,0
+55,Seasonal: 4th of July: Pinwheels,Pinwheels,,Seasonal,4th of July,Pinwheels,3,FALSE,FALSE,FALSE,FALSE,,896,Seasonal: 4th of July,FALSE,TRUE,FALSE,FALSE,FALSE,2,0,0,0,0,0
+919,Seasonal: 4th of July: Stars,Stars,,Seasonal,4th of July,Stars,3,FALSE,FALSE,FALSE,FALSE,,896,Seasonal: 4th of July,FALSE,TRUE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+989,Seasonal: Ash Wednesday,Ash-Wednesday,,Seasonal,Ash Wednesday,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,1,1,0,0,0,0
+991,Seasonal: Cemetery,Cemetery,,Seasonal,Cemetery,,2,FALSE,TRUE,FALSE,FALSE,,281,Seasonal,TRUE,TRUE,TRUE,TRUE,TRUE,92,4,4,0,2,2
+890,Seasonal: Christmas,Christmas,,Seasonal,Christmas,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,FALSE,FALSE,FALSE,TRUE,TRUE,638,0,2,12,149,227
+927,Seasonal: Christmas Decorations,Christmas-Decorations,,Seasonal,Christmas Decorations,,2,FALSE,FALSE,FALSE,FALSE,,281,Seasonal,FALSE,FALSE,FALSE,TRUE,TRUE,81,0,1,5,55,81
+224,Seasonal: Christmas Decorations: Candy Canes,Candy-Canes,,Seasonal,Christmas Decorations,Candy Canes,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,23,0,0,1,3,7
+231,Seasonal: Christmas Decorations: Christmas Ornaments,Christmas-Ornaments,,Seasonal,Christmas Decorations,Christmas Ornaments,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,43,0,0,0,4,14
+298,Seasonal: Christmas Decorations: Christmas Stockings,Christmas-Stockings,,Seasonal,Christmas Decorations,Christmas Stockings,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,12,0,0,0,0,2
+225,Seasonal: Christmas Decorations: Christmas Trees,Christmas-Trees,,Seasonal,Christmas Decorations,Christmas Trees,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,105,0,0,0,18,26
+330,Seasonal: Christmas Decorations: Gingerbread Man,Gingerbread-Man,,Seasonal,Christmas Decorations,Gingerbread Man,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,14,0,0,0,2,5
+227,Seasonal: Christmas Decorations: Holly,Holly,,Seasonal,Christmas Decorations,Holly,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,128,0,0,1,27,34
+331,Seasonal: Christmas Decorations: Nutcrackers,Nutcrackers,,Seasonal,Christmas Decorations,Nutcrackers,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,7,0,0,0,0,5
+233,Seasonal: Christmas Decorations: Presents,Presents,,Seasonal,Christmas Decorations,Presents,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,87,0,1,0,5,13
+238,Seasonal: Christmas Decorations: Wreaths,Wreaths,,Seasonal,Christmas Decorations,Wreaths,3,FALSE,FALSE,FALSE,FALSE,,927,Seasonal: Christmas Decorations,FALSE,FALSE,FALSE,TRUE,TRUE,122,0,2,3,21,26
+926,Seasonal: Christmas Religious,Christmas-Religious,,Seasonal,Christmas Religious,,2,FALSE,FALSE,FALSE,FALSE,,281,Seasonal,FALSE,FALSE,FALSE,TRUE,TRUE,21,0,0,0,9,21
+265,Seasonal: Christmas Religious: Blessings,Blessings,,Seasonal,Christmas Religious,Blessings,3,FALSE,FALSE,FALSE,FALSE,,926,Seasonal: Christmas Religious,TRUE,TRUE,TRUE,TRUE,TRUE,55,5,5,7,4,5
+223,Seasonal: Christmas Religious: Candles,Candles,,Seasonal,Christmas Religious,Candles,3,FALSE,FALSE,FALSE,FALSE,,926,Seasonal: Christmas Religious,FALSE,FALSE,TRUE,TRUE,TRUE,23,0,0,1,1,3
+913,Seasonal: Christmas Religious: Holy Night,Holy-Night,,Seasonal,Christmas Religious,Holy Night,3,FALSE,FALSE,FALSE,FALSE,,926,Seasonal: Christmas Religious,FALSE,FALSE,FALSE,TRUE,TRUE,4,0,0,0,3,4
+228,Seasonal: Christmas Religious: Jesus is the Reason,Jesus-is-the-Reason,,Seasonal,Christmas Religious,Jesus is the Reason,3,FALSE,FALSE,FALSE,FALSE,,926,Seasonal: Christmas Religious,FALSE,FALSE,FALSE,TRUE,TRUE,6,0,0,0,0,6
+294,Seasonal: Christmas Religious: Joy to the World,Joy-to-the-World,,Seasonal,Christmas Religious,Joy to the World,3,FALSE,FALSE,FALSE,FALSE,,926,Seasonal: Christmas Religious,FALSE,FALSE,FALSE,TRUE,TRUE,5,0,0,0,1,5
+229,Seasonal: Christmas Religious: Nativity,Nativity,,Seasonal,Christmas Religious,Nativity,3,FALSE,FALSE,FALSE,FALSE,,926,Seasonal: Christmas Religious,FALSE,FALSE,FALSE,TRUE,TRUE,47,0,0,0,0,10
+230,Seasonal: Christmas Religious: Noel,Noel,,Seasonal,Christmas Religious,Noel,3,FALSE,FALSE,FALSE,FALSE,,926,Seasonal: Christmas Religious,FALSE,FALSE,FALSE,TRUE,TRUE,5,0,0,0,2,5
+222,Seasonal: Christmas: Bells,Bells,,Seasonal,Christmas,Bells,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,5,0,0,0,0,2
+329,Seasonal: Christmas: Christmas In July,Christmas-In-July,,Seasonal,Christmas,Christmas In July,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,2,0,0,0,1,1
+336,Seasonal: Christmas: Elves,Elves,,Seasonal,Christmas,Elves,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,4,0,0,0,0,1
+293,Seasonal: Christmas: Happy Holidays,Happy-Holidays,,Seasonal,Christmas,Happy Holidays,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,18,0,0,0,4,5
+335,Seasonal: Christmas: Ho Ho Ho,Ho-Ho-Ho,,Seasonal,Christmas,Ho Ho Ho,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,4,0,0,0,2,2
+914,Seasonal: Christmas: Jingle All The Way,Jingle-All-The-Way,,Seasonal,Christmas,Jingle All The Way,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,2,0,0,0,0,2
+295,Seasonal: Christmas: Merry Christmas,Merry-Christmas,,Seasonal,Christmas,Merry Christmas,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,147,0,0,0,20,44
+354,Seasonal: Christmas: Reindeer,Reindeer,,Seasonal,Christmas,Reindeer,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,24,0,0,0,5,6
+234,Seasonal: Christmas: Santa,Santa,,Seasonal,Christmas,Santa,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,TRUE,TRUE,TRUE,TRUE,74,0,1,1,13,25
+297,Seasonal: Christmas: Season's Greetings,Seasons-Greetings,,Seasonal,Christmas,Season's Greetings,3,FALSE,FALSE,FALSE,FALSE,,890,Seasonal: Christmas,FALSE,FALSE,FALSE,TRUE,TRUE,48,0,0,0,4,7
+893,Seasonal: Easter,Easter,,Seasonal,Easter,,2,TRUE,FALSE,FALSE,FALSE,"All Holidays, Summer, Winter, Fall",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,208,45,0,0,0,0
+239,Seasonal: Easter: Easter Eggs,Easter-Eggs,,Seasonal,Easter,Easter Eggs,3,FALSE,FALSE,FALSE,FALSE,,893,Seasonal: Easter,TRUE,FALSE,FALSE,FALSE,FALSE,116,12,0,0,0,0
+310,Seasonal: Easter: Happy Easter,Happy-Easter,,Seasonal,Easter,Happy Easter,3,FALSE,FALSE,FALSE,FALSE,,893,Seasonal: Easter,TRUE,FALSE,FALSE,FALSE,FALSE,100,22,0,0,0,0
+904,Seasonal: Fall,Fall,,Seasonal,Fall,,2,FALSE,FALSE,TRUE,FALSE,"All Holidays, Spring, Winter",281,Seasonal,TRUE,TRUE,TRUE,TRUE,TRUE,559,4,23,206,17,12
+241,Seasonal: Fall: Fall Leaves,Fall-Leaves,,Seasonal,Fall,Fall Leaves,3,FALSE,FALSE,FALSE,FALSE,,904,Seasonal: Fall,FALSE,FALSE,TRUE,FALSE,FALSE,291,0,2,67,4,0
+1017,Seasonal: Fall: Fall Pumpkins,Fall-Pumpkins,,Seasonal,Fall,Fall Pumpkins,3,FALSE,FALSE,FALSE,FALSE,,904,Seasonal: Fall,FALSE,FALSE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+312,Seasonal: Fall: Happy Fall,Happy-Fall,,Seasonal,Fall,Happy Fall,3,FALSE,FALSE,FALSE,FALSE,,904,Seasonal: Fall,FALSE,FALSE,TRUE,FALSE,FALSE,54,0,0,26,0,0
+922,Seasonal: Fall: Harvest,Harvest,,Seasonal,Fall,Harvest,3,FALSE,FALSE,FALSE,FALSE,,904,Seasonal: Fall,FALSE,FALSE,TRUE,FALSE,FALSE,57,1,1,57,0,0
+804,Seasonal: Fall: Pine Cones,Pine-Cones,,Seasonal,Fall,Pine Cones,3,FALSE,FALSE,FALSE,FALSE,,904,Seasonal: Fall,FALSE,FALSE,TRUE,FALSE,TRUE,56,0,0,16,17,17
+900,Seasonal: Father's Day,Fathers-Day,,Seasonal,Father's Day,,2,TRUE,FALSE,FALSE,FALSE,"All Holidays, Winter, Fall",281,Seasonal,FALSE,TRUE,FALSE,FALSE,FALSE,38,0,2,0,0,0
+508,Seasonal: Father's Day: Happy Father's Day,Happy-Fathers-Day,,Seasonal,Father's Day,Happy Father's Day,3,FALSE,FALSE,FALSE,FALSE,,900,Seasonal: Father's Day,FALSE,TRUE,FALSE,FALSE,FALSE,33,0,1,0,0,0
+891,Seasonal: Halloween,Halloween,,Seasonal,Halloween,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,FALSE,FALSE,TRUE,FALSE,FALSE,248,0,0,45,0,0
+305,Seasonal: Halloween: Bats,Bats,,Seasonal,Halloween,Bats,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,50,0,0,4,0,0
+247,Seasonal: Halloween: Boo,Boo,,Seasonal,Halloween,Boo,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,21,0,0,3,0,0
+246,Seasonal: Halloween: Ghosts,Ghosts,,Seasonal,Halloween,Ghosts,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,27,0,0,0,0,0
+45,Seasonal: Halloween: Halloween Pumpkins,Halloween-Pumpkins,,Seasonal,Halloween,Halloween Pumpkins,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+972,Seasonal: Halloween: Halloween Scarecrow,Halloween-Scarecrow,,Seasonal,Halloween,Halloween Scarecrow,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+313,Seasonal: Halloween: Happy Halloween,Happy-Halloween,,Seasonal,Halloween,Happy Halloween,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,81,0,0,2,0,0
+456,Seasonal: Halloween: Jack O Lanterns,Jack-O-Lanterns,,Seasonal,Halloween,Jack O Lanterns,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,107,0,0,10,0,0
+253,Seasonal: Halloween: Masks,Masks,,Seasonal,Halloween,Masks,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,22,0,0,0,0,0
+248,Seasonal: Halloween: Skull,Skull,,Seasonal,Halloween,Skull,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,10,0,0,3,0,0
+249,Seasonal: Halloween: Spiders,Spiders,,Seasonal,Halloween,Spiders,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,16,0,0,3,0,0
+915,Seasonal: Halloween: Sugar Skull,Sugar-Skull,,Seasonal,Halloween,Sugar Skull,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+314,Seasonal: Halloween: Trick Or Treat,Trick-Or-Treat,,Seasonal,Halloween,Trick Or Treat,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,32,0,0,2,0,0
+250,Seasonal: Halloween: Witches,Witches,,Seasonal,Halloween,Witches,3,FALSE,FALSE,FALSE,FALSE,,891,Seasonal: Halloween,FALSE,FALSE,TRUE,FALSE,FALSE,43,0,0,5,0,0
+897,Seasonal: Hanukkah,Hanukkah,,Seasonal,Hanukkah,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,FALSE,FALSE,FALSE,TRUE,FALSE,5,0,0,0,0,0
+902,Seasonal: Kwanzaa,Kwanzaa,,Seasonal,Kwanzaa,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,FALSE,FALSE,FALSE,TRUE,FALSE,4,0,0,0,0,0
+992,Seasonal: Lent,Lent,,Seasonal,Lent,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,3,3,0,0,0,0
+901,Seasonal: Mardi Gras,Mardi-Gras,,Seasonal,Mardi Gras,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,31,0,0,0,0,0
+252,Seasonal: Mardi Gras: Fleur De Lis,Fleur-De-Lis,,Seasonal,Mardi Gras,Fleur De Lis,3,FALSE,FALSE,FALSE,FALSE,,901,Seasonal: Mardi Gras,TRUE,FALSE,FALSE,FALSE,FALSE,4,0,0,0,0,0
+506,Seasonal: Mardi Gras: Happy Mardi Gras,Happy-Mardi-Gras,,Seasonal,Mardi Gras,Happy Mardi Gras,3,FALSE,FALSE,FALSE,FALSE,,901,Seasonal: Mardi Gras,TRUE,FALSE,FALSE,FALSE,FALSE,25,0,0,0,0,0
+993,Seasonal: Memorial Day,Memorial-Day,,Seasonal,Memorial Day,,2,TRUE,FALSE,FALSE,FALSE,"All Holidays, Winter, Fall",281,Seasonal,FALSE,TRUE,FALSE,FALSE,FALSE,99,1,6,0,0,0
+899,Seasonal: Mother's Day,Mothers-Day,,Seasonal,Mother's Day,,2,TRUE,FALSE,FALSE,FALSE,"All Holidays, Winter, Fall",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,61,3,0,0,0,0
+477,Seasonal: Mother's Day: Happy Mother's Day,Happy-Mothers-Day,,Seasonal,Mother's Day,Happy Mother's Day,3,FALSE,FALSE,FALSE,FALSE,,899,Seasonal: Mother's Day,TRUE,TRUE,FALSE,FALSE,FALSE,34,2,0,0,0,0
+898,Seasonal: New Year,New-Year,,Seasonal,New Year,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,FALSE,FALSE,FALSE,TRUE,FALSE,53,0,0,0,0,0
+510,Seasonal: New Year: Happy New Year,Happy-New-Year,,Seasonal,New Year,Happy New Year,3,FALSE,FALSE,FALSE,FALSE,,898,Seasonal: New Year,FALSE,FALSE,FALSE,TRUE,FALSE,51,0,0,0,0,0
+994,Seasonal: Palm Sunday,Palm-Sunday,,Seasonal,Palm Sunday,,2,TRUE,FALSE,FALSE,FALSE,All Seasons,281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,1,1,0,0,0,0
+995,Seasonal: Passover,Passover,,Seasonal,Passover,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,1,1,0,0,0,0
+903,Seasonal: Spring,Spring,,Seasonal,Spring,,2,FALSE,FALSE,TRUE,FALSE,"All Holidays, Winter, Fall",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,974,302,214,4,0,0
+316,Seasonal: Spring: Happy Spring,Happy-Spring,,Seasonal,Spring,Happy Spring,3,FALSE,FALSE,FALSE,FALSE,,903,Seasonal: Spring,TRUE,FALSE,FALSE,FALSE,FALSE,13,12,4,0,0,0
+823,Seasonal: Spring: Hello Spring,Hello-Spring,,Seasonal,Spring,Hello Spring,3,FALSE,FALSE,FALSE,FALSE,,903,Seasonal: Spring,TRUE,FALSE,FALSE,FALSE,FALSE,65,19,7,0,0,0
+895,Seasonal: St. Patrick's Day,St-Patricks-Day,,Seasonal,St. Patrick's Day,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,TRUE,FALSE,FALSE,FALSE,FALSE,90,6,1,0,0,0
+317,Seasonal: St. Patrick's Day: Happy St. Patrick's,Happy-St-Patricks,,Seasonal,St. Patrick's Day,Happy St. Patrick's,3,FALSE,FALSE,FALSE,FALSE,,895,Seasonal: St. Patrick's Day,TRUE,FALSE,FALSE,FALSE,FALSE,47,1,0,0,0,0
+256,Seasonal: St. Patrick's Day: Irish Pride,Irish-Pride,,Seasonal,St. Patrick's Day,Irish Pride,3,FALSE,FALSE,FALSE,FALSE,,895,Seasonal: St. Patrick's Day,TRUE,FALSE,FALSE,FALSE,FALSE,4,0,0,0,0,0
+257,Seasonal: St. Patrick's Day: Leprechauns,Leprechauns,,Seasonal,St. Patrick's Day,Leprechauns,3,FALSE,FALSE,FALSE,FALSE,,895,Seasonal: St. Patrick's Day,TRUE,FALSE,FALSE,FALSE,FALSE,27,1,0,0,0,0
+259,Seasonal: St. Patrick's Day: Luck of the Irish,Luck-of-the-Irish,,Seasonal,St. Patrick's Day,Luck of the Irish,3,FALSE,FALSE,FALSE,FALSE,,895,Seasonal: St. Patrick's Day,TRUE,FALSE,FALSE,FALSE,FALSE,11,2,0,0,0,0
+260,Seasonal: St. Patrick's Day: Pot Of Gold,Pot-Of-Gold,,Seasonal,St. Patrick's Day,Pot Of Gold,3,FALSE,FALSE,FALSE,FALSE,,895,Seasonal: St. Patrick's Day,TRUE,FALSE,FALSE,FALSE,FALSE,25,2,0,0,0,0
+788,Seasonal: St. Patrick's Day: Rainbow,Rainbow,,Seasonal,St. Patrick's Day,Rainbow,3,FALSE,FALSE,FALSE,FALSE,,895,Seasonal: St. Patrick's Day,TRUE,FALSE,FALSE,FALSE,FALSE,17,1,0,0,0,0
+261,Seasonal: St. Patrick's Day: Shamrock/Clovers,Shamrock-Clovers,,Seasonal,St. Patrick's Day,Shamrock/Clovers,3,FALSE,FALSE,FALSE,FALSE,,895,Seasonal: St. Patrick's Day,TRUE,TRUE,FALSE,FALSE,FALSE,83,6,1,0,0,0
+911,Seasonal: Summer,Summer,,Seasonal,Summer,,2,FALSE,FALSE,TRUE,FALSE,"All Holidays, Winter",281,Seasonal,TRUE,TRUE,TRUE,FALSE,TRUE,1299,214,351,23,0,2
+60,Seasonal: Summer: Flip Flops,Flip-Flops,,Seasonal,Summer,Flip Flops,3,FALSE,FALSE,FALSE,FALSE,,911,Seasonal: Summer,FALSE,TRUE,FALSE,FALSE,FALSE,14,0,2,0,0,0
+22,Seasonal: Summer: Pool,Pool,,Seasonal,Summer,Pool,3,FALSE,FALSE,FALSE,FALSE,,911,Seasonal: Summer,FALSE,FALSE,FALSE,FALSE,FALSE,9,0,0,0,0,0
+183,Seasonal: Summer: Sun,Sun,,Seasonal,Summer,Sun,3,FALSE,FALSE,FALSE,FALSE,,911,Seasonal: Summer,TRUE,TRUE,FALSE,FALSE,FALSE,28,4,4,0,0,0
+925,Seasonal: Summer: Sunshine,Sunshine,,Seasonal,Summer,Sunshine,3,FALSE,FALSE,FALSE,FALSE,,911,Seasonal: Summer,FALSE,TRUE,FALSE,FALSE,FALSE,1,0,1,0,0,0
+184,Seasonal: Summer: Tropical,Tropical,,Seasonal,Summer,Tropical,3,FALSE,FALSE,FALSE,FALSE,,911,Seasonal: Summer,FALSE,TRUE,FALSE,FALSE,TRUE,78,0,15,0,0,3
+894,Seasonal: Thanksgiving,Thanksgiving,,Seasonal,Thanksgiving,,2,TRUE,FALSE,FALSE,FALSE,"All Holidays, Spring, Summer, Winter",281,Seasonal,FALSE,FALSE,TRUE,FALSE,FALSE,159,0,0,53,0,0
+311,Seasonal: Thanksgiving: Cornucopia,Cornucopia,,Seasonal,Thanksgiving,Cornucopia,3,FALSE,FALSE,FALSE,FALSE,,894,Seasonal: Thanksgiving,FALSE,FALSE,TRUE,FALSE,FALSE,26,0,0,4,0,0
+266,Seasonal: Thanksgiving: Give Thanks,Give-Thanks,,Seasonal,Thanksgiving,Give Thanks,3,FALSE,FALSE,FALSE,FALSE,,894,Seasonal: Thanksgiving,FALSE,FALSE,TRUE,FALSE,FALSE,49,0,0,15,0,0
+319,Seasonal: Thanksgiving: Happy Thanksgiving,Happy-Thanksgiving,,Seasonal,Thanksgiving,Happy Thanksgiving,3,FALSE,FALSE,FALSE,FALSE,,894,Seasonal: Thanksgiving,FALSE,FALSE,TRUE,FALSE,FALSE,24,0,0,3,0,0
+802,Seasonal: Thanksgiving: Pilgrim Hats,Pilgrim-Hats,,Seasonal,Thanksgiving,Pilgrim Hats,3,FALSE,FALSE,FALSE,FALSE,,894,Seasonal: Thanksgiving,FALSE,FALSE,TRUE,FALSE,FALSE,1,0,0,1,0,0
+1018,Seasonal: Thanksgiving: Thanksgiving Pumpkins,Thanksgiving-Pumpkins,,Seasonal,Thanksgiving,Thanksgiving Pumpkins,3,FALSE,FALSE,FALSE,FALSE,,894,Seasonal: Thanksgiving,FALSE,FALSE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+981,Seasonal: Thanksgiving: Thanksgiving Turkey,Thanksgiving-Turkey,,Seasonal,Thanksgiving,Thanksgiving Turkey,3,FALSE,FALSE,FALSE,FALSE,,894,Seasonal: Thanksgiving,FALSE,FALSE,TRUE,FALSE,FALSE,4,0,0,3,0,0
+892,Seasonal: Valentine's Day,Valentines-Day,,Seasonal,Valentine's Day,,2,TRUE,FALSE,FALSE,FALSE,"All Seasons, All Holidays",281,Seasonal,TRUE,FALSE,FALSE,TRUE,FALSE,95,2,0,0,1,0
+267,Seasonal: Valentine's Day: Be Mine,Be-Mine,,Seasonal,Valentine's Day,Be Mine,3,FALSE,FALSE,FALSE,FALSE,,892,Seasonal: Valentine's Day,TRUE,FALSE,FALSE,FALSE,FALSE,7,0,0,0,0,0
+268,Seasonal: Valentine's Day: Be My Valentine,Be-My-Valentine,,Seasonal,Valentine's Day,Be My Valentine,3,FALSE,FALSE,FALSE,FALSE,,892,Seasonal: Valentine's Day,TRUE,FALSE,FALSE,FALSE,FALSE,3,0,0,0,0,0
+916,Seasonal: Valentine's Day: Cupid,Cupid,,Seasonal,Valentine's Day,Cupid,3,FALSE,FALSE,FALSE,FALSE,,892,Seasonal: Valentine's Day,TRUE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+320,Seasonal: Valentine's Day: Happy Valentine's,Happy-Valentines,,Seasonal,Valentine's Day,Happy Valentine's,3,FALSE,FALSE,FALSE,FALSE,,892,Seasonal: Valentine's Day,TRUE,FALSE,FALSE,FALSE,FALSE,34,0,0,0,0,0
+255,Seasonal: Valentine's Day: Hearts,Hearts,,Seasonal,Valentine's Day,Hearts,3,FALSE,FALSE,FALSE,FALSE,,892,Seasonal: Valentine's Day,TRUE,FALSE,FALSE,FALSE,FALSE,111,1,0,0,1,0
+168,Seasonal: Valentine's Day: Love,Valentines-Love,,Seasonal,Valentine's Day,Love,3,FALSE,FALSE,FALSE,FALSE,,892,Seasonal: Valentine's Day,TRUE,FALSE,FALSE,FALSE,FALSE,73,14,8,1,0,0
+905,Seasonal: Winter,Winter,,Seasonal,Winter,,2,FALSE,FALSE,TRUE,FALSE,"All Holidays, Spring, Summer",281,Seasonal,FALSE,FALSE,FALSE,TRUE,TRUE,478,0,0,17,169,149
+923,Seasonal: Winter: Let It Snow,Let-It-Snow,,Seasonal,Winter,Let It Snow,3,FALSE,FALSE,FALSE,FALSE,,905,Seasonal: Winter,FALSE,FALSE,FALSE,TRUE,TRUE,2,0,0,0,2,2
+235,Seasonal: Winter: Skates,Skates,,Seasonal,Winter,Skates,3,FALSE,FALSE,FALSE,FALSE,,905,Seasonal: Winter,FALSE,FALSE,FALSE,TRUE,FALSE,4,0,0,0,0,0
+269,Seasonal: Winter: Sleds,Sleds,,Seasonal,Winter,Sleds,3,FALSE,FALSE,FALSE,FALSE,,905,Seasonal: Winter,FALSE,FALSE,FALSE,TRUE,TRUE,10,0,0,0,3,3
+236,Seasonal: Winter: Snow,Snow,,Seasonal,Winter,Snow,3,FALSE,FALSE,FALSE,FALSE,,905,Seasonal: Winter,FALSE,FALSE,FALSE,TRUE,TRUE,265,0,0,10,95,83
+237,Seasonal: Winter: Snowman,Snowman,,Seasonal,Winter,Snowman,3,FALSE,FALSE,FALSE,FALSE,,905,Seasonal: Winter,FALSE,FALSE,FALSE,TRUE,TRUE,159,0,0,0,47,47
+998,Size,Size,Ignore for Theme Selection,Size,,,1,FALSE,FALSE,FALSE,TRUE,,,,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1009,Size: 10 X 22,10-x-22,Ignore for Theme Selection,Size,10 X 22,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1010,Size: 12 5 X 18,12-5-x-18,Ignore for Theme Selection,Size,12 5 X 18,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1011,Size: 16 X 28,16-x-28,Ignore for Theme Selection,Size,16 X 28,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1012,Size: 17 5 X 29,17-5-x-29,Ignore for Theme Selection,Size,17 5 X 29,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1013,Size: 17 X 29,17-x-29,Ignore for Theme Selection,Size,17 X 29,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1014,Size: 18 X 30,18-x-30,Ignore for Theme Selection,Size,18 X 30,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1015,Size: 28 X 40,28-x-40,Ignore for Theme Selection,Size,28 X 40,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+1016,Size: 9 25 X 28 25,9-25-x-28-25,Ignore for Theme Selection,Size,9 25 X 28 25,,2,FALSE,FALSE,FALSE,TRUE,,998,Size,FALSE,FALSE,FALSE,FALSE,FALSE,0,0,0,0,0,0
+11,Sports & Recreation,Sports,,Sports & Recreation,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,9,3,3,3,3,3
+463,Sports & Recreation: Bicycles,Bicycles,,Sports & Recreation,Bicycles,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,FALSE,FALSE,29,0,0,2,0,0
+871,Sports & Recreation: Equestrian,Equestrian,,Sports & Recreation,Equestrian,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,TRUE,FALSE,1,0,0,0,0,0
+122,Sports & Recreation: General Sports,General-Sports,,Sports & Recreation,General Sports,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,TRUE,FALSE,13,1,1,1,0,0
+123,Sports & Recreation: Golf,Golf,,Sports & Recreation,Golf,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,FALSE,FALSE,5,0,0,0,0,0
+262,Sports & Recreation: Hot Air Balloons,Hot-Air-Balloons,,Sports & Recreation,Hot Air Balloons,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,FALSE,FALSE,7,1,1,0,0,0
+884,Sports & Recreation: Indoor games,Indoor-games,,Sports & Recreation,Indoor games,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,TRUE,FALSE,0,0,0,0,0,0
+459,Sports & Recreation: Kites,Kites,,Sports & Recreation,Kites,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,FALSE,FALSE,FALSE,1,0,0,0,0,0
+681,Sports & Recreation: Motorcycles,Motorcycles,,Sports & Recreation,Motorcycles,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,FALSE,FALSE,0,0,0,0,0,0
+733,Sports & Recreation: Skiing,Skiing,,Sports & Recreation,Skiing,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,FALSE,FALSE,FALSE,TRUE,TRUE,8,0,0,0,1,1
+466,Sports & Recreation: Soccer,Soccer,,Sports & Recreation,Soccer,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,TRUE,FALSE,2,0,0,0,0,0
+465,Sports & Recreation: Transportation,Transportation,,Sports & Recreation,Transportation,,2,FALSE,FALSE,FALSE,FALSE,,11,Sports & Recreation,TRUE,TRUE,TRUE,TRUE,TRUE,105,1,3,0,2,2
+175,Wedding: Wedding Dresses: 3,Seasonal,,Wedding,Wedding Dresses,3,3,FALSE,FALSE,FALSE,FALSE,,Seasonal: Wedding,,FALSE,FALSE,FALSE,FALSE,FALSE,1467,0,0,0,0,0
+12,Welcome,Welcome-Flags,,Welcome,,,1,FALSE,FALSE,FALSE,FALSE,,,,TRUE,TRUE,TRUE,TRUE,TRUE,468,78,88,41,19,18

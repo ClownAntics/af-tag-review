@@ -1,0 +1,617 @@
+﻿Id,Label,Search Term,Notes,Name,Sub Theme,Sub Sub Theme,Level,IsHoliday?,isOccasion?,isSeason?,isBusinessTheme?,isSpring?,isSummer?,isFall?,isWinter?,isXmas?,ConflictsWith,Related FL Theme (ref),Related Parent FL Theme Label
+523,Beaches & Nautical,Beaches-Nautical,,Beaches & Nautical,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+181,Beaches & Nautical: Beach,Beach,,Beaches & Nautical,Beach,,2.000000,False,False,False,False,False,True,True,True,True,,523,Beaches & Nautical
+944,Beaches & Nautical: Beach: Coastal,Coastal,,Beaches & Nautical,Beach,Coastal,3.000000,False,False,False,False,False,True,True,False,True,,181,Beaches & Nautical: Beach
+188,Beaches & Nautical: Lighthouses,Lighthouses,,Beaches & Nautical,Lighthouses,,2.000000,False,False,False,False,True,True,False,False,False,,523,Beaches & Nautical
+185,Beaches & Nautical: Nautical,Nautical,,Beaches & Nautical,Nautical,,2.000000,False,False,False,False,True,True,False,False,True,,523,Beaches & Nautical
+971,Beaches & Nautical: Nautical: Anchor,Anchor,,Beaches & Nautical,Nautical,Anchor,3.000000,False,False,False,False,False,True,False,False,False,,185,Beaches & Nautical: Nautical
+283,Birds,Birds,,Birds,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+372,Birds: Blue Jays,Blue-Jays,,Birds,Blue Jays,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+366,Birds: Bluebirds,Bluebirds,,Birds,Bluebirds,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+364,Birds: Cardinals,Cardinals,,Birds,Cardinals,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+367,Birds: Chickadees,Chickadees,,Birds,Chickadees,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+303,Birds: Chicks,Chicks,,Birds,Chicks,,2.000000,False,False,False,False,True,False,False,False,False,,283,Birds
+390,Birds: Cranes,Cranes,,Birds,Cranes,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+343,Birds: Crows,Crows,,Birds,Crows,,2.000000,False,False,False,False,False,False,True,False,False,,283,Birds
+306,Birds: Doves,Doves,,Birds,Doves,,2.000000,False,False,False,False,True,False,False,True,True,,283,Birds
+378,Birds: Ducks,Ducks,,Birds,Ducks,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+108,Birds: Eagles,Eagles,,Birds,Eagles,,2.000000,False,False,False,False,False,True,False,False,False,,283,Birds
+738,Birds: Egrets,Egrets,,Birds,Egrets,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+664,Birds: Exotic Birds,Exotic-birds,,Birds,Exotic Birds,,2.000000,False,False,False,False,True,True,False,False,True,,283,Birds
+23,Birds: Flamingos,Flamingos,,Birds,Flamingos,,2.000000,False,False,False,False,True,True,False,False,True,,283,Birds
+382,Birds: Geese,Geese,,Birds,Geese,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+371,Birds: Goldfinches,Goldfinches,,Birds,Goldfinches,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+740,Birds: Grosbeaks,Grosbeaks,,Birds,Grosbeaks,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+374,Birds: Herons,Herons,,Birds,Herons,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+373,Birds: House Martins,House-Martins,,Birds,House Martins,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+365,Birds: Hummingbirds,Hummingbirds,,Birds,Hummingbirds,,2.000000,False,False,False,False,True,True,False,True,False,,283,Birds
+394,Birds: Kingfishers,Kingfishers,,Birds,Kingfishers,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+379,Birds: Loons,Loons,,Birds,Loons,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+220,Birds: Love Birds,Love-Birds,,Birds,Love Birds,,2.000000,False,False,False,False,True,True,True,True,False,,283,Birds
+389,Birds: Mockingbirds,Mockingbirds,,Birds,Mockingbirds,,2.000000,False,False,False,False,True,True,True,True,False,,283,Birds
+718,Birds: Orioles,Orioles,,Birds,Orioles,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+300,Birds: Owls,Owls,,Birds,Owls,,2.000000,False,False,False,False,False,False,True,True,True,,283,Birds
+376,Birds: Parrots,Parrots,,Birds,Parrots,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+395,Birds: Partridges,Partridges,,Birds,Partridges,,2.000000,False,False,False,False,False,False,True,True,True,,283,Birds
+302,Birds: Peacocks,Peacocks,,Birds,Peacocks,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+380,Birds: Pelicans,Pelicans,,Birds,Pelicans,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+301,Birds: Penguins,Penguins,,Birds,Penguins,,2.000000,False,False,False,False,False,False,False,True,True,,283,Birds
+385,Birds: Pheasants,Pheasants,,Birds,Pheasants,,2.000000,False,False,False,False,False,False,True,True,False,,283,Birds
+715,Birds: Phoebes,Phoebes,,Birds,Phoebes,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+493,Birds: Puffins,Puffins,,Birds,Puffins,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+370,Birds: Robins,Robins,,Birds,Robins,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+243,Birds: Roosters,Roosters,,Birds,Roosters,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+381,Birds: Sandpipers,Sandpipers,,Birds,Sandpipers,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+369,Birds: Seagulls,Seagulls,,Birds,Seagulls,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+386,Birds: Sparrows,Sparrows,,Birds,Sparrows,,2.000000,False,False,False,False,True,True,True,True,False,,283,Birds
+388,Birds: Swans,Swans,,Birds,Swans,,2.000000,False,False,False,False,True,True,True,True,False,,283,Birds
+735,Birds: Tanagers,Tanagers,,Birds,Tanagers,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+736,Birds: Titmouses,Titmouses,,Birds,Titmouses,,2.000000,False,False,False,False,False,False,True,True,False,,283,Birds
+393,Birds: Toucans,Toucans,,Birds,Toucans,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+304,Birds: Turkeys,Turkeys,,Birds,Turkeys,,2.000000,False,False,False,False,False,False,True,False,False,,283,Birds
+391,Birds: Warblers,Warblers,,Birds,Warblers,,2.000000,False,False,False,False,True,True,False,False,False,,283,Birds
+666,Birds: Water Birds,Water-Birds,,Birds,Water Birds,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+387,Birds: Woodpeckers,Woodpeckers,,Birds,Woodpeckers,,2.000000,False,False,False,False,True,True,True,True,True,,283,Birds
+720,Birds: Wrens,Wrens,,Birds,Wrens,,2.000000,False,False,False,False,True,True,True,False,False,,283,Birds
+996,Business,Business,Ignore for Theme Selection,Business,,,1.000000,False,False,False,True,False,False,False,False,False,,,
+999,Business: Charity Usa,charity-usa,Ignore for Theme Selection,Business,Charity Usa,,2.000000,False,False,False,True,False,False,False,False,False,,996,Business
+1655,Business: Community Favorites,community-favorites,Ignore for Theme Selection,Business,Community Favorites,,2.000000,False,False,False,True,False,False,False,False,False,,996,Business
+1654,Business: Featured Designs,featured-designs,Ignore for Theme Selection,Business,Featured Designs,,2.000000,False,False,False,True,False,False,False,False,False,,996,Business
+1000,Business: Fire Sale,fire-sale,Ignore for Theme Selection,Business,Fire Sale,,2.000000,False,False,False,True,False,False,False,False,False,,996,Business
+1001,Business: In Stock,in-stock,Ignore for Theme Selection,Business,In Stock,,2.000000,False,False,False,True,False,False,False,False,False,,996,Business
+1002,Business: Monthly,monthly,Ignore for Theme Selection,Business,Monthly,,2.000000,False,False,False,True,False,False,False,False,False,,996,Business
+1003,Business: New Product,new-product,Ignore for Theme Selection,Business,New Product,,2.000000,False,False,False,True,False,False,False,False,False,,996,Business
+679,Butterflies & Insects,Butterflies-Insects,,Butterflies & Insects,,,1.000000,False,False,False,False,True,True,True,False,False,,,
+307,Butterflies & Insects: Bees,Bees,,Butterflies & Insects,Bees,,2.000000,False,False,False,False,True,True,False,False,False,,679,Butterflies & Insects
+103,Butterflies & Insects: Butterflies,Butterflies,,Butterflies & Insects,Butterflies,,2.000000,False,False,False,False,True,True,True,False,False,,679,Butterflies & Insects
+26,Butterflies & Insects: Dragonflies,Dragonflies,,Butterflies & Insects,Dragonflies,,2.000000,False,False,False,False,True,True,True,False,False,,679,Butterflies & Insects
+808,Butterflies & Insects: Fireflies,Fireflies,,Butterflies & Insects,Fireflies,,2.000000,False,False,False,False,False,True,False,False,False,,679,Butterflies & Insects
+101,Butterflies & Insects: Ladybugs,Ladybugs,,Butterflies & Insects,Ladybugs,,2.000000,False,False,False,False,True,True,True,False,False,,679,Butterflies & Insects
+8,Country Living,Country-Living,,Country Living,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+190,Country Living: Americana,Americana,,Country Living,Americana,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+57,Country Living: Barn Stars,Barn-Stars,,Country Living,Barn Stars,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+346,Country Living: Country Music,Country-Music,,Country Living,Country Music,,2.000000,False,False,False,False,True,True,True,True,False,,8,Country Living
+186,Country Living: Farm Country,Farm,,Country Living,Farm Country,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+948,Country Living: Farmhouse,Farmhouses,,Country Living,Farmhouse,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+53,Country Living: Houses,Farm-House,,Country Living,Houses,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+810,Country Living: Mason Jars,Mason-Jars,,Country Living,Mason Jars,,2.000000,False,False,False,False,True,True,True,True,False,,8,Country Living
+179,Country Living: Pineapples,Pineapples,,Country Living,Pineapples,,2.000000,False,False,False,False,False,True,False,False,False,,8,Country Living
+959,Country Living: Red Truck,Red-Truck,,Country Living,Red Truck,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+244,Country Living: Scarecrows,Scarecrows,,Country Living,Scarecrows,,2.000000,False,False,False,False,False,False,True,False,False,,8,Country Living
+967,Country Living: Truck,Truck,,Country Living,Truck,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+189,Country Living: Western,Western,,Country Living,Western,,2.000000,False,False,False,False,True,True,True,True,True,,8,Country Living
+882,Earth,Earth,,Earth,,,1.000000,False,False,False,False,True,True,True,True,False,,,
+795,Everything Else,Everything-Else,,Everything Else,,,1.000000,False,False,False,False,True,True,True,True,False,,,
+525,Family & Friends,Family-Friends,,Family & Friends,,,1.000000,False,False,False,False,False,False,False,False,False,,,
+906,Family & Friends: Anniversary,Anniversary,,Family & Friends,Anniversary,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+322,Family & Friends: Anniversary: Forever,Forever,,Family & Friends,Anniversary,Forever,3.000000,False,False,False,False,False,False,False,False,False,,906,Family & Friends: Anniversary
+166,Family & Friends: Anniversary: Happy Anniversary,Happy-Anniversary,,Family & Friends,Anniversary,Happy Anniversary,3.000000,False,False,False,False,False,False,False,False,False,,906,Family & Friends: Anniversary
+910,Family & Friends: Baby & Kids,Baby-And-Kids,,Family & Friends,Baby & Kids,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+979,Family & Friends: Baby & Kids: Babies,Babies,,Family & Friends,Baby & Kids,Babies,3.000000,False,False,False,False,False,False,False,False,False,,910,Family & Friends: Baby & Kids
+172,Family & Friends: Baby & Kids: Storks,Storks,,Family & Friends,Baby & Kids,Storks,3.000000,False,False,False,False,False,False,False,False,False,,910,Family & Friends: Baby & Kids
+353,Family & Friends: Baby & Kids: Teddy Bears,Teddy-Bears,,Family & Friends,Baby & Kids,Teddy Bears,3.000000,False,False,False,False,False,False,False,False,False,,910,Family & Friends: Baby & Kids
+908,Family & Friends: Back to School,Back-To-School,,Family & Friends,Back to School,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+990,Family & Friends: Baptism,Baptism,,Family & Friends,Baptism,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+907,Family & Friends: Birthday,Birthday,,Family & Friends,Birthday,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+983,Family & Friends: Family,Family,,Family & Friends,Family,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+982,Family & Friends: First Communion,First-Communion,,Family & Friends,First Communion,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+977,Family & Friends: Friends,Friends,,Family & Friends,Friends,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+912,Family & Friends: Graduation,Graduation,,Family & Friends,Graduation,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+291,Family & Friends: Graduation: Celebrate,Celebrate,,Family & Friends,Graduation,Celebrate,3.000000,False,False,False,False,False,False,False,False,False,,912,Family & Friends: Graduation
+475,Family & Friends: Graduation: Congrats,Congrats,,Family & Friends,Graduation,Congrats,3.000000,False,False,False,False,False,False,False,False,False,,912,Family & Friends: Graduation
+976,Family & Friends: Grandparents,Grandparents,,Family & Friends,Grandparents,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+909,Family & Friends: Wedding,Wedding,,Family & Friends,Wedding,,2.000000,False,True,False,False,False,False,False,False,False,,525,Family & Friends
+784,Fantasy,Fantasy,,Fantasy,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+856,Fantasy: Fairies,Fairies,,Fantasy,Fairies,,2.000000,False,False,False,False,True,True,True,False,True,,784,Fantasy
+731,Fantasy: Mermaids,Mermaids,,Fantasy,Mermaids,,2.000000,False,False,False,False,True,True,False,False,False,,784,Fantasy
+987,Fantasy: Moon,Moon,,Fantasy,Moon,,2.000000,False,False,False,False,True,True,True,True,False,,784,Fantasy
+786,Fantasy: Unicorns,Unicorns,,Fantasy,Unicorns,,2.000000,False,False,False,False,True,True,True,True,False,,784,Fantasy
+997,Features,Features,Ignore for Theme Selection,Features,,,1.000000,False,False,False,True,True,True,True,True,True,,,
+1656,Features: Environmentally Friendly,environmentally-friendly,Ignore for Theme Selection,Features,Environmentally Friendly,,2.000000,False,False,False,True,True,True,True,True,True,,997,Features
+1004,Features: Glittertrends,glittertrends,Ignore for Theme Selection,Features,Glittertrends,,2.000000,False,False,False,True,True,True,True,True,True,,997,Features
+1005,Features: Premiersoft,premiersoft,Ignore for Theme Selection,Features,Premiersoft,,2.000000,False,False,False,True,True,True,True,True,True,,997,Features
+1006,Features: Printed In The Usa,printed-in-the-usa,Ignore for Theme Selection,Features,Printed In The Usa,,2.000000,False,False,False,True,True,True,True,True,True,,997,Features
+1007,Features: Reversible,reversible,Ignore for Theme Selection,Features,Reversible,,2.000000,False,False,False,True,True,True,True,True,True,,997,Features
+1008,Features: Suedereflections,suedereflections,Ignore for Theme Selection,Features,Suedereflections,,2.000000,False,False,False,True,True,True,True,True,True,,997,Features
+936,First Responders,First-Responders,,First Responders,,,1.000000,False,False,False,False,False,False,False,False,False,,,
+863,First Responders: Correctional Officers,Correctional,,First Responders,Correctional Officers,,2.000000,False,False,False,False,False,False,False,False,False,,936,First Responders
+866,First Responders: Dispatchers,Dispatcher,,First Responders,Dispatchers,,2.000000,False,False,False,False,False,False,False,False,False,,936,First Responders
+864,First Responders: Emergency Medical Services,Emergency,,First Responders,Emergency Medical Services,,2.000000,False,False,False,False,False,False,False,False,False,,936,First Responders
+191,First Responders: Fire Department,Fire-fighter,,First Responders,Fire Department,,2.000000,False,False,False,False,False,False,False,False,False,,936,First Responders
+726,First Responders: Police Department,Police-officer,,First Responders,Police Department,,2.000000,False,False,False,False,False,False,False,False,False,,936,First Responders
+865,First Responders: Security Professionals,Security,,First Responders,Security Professionals,,2.000000,False,False,False,False,False,False,False,False,False,,936,First Responders
+861,First Responders: Women in Emergency Services,Women-first-responder,,First Responders,Women in Emergency Services,,2.000000,False,False,False,False,False,False,False,False,False,,936,First Responders
+445,Flowers,Flowers,,Flowers,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+940,Flowers: Holiday Flowers,Holiday-Flowers,,Flowers,Holiday Flowers,,2.000000,False,False,False,False,False,False,False,True,True,,445,Flowers
+447,Flowers: Holiday Flowers: Amaryllis,Amaryllis,,Flowers,Holiday Flowers,Amaryllis,3.000000,False,False,False,False,False,False,False,True,True,,940,Flowers: Holiday Flowers
+667,Flowers: Holiday Flowers: Christmas Flowers,Christmas-Flowers,,Flowers,Holiday Flowers,Christmas Flowers,3.000000,False,False,False,False,False,False,False,True,True,,940,Flowers: Holiday Flowers
+627,Flowers: Holiday Flowers: Easter Lilies,Easter-Lilies,,Flowers,Holiday Flowers,Easter Lilies,3.000000,False,False,False,False,True,False,False,False,False,,940,Flowers: Holiday Flowers
+232,Flowers: Holiday Flowers: Poinsettias,Poinsettias,,Flowers,Holiday Flowers,Poinsettias,3.000000,False,False,False,False,False,False,False,True,True,,940,Flowers: Holiday Flowers
+937,Flowers: Spring Flowers,Spring-Flowers,,Flowers,Spring Flowers,,2.000000,False,False,False,False,True,True,True,True,True,,445,Flowers
+611,Flowers: Spring Flowers: Apple Blossoms,Apple-Blossoms,,Flowers,Spring Flowers,Apple Blossoms,3.000000,False,False,False,False,True,False,False,False,False,,937,Flowers: Spring Flowers
+441,Flowers: Spring Flowers: Azaleas,Azaleas,,Flowers,Spring Flowers,Azaleas,3.000000,False,False,False,False,False,False,False,False,False,,937,Flowers: Spring Flowers
+614,Flowers: Spring Flowers: Bluebells,Bluebells,,Flowers,Spring Flowers,Bluebells,3.000000,False,False,False,False,False,False,False,False,False,,937,Flowers: Spring Flowers
+620,Flowers: Spring Flowers: Cherry Blossoms,Cherry-Blossoms,,Flowers,Spring Flowers,Cherry Blossoms,3.000000,False,False,False,False,True,False,False,False,False,,937,Flowers: Spring Flowers
+623,Flowers: Spring Flowers: Crocuses,Crocuses,,Flowers,Spring Flowers,Crocuses,3.000000,False,False,False,False,False,False,False,False,False,,937,Flowers: Spring Flowers
+412,Flowers: Spring Flowers: Daffodils,Daffodils,,Flowers,Spring Flowers,Daffodils,3.000000,False,False,False,False,True,False,False,False,False,,937,Flowers: Spring Flowers
+628,Flowers: Spring Flowers: Forget Me Nots,Forget-Me-Nots,,Flowers,Spring Flowers,Forget Me Nots,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+435,Flowers: Spring Flowers: Hibiscus,Hibiscus,,Flowers,Spring Flowers,Hibiscus,3.000000,False,False,False,False,False,True,False,False,False,,937,Flowers: Spring Flowers
+440,Flowers: Spring Flowers: Hyacinths,Hyacinths,,Flowers,Spring Flowers,Hyacinths,3.000000,False,False,False,False,True,False,False,False,False,,937,Flowers: Spring Flowers
+431,Flowers: Spring Flowers: Hydrangeas,Hydrangeas,,Flowers,Spring Flowers,Hydrangeas,3.000000,False,False,False,False,True,True,True,False,False,,937,Flowers: Spring Flowers
+409,Flowers: Spring Flowers: Irises,Irises,,Flowers,Spring Flowers,Irises,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+426,Flowers: Spring Flowers: Lilacs,Lilacs,,Flowers,Spring Flowers,Lilacs,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+410,Flowers: Spring Flowers: Lilies,Lilies,,Flowers,Spring Flowers,Lilies,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+425,Flowers: Spring Flowers: Magnolias,Magnolias,,Flowers,Spring Flowers,Magnolias,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+432,Flowers: Spring Flowers: Pansies,Pansies,,Flowers,Spring Flowers,Pansies,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+438,Flowers: Spring Flowers: Peonies,Peonies,,Flowers,Spring Flowers,Peonies,3.000000,False,False,False,False,True,True,True,False,False,,937,Flowers: Spring Flowers
+421,Flowers: Spring Flowers: Roses,Roses,,Flowers,Spring Flowers,Roses,3.000000,False,False,False,False,True,True,True,True,True,,937,Flowers: Spring Flowers
+411,Flowers: Spring Flowers: Tulips,Tulips,,Flowers,Spring Flowers,Tulips,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+646,Flowers: Spring Flowers: Violets,Violets,,Flowers,Spring Flowers,Violets,3.000000,False,False,False,False,True,True,False,False,False,,937,Flowers: Spring Flowers
+938,Flowers: Summer & Fall Flowers,Summer-Fall-Flowers,,Flowers,Summer & Fall Flowers,,2.000000,False,False,False,False,True,True,True,False,False,,445,Flowers
+612,Flowers: Summer & Fall Flowers: Asters,Asters,,Flowers,Summer & Fall Flowers,Asters,3.000000,False,False,False,False,False,False,True,False,False,,938,Flowers: Summer & Fall Flowers
+613,Flowers: Summer & Fall Flowers: Black-Eyed Susans,Black-Eyed-Susans,,Flowers,Summer & Fall Flowers,Black-Eyed Susans,3.000000,False,False,False,False,True,True,True,False,False,,938,Flowers: Summer & Fall Flowers
+617,Flowers: Summer & Fall Flowers: Butterfly Bush,Butterfly-Bush,,Flowers,Summer & Fall Flowers,Butterfly Bush,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+619,Flowers: Summer & Fall Flowers: Carnations,Carnations,,Flowers,Summer & Fall Flowers,Carnations,3.000000,False,False,False,False,False,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+419,Flowers: Summer & Fall Flowers: Clematis,Clematis,,Flowers,Summer & Fall Flowers,Clematis,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+429,Flowers: Summer & Fall Flowers: Cone Flowers,Cone-Flowers,,Flowers,Summer & Fall Flowers,Cone Flowers,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+713,Flowers: Summer & Fall Flowers: Cosmos,Cosmos,,Flowers,Summer & Fall Flowers,Cosmos,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+436,Flowers: Summer & Fall Flowers: Dahlias,Dahlias,,Flowers,Summer & Fall Flowers,Dahlias,3.000000,False,False,False,False,False,False,True,False,False,,938,Flowers: Summer & Fall Flowers
+408,Flowers: Summer & Fall Flowers: Daisies,Daisies,,Flowers,Summer & Fall Flowers,Daisies,3.000000,False,False,False,False,True,True,True,False,False,,938,Flowers: Summer & Fall Flowers
+625,Flowers: Summer & Fall Flowers: Daylilies,Daylilies,,Flowers,Summer & Fall Flowers,Daylilies,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+418,Flowers: Summer & Fall Flowers: Delphines,Delphines,,Flowers,Summer & Fall Flowers,Delphines,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+716,Flowers: Summer & Fall Flowers: Fuchsias,Fuchsias,,Flowers,Summer & Fall Flowers,Fuchsias,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+415,Flowers: Summer & Fall Flowers: Geraniums,Geraniums,,Flowers,Summer & Fall Flowers,Geraniums,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+406,Flowers: Summer & Fall Flowers: Gerberas,Gerberas,,Flowers,Summer & Fall Flowers,Gerberas,3.000000,False,False,False,False,True,True,True,False,False,,938,Flowers: Summer & Fall Flowers
+630,Flowers: Summer & Fall Flowers: Globe Amaranth,Globe-Amaranth,,Flowers,Summer & Fall Flowers,Globe Amaranth,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+632,Flowers: Summer & Fall Flowers: Hollyhocks,Hollyhocks,,Flowers,Summer & Fall Flowers,Hollyhocks,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+633,Flowers: Summer & Fall Flowers: Hummingbird Flowers,Hummingbird-and-Flowers,,Flowers,Summer & Fall Flowers,Hummingbird Flowers,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+635,Flowers: Summer & Fall Flowers: Impatiens,Impatiens,,Flowers,Summer & Fall Flowers,Impatiens,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+637,Flowers: Summer & Fall Flowers: Larkspur,Larkspur,,Flowers,Summer & Fall Flowers,Larkspur,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+638,Flowers: Summer & Fall Flowers: Lavender,Lavender,,Flowers,Summer & Fall Flowers,Lavender,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+782,Flowers: Summer & Fall Flowers: Marigolds,Marigolds,,Flowers,Summer & Fall Flowers,Marigolds,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+729,Flowers: Summer & Fall Flowers: Morning Glories,Morning-Glories,,Flowers,Summer & Fall Flowers,Morning Glories,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+433,Flowers: Summer & Fall Flowers: Mums,Mums,,Flowers,Summer & Fall Flowers,Mums,3.000000,False,False,False,False,False,False,True,False,False,,938,Flowers: Summer & Fall Flowers
+641,Flowers: Summer & Fall Flowers: Pentas,Pentas,,Flowers,Summer & Fall Flowers,Pentas,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+422,Flowers: Summer & Fall Flowers: Petunias,Petunias,,Flowers,Summer & Fall Flowers,Petunias,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+413,Flowers: Summer & Fall Flowers: Ranunculus,Ranunculus,,Flowers,Summer & Fall Flowers,Ranunculus,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+404,Flowers: Summer & Fall Flowers: Sunflowers,Sunflowers,,Flowers,Summer & Fall Flowers,Sunflowers,3.000000,False,False,False,False,True,True,True,False,False,,938,Flowers: Summer & Fall Flowers
+644,Flowers: Summer & Fall Flowers: Verbena,Verbena,,Flowers,Summer & Fall Flowers,Verbena,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+710,Flowers: Summer & Fall Flowers: Veronica,Veronica,,Flowers,Summer & Fall Flowers,Veronica,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+645,Flowers: Summer & Fall Flowers: Vinca,Vincas,,Flowers,Summer & Fall Flowers,Vinca,3.000000,False,False,False,False,False,False,False,False,False,,938,Flowers: Summer & Fall Flowers
+420,Flowers: Summer & Fall Flowers: Zinnias,Zinnias,,Flowers,Summer & Fall Flowers,Zinnias,3.000000,False,False,False,False,True,True,False,False,False,,938,Flowers: Summer & Fall Flowers
+941,Flowers: Tropical & Exotic Flowers,Tropical-Flowers,,Flowers,Tropical & Exotic Flowers,,2.000000,False,False,False,False,True,True,False,False,False,,445,Flowers
+618,Flowers: Tropical & Exotic Flowers: Calla Lilies,Calla-Lilies,,Flowers,Tropical & Exotic Flowers,Calla Lilies,3.000000,False,False,False,False,False,False,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+742,Flowers: Tropical & Exotic Flowers: Cattails,Cattails,,Flowers,Tropical & Exotic Flowers,Cattails,3.000000,False,False,False,False,False,False,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+669,Flowers: Tropical & Exotic Flowers: Exotic Flowers,Exotic-Flowers,,Flowers,Tropical & Exotic Flowers,Exotic Flowers,3.000000,False,False,False,False,True,True,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+443,Flowers: Tropical & Exotic Flowers: Lotus,Lotus,,Flowers,Tropical & Exotic Flowers,Lotus,3.000000,False,False,False,False,True,True,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+442,Flowers: Tropical & Exotic Flowers: Orchids,Orchids,,Flowers,Tropical & Exotic Flowers,Orchids,3.000000,False,False,False,False,False,False,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+649,Flowers: Tropical & Exotic Flowers: Tropical Flowers,Tropical-Flowers,,Flowers,Tropical & Exotic Flowers,Tropical Flowers,3.000000,False,False,False,False,False,True,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+942,Flowers: Tropical & Exotic Flowers: Water Flowers,Water-Flowers,,Flowers,Tropical & Exotic Flowers,Water Flowers,3.000000,False,False,False,False,False,False,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+647,Flowers: Tropical & Exotic Flowers: Water Lilies,Water-Lilies,,Flowers,Tropical & Exotic Flowers,Water Lilies,3.000000,False,False,False,False,True,True,False,False,False,,941,Flowers: Tropical & Exotic Flowers
+939,Flowers: Wild Flowers,Wild-Flowers,,Flowers,Wild Flowers,,2.000000,False,False,False,False,True,True,True,True,False,,445,Flowers
+434,Flowers: Wild Flowers: Bluebonnets,Bluebonnets,,Flowers,Wild Flowers,Bluebonnets,3.000000,False,False,False,False,False,False,False,False,False,,939,Flowers: Wild Flowers
+616,Flowers: Wild Flowers: Buttercups,Buttercups,,Flowers,Wild Flowers,Buttercups,3.000000,False,False,False,False,False,False,False,False,False,,939,Flowers: Wild Flowers
+621,Flowers: Wild Flowers: Clovers,Clovers,,Flowers,Wild Flowers,Clovers,3.000000,False,False,False,False,False,False,False,False,False,,939,Flowers: Wild Flowers
+427,Flowers: Wild Flowers: Columbines,Columbines,,Flowers,Wild Flowers,Columbines,3.000000,False,False,False,False,True,False,True,False,False,,939,Flowers: Wild Flowers
+417,Flowers: Wild Flowers: Poppies,Poppies,,Flowers,Wild Flowers,Poppies,3.000000,False,False,False,False,True,True,False,False,False,,939,Flowers: Wild Flowers
+416,Flowers: Wild Flowers: Thistles,Thistles,,Flowers,Wild Flowers,Thistles,3.000000,False,False,False,False,False,False,False,False,False,,939,Flowers: Wild Flowers
+279,Food & Wine,Food-Wine,,Food & Wine,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+449,Food & Wine: Apples,Apples,,Food & Wine,Apples,,2.000000,False,False,False,False,False,False,True,False,False,,279,Food & Wine
+318,Food & Wine: BBQ,BBQ,,Food & Wine,BBQ,,2.000000,False,False,False,False,False,True,False,False,False,,279,Food & Wine
+945,Food & Wine: Citrus,Citrus,,Food & Wine,Citrus,,2.000000,False,False,False,False,True,True,True,False,False,,279,Food & Wine
+29,Food & Wine: Coffee,Coffee,,Food & Wine,Coffee,,2.000000,False,False,False,False,True,True,True,True,True,,279,Food & Wine
+271,Food & Wine: Fruits,Fruits,,Food & Wine,Fruits,,2.000000,False,False,False,False,True,True,True,False,False,,279,Food & Wine
+1019,Food & Wine: General Pumpkins,General-Pumpkins,,Food & Wine,General Pumpkins,,2.000000,False,False,False,False,False,False,True,False,False,,279,Food & Wine
+451,Food & Wine: Grapes,Grapes,,Food & Wine,Grapes,,2.000000,False,False,False,False,False,True,True,False,False,,279,Food & Wine
+460,Food & Wine: Ice Cream,Ice-Cream,,Food & Wine,Ice Cream,,2.000000,False,False,False,False,False,True,False,False,False,,279,Food & Wine
+461,Food & Wine: Lemonade,Lemonade,,Food & Wine,Lemonade,,2.000000,False,False,False,False,True,True,False,False,False,,279,Food & Wine
+821,Food & Wine: Lemons,Lemons,,Food & Wine,Lemons,,2.000000,False,False,False,False,True,True,False,False,False,,279,Food & Wine
+263,Food & Wine: Strawberries,Strawberries,,Food & Wine,Strawberries,,2.000000,False,False,False,False,True,True,False,False,False,,279,Food & Wine
+245,Food & Wine: Sweets,Sweets,,Food & Wine,Sweets,,2.000000,False,False,False,False,True,True,True,True,True,,279,Food & Wine
+264,Food & Wine: Watermelon,Watermelon,,Food & Wine,Watermelon,,2.000000,False,False,False,False,False,True,False,False,False,,279,Food & Wine
+176,Food & Wine: Wine & Drinks,Wine-Drinks,,Food & Wine,Wine & Drinks,,2.000000,False,False,False,False,True,True,True,True,False,,279,Food & Wine
+519,For The Cause,For-The-Cause,,For The Cause,,,1.000000,False,False,False,False,False,False,False,False,False,,,
+707,For The Cause: Animals,Animals,,For The Cause,Animals,,2.000000,False,False,False,False,False,False,False,False,False,,519,For The Cause
+819,For The Cause: Autism Awareness,Autism-Awareness,,For The Cause,Autism Awareness,,2.000000,False,False,False,False,False,False,False,False,False,,519,For The Cause
+858,For The Cause: Awareness,Awareness,,For The Cause,Awareness,,2.000000,False,False,False,False,False,False,False,False,False,,519,For The Cause
+527,For The Cause: Breast Cancer Awareness,Breast-Cancer-Awareness,,For The Cause,Breast Cancer Awareness,,2.000000,False,False,False,False,False,False,False,False,False,,519,For The Cause
+825,For The Cause: Coronavirus,Coronavirus,,For The Cause,Coronavirus,,2.000000,False,False,False,False,False,False,False,False,False,,519,For The Cause
+528,For The Cause: Gay Pride,Gay-Pride,,For The Cause,Gay Pride,,2.000000,False,False,False,False,False,False,False,False,False,,519,For The Cause
+530,For The Cause: Peace,Peace,,For The Cause,Peace,,2.000000,False,False,False,False,False,False,False,False,False,,519,For The Cause
+928,Gardens,Gardens,,Gardens,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+984,Gardens: Baskets,Baskets,,Gardens,Baskets,,2.000000,False,False,False,False,True,True,True,True,True,,928,Gardens
+277,Gardens: Birdhouses,Birdhouses,,Gardens,Birdhouses,,2.000000,False,False,False,False,True,True,True,True,True,,928,Gardens
+325,Gardens: Bless My Garden,Bless-My-Garden,,Gardens,Bless My Garden,,2.000000,False,False,False,False,True,True,True,False,False,,928,Gardens
+424,Gardens: Dogwood,Dogwood,,Gardens,Dogwood,,2.000000,False,False,False,False,True,False,False,False,False,,928,Gardens
+516,Gardens: Garden Gnomes,Garden-Gnomes,,Gardens,Garden Gnomes,,2.000000,False,False,False,False,True,True,True,True,True,,928,Gardens
+957,Gardens: Potted Floral,Potted-Floral,,Gardens,Potted Floral,,2.000000,False,False,False,False,True,True,True,False,False,,928,Gardens
+921,Gardens: Rain Boots,Rain-Boots,,Gardens,Rain Boots,,2.000000,False,False,False,False,True,True,False,False,False,,928,Gardens
+672,Gardens: Shrubs,Shrubs,,Gardens,Shrubs,,2.000000,False,False,False,False,True,True,True,True,False,,928,Gardens
+341,Gardens: Trees,Trees,,Gardens,Trees,,2.000000,False,False,False,False,True,True,True,True,True,,928,Gardens
+273,Gardens: Watering Cans,Watering-Cans,,Gardens,Watering Cans,,2.000000,False,False,False,False,True,True,True,False,False,,928,Gardens
+970,Gardens: Wheelbarrow,Wheelbarrow,,Gardens,Wheelbarrow,,2.000000,False,False,False,False,True,True,True,False,False,,928,Gardens
+468,Great Outdoors,Great-Outdoors,,Great Outdoors,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+40,Great Outdoors: Camping,Camping,,Great Outdoors,Camping,,2.000000,False,False,False,False,True,True,True,False,False,,468,Great Outdoors
+121,Great Outdoors: Fishing,Fishing,,Great Outdoors,Fishing,,2.000000,False,False,False,False,True,True,True,False,False,,468,Great Outdoors
+454,Great Outdoors: Hunting,Hunting,,Great Outdoors,Hunting,,2.000000,False,False,False,False,False,False,True,False,False,,468,Great Outdoors
+33,Great Outdoors: Lake,Lakes,,Great Outdoors,Lake,,2.000000,False,False,False,False,True,True,True,False,False,,468,Great Outdoors
+496,Great Outdoors: Outdoors,Outdoors,,Great Outdoors,Outdoors,,2.000000,False,False,False,False,True,True,True,True,True,,468,Great Outdoors
+812,Great Outdoors: Rivers,Rivers,,Great Outdoors,Rivers,,2.000000,False,False,False,False,True,True,True,False,False,,468,Great Outdoors
+869,Humor,Humor,,Humor,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+118,Love & Happiness,Love-Happiness,,Love & Happiness,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+328,Love & Happiness: Bless Your Heart,Bless-Your-Heart,,Love & Happiness,Bless Your Heart,,2.000000,False,False,False,False,True,True,True,True,False,,118,Love & Happiness
+950,Love & Happiness: Hello,Hello,,Love & Happiness,Hello,,2.000000,False,False,False,False,True,True,True,True,True,,118,Love & Happiness
+289,Love & Happiness: Home Sweet Home,Home-Sweet-Home,,Love & Happiness,Home Sweet Home,,2.000000,False,False,False,False,True,True,True,True,True,,118,Love & Happiness
+323,Love & Happiness: Live/Laugh/Love,Live-Laugh-Love,,Love & Happiness,Live/Laugh/Love,,2.000000,False,False,False,False,True,True,True,True,False,,118,Love & Happiness
+929,Military,Military,,Military,,,1.000000,False,False,False,False,False,False,False,False,False,,,
+930,Military: Air Force,Air-Force,,Military,Air Force,,2.000000,False,False,False,False,False,False,False,False,False,,929,Military
+931,Military: Army,Army,,Military,Army,,2.000000,False,False,False,False,False,False,False,False,False,,929,Military
+932,Military: Coast Guard,Coast-Guard,,Military,Coast Guard,,2.000000,False,False,False,False,False,False,False,False,False,,929,Military
+933,Military: Marines,Marines,,Military,Marines,,2.000000,False,False,False,False,False,False,False,False,False,,929,Military
+934,Military: Navy,Navy,,Military,Navy,,2.000000,False,False,False,False,False,False,False,False,False,,929,Military
+58,Military: Support Our Troops,Support-Our-Troops,,Military,Support Our Troops,,2.000000,False,False,False,False,False,False,False,False,False,,929,Military
+708,Military: Veterans,Veterans,,Military,Veterans,,2.000000,False,False,False,False,False,False,False,False,False,,929,Military
+124,MLB Baseball: 2,Sports & Recreation,,MLB Baseball,,2,3.000000,False,False,False,False,False,False,False,False,False,,Sports & Recreation,
+13,Monogrammed,Monogrammed,,Monogrammed,,,1.000000,False,False,False,False,True,True,True,True,False,,,
+131,Monogrammed: Letter A,Letter-A,,Monogrammed,Letter A,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+132,Monogrammed: Letter B,Letter-B,,Monogrammed,Letter B,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+133,Monogrammed: Letter C,Letter-C,,Monogrammed,Letter C,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+134,Monogrammed: Letter D,Letter-D,,Monogrammed,Letter D,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+135,Monogrammed: Letter E,Letter-E,,Monogrammed,Letter E,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+136,Monogrammed: Letter F,Letter-F,,Monogrammed,Letter F,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+137,Monogrammed: Letter G,Letter-G,,Monogrammed,Letter G,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+138,Monogrammed: Letter H,Letter-H,,Monogrammed,Letter H,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+139,Monogrammed: Letter I,Letter-I,,Monogrammed,Letter I,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+140,Monogrammed: Letter J,Letter-J,,Monogrammed,Letter J,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+141,Monogrammed: Letter K,Letter-K,,Monogrammed,Letter K,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+142,Monogrammed: Letter L,Letter-L,,Monogrammed,Letter L,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+143,Monogrammed: Letter M,Letter-M,,Monogrammed,Letter M,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+144,Monogrammed: Letter N,Letter-N,,Monogrammed,Letter N,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+145,Monogrammed: Letter O,Letter-O,,Monogrammed,Letter O,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+146,Monogrammed: Letter P,Letter-P,,Monogrammed,Letter P,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+147,Monogrammed: Letter Q,Letter-Q,,Monogrammed,Letter Q,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+148,Monogrammed: Letter R,Letter-R,,Monogrammed,Letter R,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+149,Monogrammed: Letter S,Letter-S,,Monogrammed,Letter S,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+150,Monogrammed: Letter T,Letter-T,,Monogrammed,Letter T,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+151,Monogrammed: Letter U,Letter-U,,Monogrammed,Letter U,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+152,Monogrammed: Letter V,Letter-V,,Monogrammed,Letter V,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+153,Monogrammed: Letter W,Letter-W,,Monogrammed,Letter W,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+154,Monogrammed: Letter X,Letter-X,,Monogrammed,Letter X,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+155,Monogrammed: Letter Y,Letter-Y,,Monogrammed,Letter Y,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+156,Monogrammed: Letter Z,Letter-Z,,Monogrammed,Letter Z,,2.000000,False,False,False,False,True,True,True,True,False,,13,Monogrammed
+125,Nascar: 2,Sports & Recreation,,Nascar,,2,3.000000,False,False,False,False,False,False,False,False,False,,Sports & Recreation,
+126,NBA Basketball: 2,Sports & Recreation,,NBA Basketball,,2,3.000000,False,False,False,False,False,False,False,False,False,,Sports & Recreation,
+127,NCAA: 2,Sports & Recreation,,NCAA,,2,3.000000,False,False,False,False,False,False,False,False,False,,Sports & Recreation,
+128,NFL Football: 2,Sports & Recreation,,NFL Football,,2,3.000000,False,False,False,False,False,False,False,False,False,,Sports & Recreation,
+129,NHL Hockey: 2,Sports & Recreation,,NHL Hockey,,2,3.000000,False,False,False,False,False,False,False,False,False,,Sports & Recreation,
+6,Open & Sale,Open-Sale,,Open & Sale,,,1.000000,False,False,False,False,False,False,False,False,False,,,
+521,Party Time,Party-Time,,Party Time,,,1.000000,False,False,False,False,True,True,True,True,False,,,
+657,Party Time: 5 O Clock Somewhere,5-O-Clock-Somewhere,,Party Time,5 O Clock Somewhere,,2.000000,False,False,False,False,True,True,False,False,False,,521,Party Time
+656,Party Time: Balloons,Balloons,,Party Time,Balloons,,2.000000,False,False,False,False,True,True,True,True,False,,521,Party Time
+653,Party Time: Beer,Beer,,Party Time,Beer,,2.000000,False,False,False,False,True,True,True,True,False,,521,Party Time
+658,Party Time: Girls Night,Girls-Night,,Party Time,Girls Night,,2.000000,False,False,False,False,True,True,True,True,False,,521,Party Time
+654,Party Time: Margaritas,Margaritas,,Party Time,Margaritas,,2.000000,False,False,False,False,True,True,False,False,False,,521,Party Time
+660,Party Time: Pool Party,Pool-Party,,Party Time,Pool Party,,2.000000,False,False,False,False,False,True,False,False,False,,521,Party Time
+655,Party Time: The Party is Here,The-Party-is-Here,,Party Time,The Party is Here,,2.000000,False,False,False,False,True,True,True,True,False,,521,Party Time
+7,Patriotic,Patriotic,,Patriotic,,,1.000000,False,False,False,False,True,True,True,True,False,,,
+47,Patriotic: American Flags,American-Flags,,Patriotic,American Flags,,2.000000,False,False,False,False,True,True,True,True,True,,7,Patriotic
+453,Patriotic: God Bless America,God-Bless-America,,Patriotic,God Bless America,,2.000000,False,False,False,False,True,True,True,True,False,,7,Patriotic
+52,Patriotic: Hearts and Stripes,Hearts-and-Stripes,,Patriotic,Hearts and Stripes,,2.000000,False,False,False,False,True,True,True,True,False,,7,Patriotic
+54,Patriotic: Liberty & Freedom,Liberty-Freedom,,Patriotic,Liberty & Freedom,,2.000000,False,False,False,False,True,True,True,True,False,,7,Patriotic
+59,Patriotic: Uncle Sam,Uncle-Sam,,Patriotic,Uncle Sam,,2.000000,False,False,False,False,False,True,False,False,False,,7,Patriotic
+398,Patterns,Patterns,,Patterns,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+485,Patterns: Camo,Camo,,Patterns,Camo,,2.000000,False,False,False,False,True,True,True,True,False,,398,Patterns
+985,Patterns: Checkered,Checkered,,Patterns,Checkered,,2.000000,False,False,False,False,True,True,True,True,True,,398,Patterns
+399,Patterns: Chevron,Chevron,,Patterns,Chevron,,2.000000,False,False,False,False,True,True,True,True,False,,398,Patterns
+947,Patterns: Diamonds,Diamonds,,Patterns,Diamonds,,2.000000,False,False,False,False,True,True,True,True,False,,398,Patterns
+817,Patterns: Lattice,Lattice,,Patterns,Lattice,,2.000000,False,False,False,False,True,True,True,True,True,,398,Patterns
+956,Patterns: Plaid,Plaid,,Patterns,Plaid,,2.000000,False,False,False,False,True,True,True,True,True,,398,Patterns
+400,Patterns: Polka Dots,Polka-Dots,,Patterns,Polka Dots,,2.000000,False,False,False,False,True,True,True,True,True,,398,Patterns
+489,Patterns: Quatrefoil,Quatrefoil,,Patterns,Quatrefoil,,2.000000,False,False,False,False,True,True,True,True,False,,398,Patterns
+965,Patterns: Stained Glass,Stained-Glass,,Patterns,Stained Glass,,2.000000,False,False,False,False,True,True,True,True,True,,398,Patterns
+487,Patterns: Stripes,Stripes,,Patterns,Stripes,,2.000000,False,False,False,False,True,True,True,True,True,,398,Patterns
+966,Patterns: Tie Dye,Tie-Dye,,Patterns,Tie Dye,,2.000000,False,False,False,False,True,True,False,False,False,,398,Patterns
+483,Patterns: Zebra Stripes,Zebra-Stripes,,Patterns,Zebra Stripes,,2.000000,False,False,False,False,True,True,True,True,False,,398,Patterns
+1,Pets & Animals,Pets-Animals,,Pets & Animals,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+674,Pets & Animals: Aquatic Life,Aquatic-Life,,Pets & Animals,Aquatic Life,,2.000000,False,False,False,False,True,True,True,False,True,,1,Pets & Animals
+773,Pets & Animals: Aquatic Life: Beavers,Beavers,,Pets & Animals,Aquatic Life,Beavers,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+357,Pets & Animals: Aquatic Life: Crabs,Crabs,,Pets & Animals,Aquatic Life,Crabs,3.000000,False,False,False,False,True,True,True,False,False,,674,Pets & Animals: Aquatic Life
+361,Pets & Animals: Aquatic Life: Dolphins,Dolphins,,Pets & Animals,Aquatic Life,Dolphins,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+359,Pets & Animals: Aquatic Life: Fish,Fish,,Pets & Animals,Aquatic Life,Fish,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+109,Pets & Animals: Aquatic Life: Frogs,Frogs,,Pets & Animals,Aquatic Life,Frogs,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+952,Pets & Animals: Aquatic Life: Koi,Koi,,Pets & Animals,Aquatic Life,Koi,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+360,Pets & Animals: Aquatic Life: Lobsters,Lobsters,,Pets & Animals,Aquatic Life,Lobsters,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+781,Pets & Animals: Aquatic Life: Octopuses,Octopuses,,Pets & Animals,Aquatic Life,Octopuses,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+356,Pets & Animals: Aquatic Life: Sea Shells,Sea-Shells,,Pets & Animals,Aquatic Life,Sea Shells,3.000000,False,False,False,False,True,True,True,False,True,,674,Pets & Animals: Aquatic Life
+362,Pets & Animals: Aquatic Life: Seahorses,Seahorses,,Pets & Animals,Aquatic Life,Seahorses,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+358,Pets & Animals: Aquatic Life: Starfish,Starfish,,Pets & Animals,Aquatic Life,Starfish,3.000000,False,False,False,False,True,True,True,False,True,,674,Pets & Animals: Aquatic Life
+326,Pets & Animals: Aquatic Life: Turtles,Turtles,,Pets & Animals,Aquatic Life,Turtles,3.000000,False,False,False,False,True,True,False,False,False,,674,Pets & Animals: Aquatic Life
+102,Pets & Animals: Bunnies,Bunnies,,Pets & Animals,Bunnies,,2.000000,False,False,False,False,True,True,True,True,True,,1,Pets & Animals
+104,Pets & Animals: Cats,Cats,,Pets & Animals,Cats,,2.000000,False,False,False,False,True,True,True,True,True,,1,Pets & Animals
+744,Pets & Animals: Cats: Black,Black-Cats,,Pets & Animals,Cats,Black,3.000000,False,False,False,False,False,False,True,False,False,,104,Pets & Animals: Cats
+749,Pets & Animals: Cats: Black & White,Black-and-White-Cats,,Pets & Animals,Cats,Black & White,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+751,Pets & Animals: Cats: Brown,Brown-Cats,,Pets & Animals,Cats,Brown,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+750,Pets & Animals: Cats: Brown Tabby,Brown-Tabby,,Pets & Animals,Cats,Brown Tabby,3.000000,False,False,False,False,False,False,True,True,True,,104,Pets & Animals: Cats
+764,Pets & Animals: Cats: Brown w/White,Brown-White-Cats,,Pets & Animals,Cats,Brown w/White,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+752,Pets & Animals: Cats: Calico,Calico-Cats,,Pets & Animals,Cats,Calico,3.000000,False,False,False,False,True,False,True,False,False,,104,Pets & Animals: Cats
+753,Pets & Animals: Cats: Cream,Cream-Cats,,Pets & Animals,Cats,Cream,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+759,Pets & Animals: Cats: Cream Tabby,Cream-Tabby,,Pets & Animals,Cats,Cream Tabby,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+754,Pets & Animals: Cats: Gray Tuxedo,Gray-Tuxedo,,Pets & Animals,Cats,Gray Tuxedo,3.000000,False,False,False,False,False,False,True,False,False,,104,Pets & Animals: Cats
+755,Pets & Animals: Cats: Grey,Grey-Cats,,Pets & Animals,Cats,Grey,3.000000,False,False,False,False,False,False,True,False,False,,104,Pets & Animals: Cats
+756,Pets & Animals: Cats: Grey Tabby,Grey-Tabby,,Pets & Animals,Cats,Grey Tabby,3.000000,False,False,False,False,True,True,False,True,True,,104,Pets & Animals: Cats
+974,Pets & Animals: Cats: Memorial,Cats-Memorial,,Pets & Animals,Cats,Memorial,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+757,Pets & Animals: Cats: Orange,Orange-Cats,,Pets & Animals,Cats,Orange,3.000000,False,False,False,False,False,True,False,False,False,,104,Pets & Animals: Cats
+758,Pets & Animals: Cats: Orange Tabby,Orange-Tabby,,Pets & Animals,Cats,Orange Tabby,3.000000,False,False,False,False,True,True,True,False,False,,104,Pets & Animals: Cats
+765,Pets & Animals: Cats: Orange w/White,Orange-White-Cats,,Pets & Animals,Cats,Orange w/White,3.000000,False,False,False,False,True,False,False,False,False,,104,Pets & Animals: Cats
+746,Pets & Animals: Cats: Paws,Cats-Paw-Print,,Pets & Animals,Cats,Paws,3.000000,False,False,False,False,False,False,True,False,False,,104,Pets & Animals: Cats
+761,Pets & Animals: Cats: Ragdoll,Ragdoll-Cats,,Pets & Animals,Cats,Ragdoll,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+760,Pets & Animals: Cats: Siamese,Siamese-Cats,,Pets & Animals,Cats,Siamese,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+762,Pets & Animals: Cats: Tuxedo,Tuxedo-Cats,,Pets & Animals,Cats,Tuxedo,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+763,Pets & Animals: Cats: White,White-Cats,,Pets & Animals,Cats,White,3.000000,False,False,False,False,False,False,False,False,False,,104,Pets & Animals: Cats
+769,Pets & Animals: Dinosaurs,Dinosaurs,,Pets & Animals,Dinosaurs,,2.000000,False,False,False,False,True,True,True,True,False,,1,Pets & Animals
+107,Pets & Animals: Dogs,Dogs,,Pets & Animals,Dogs,,2.000000,False,False,False,False,True,True,True,True,True,,1,Pets & Animals
+535,Pets & Animals: Dogs: Basset Hounds,Basset-Hounds,,Pets & Animals,Dogs,Basset Hounds,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+557,Pets & Animals: Dogs: Beagles,Beagles,,Pets & Animals,Dogs,Beagles,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+687,Pets & Animals: Dogs: Bichon Frise,Bichon-Frise,,Pets & Animals,Dogs,Bichon Frise,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+562,Pets & Animals: Dogs: Border Collies,Border-Collies,,Pets & Animals,Dogs,Border Collies,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+541,Pets & Animals: Dogs: Boston Terriers,Boston-Terriers,,Pets & Animals,Dogs,Boston Terriers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+534,Pets & Animals: Dogs: Boxers,Boxers,,Pets & Animals,Dogs,Boxers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+688,Pets & Animals: Dogs: Brittany Spaniels,Brittany-Spaniels,,Pets & Animals,Dogs,Brittany Spaniels,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+533,Pets & Animals: Dogs: Bulldogs,Bulldogs,,Pets & Animals,Dogs,Bulldogs,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+543,Pets & Animals: Dogs: Chihuahuas,Chihuahuas,,Pets & Animals,Dogs,Chihuahuas,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+559,Pets & Animals: Dogs: Cocker Spaniels,Cocker-Spaniels,,Pets & Animals,Dogs,Cocker Spaniels,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+690,Pets & Animals: Dogs: Collies,Collies,,Pets & Animals,Dogs,Collies,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+538,Pets & Animals: Dogs: Dachshunds,Dachshunds,,Pets & Animals,Dogs,Dachshunds,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+558,Pets & Animals: Dogs: Dalmatians,Dalmatians,,Pets & Animals,Dogs,Dalmatians,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+545,Pets & Animals: Dogs: Dogsome,Dogsome,,Pets & Animals,Dogs,Dogsome,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+683,Pets & Animals: Dogs: Flat-coated Retrievers,Flat-coated-Retrievers,,Pets & Animals,Dogs,Flat-coated Retrievers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+686,Pets & Animals: Dogs: Fox Terriers,Fox-Terriers,,Pets & Animals,Dogs,Fox Terriers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+569,Pets & Animals: Dogs: French Bulldogs,French-Bulldogs,,Pets & Animals,Dogs,French Bulldogs,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+550,Pets & Animals: Dogs: German Shepherds,German-Shepherds,,Pets & Animals,Dogs,German Shepherds,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+561,Pets & Animals: Dogs: German Shorthaired Pointers,German-Shorthaired-Pointers,,Pets & Animals,Dogs,German Shorthaired Pointers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+537,Pets & Animals: Dogs: Golden Retrievers,Golden-Retrievers,,Pets & Animals,Dogs,Golden Retrievers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+564,Pets & Animals: Dogs: Great Danes,Great-Danes,,Pets & Animals,Dogs,Great Danes,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+684,Pets & Animals: Dogs: Great Pyrenees,Great-Pyrenees,,Pets & Animals,Dogs,Great Pyrenees,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+691,Pets & Animals: Dogs: Hounds,Hounds,,Pets & Animals,Dogs,Hounds,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+692,Pets & Animals: Dogs: Huskies,Huskies,,Pets & Animals,Dogs,Huskies,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+547,Pets & Animals: Dogs: Irish Setters,Irish-Setters,,Pets & Animals,Dogs,Irish Setters,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+544,Pets & Animals: Dogs: Jack Russell Terriers,Jack-Russell-Terriers,,Pets & Animals,Dogs,Jack Russell Terriers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+532,Pets & Animals: Dogs: Labrador Retrievers,Labrador-Retrievers,,Pets & Animals,Dogs,Labrador Retrievers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+560,Pets & Animals: Dogs: Maltese,Maltese,,Pets & Animals,Dogs,Maltese,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+539,Pets & Animals: Dogs: Mastiffs,Mastiffs,,Pets & Animals,Dogs,Mastiffs,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+973,Pets & Animals: Dogs: Memorial,Dogs-Memorial,,Pets & Animals,Dogs,Memorial,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+886,Pets & Animals: Dogs: Paws,Dog-Paws,,Pets & Animals,Dogs,Paws,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+699,Pets & Animals: Dogs: Pointers,Pointers,,Pets & Animals,Dogs,Pointers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+565,Pets & Animals: Dogs: Pomeranians,Pomeranians,,Pets & Animals,Dogs,Pomeranians,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+552,Pets & Animals: Dogs: Poodles,Poodles,,Pets & Animals,Dogs,Poodles,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+540,Pets & Animals: Dogs: Pugs,Pugs,,Pets & Animals,Dogs,Pugs,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+961,Pets & Animals: Dogs: Rottweilers,Rottweilers,,Pets & Animals,Dogs,Rottweilers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+556,Pets & Animals: Dogs: Schnauzers,Schnauzers,,Pets & Animals,Dogs,Schnauzers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+698,Pets & Animals: Dogs: Sheepdogs,Sheepdogs,,Pets & Animals,Dogs,Sheepdogs,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+566,Pets & Animals: Dogs: Shetland Sheepdogs,Shetland-Sheepdogs,,Pets & Animals,Dogs,Shetland Sheepdogs,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+553,Pets & Animals: Dogs: Shi Tzus,Shi-Tzus,,Pets & Animals,Dogs,Shi Tzus,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+567,Pets & Animals: Dogs: Siberian Huskies,Siberian-Huskies,,Pets & Animals,Dogs,Siberian Huskies,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+696,Pets & Animals: Dogs: St. Bernards,St-Bernards,,Pets & Animals,Dogs,St. Bernards,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+685,Pets & Animals: Dogs: Terriers,Terriers,,Pets & Animals,Dogs,Terriers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+548,Pets & Animals: Dogs: Weiners,Weiners,,Pets & Animals,Dogs,Weiners,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+551,Pets & Animals: Dogs: Welsh Corgis,Welsh-Corgis,,Pets & Animals,Dogs,Welsh Corgis,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+689,Pets & Animals: Dogs: Welsh Terriers,Welsh-Terriers,,Pets & Animals,Dogs,Welsh Terriers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+546,Pets & Animals: Dogs: Westies,Westies,,Pets & Animals,Dogs,Westies,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+554,Pets & Animals: Dogs: Yorkshire Terriers,Yorkshire-Terriers,,Pets & Animals,Dogs,Yorkshire Terriers,3.000000,False,False,False,False,True,True,True,True,True,,107,Pets & Animals: Dogs
+675,Pets & Animals: Farm Animals,Farm-Animals,,Pets & Animals,Farm Animals,,2.000000,False,False,False,False,True,True,True,True,True,,1,Pets & Animals
+402,Pets & Animals: Farm Animals: Cows,Cows,,Pets & Animals,Farm Animals,Cows,3.000000,False,False,False,False,True,True,True,True,True,,675,Pets & Animals: Farm Animals
+349,Pets & Animals: Farm Animals: Donkeys,Donkeys,,Pets & Animals,Farm Animals,Donkeys,3.000000,False,False,False,False,False,False,False,False,True,,675,Pets & Animals: Farm Animals
+986,Pets & Animals: Farm Animals: Goats,Goats,,Pets & Animals,Farm Animals,Goats,3.000000,False,False,False,False,True,True,True,True,False,,675,Pets & Animals: Farm Animals
+111,Pets & Animals: Farm Animals: Horses,Horses,,Pets & Animals,Farm Animals,Horses,3.000000,False,False,False,False,True,True,True,True,True,,675,Pets & Animals: Farm Animals
+470,Pets & Animals: Farm Animals: Pigs,Pigs,,Pets & Animals,Farm Animals,Pigs,3.000000,False,False,False,False,True,True,True,False,False,,675,Pets & Animals: Farm Animals
+21,Pets & Animals: Farm Animals: Sheep,Sheep,,Pets & Animals,Farm Animals,Sheep,3.000000,False,False,False,False,True,True,True,True,True,,675,Pets & Animals: Farm Animals
+676,Pets & Animals: Wildlife,Wildlife,,Pets & Animals,Wildlife,,2.000000,False,False,False,False,True,True,True,True,True,,1,Pets & Animals
+321,Pets & Animals: Wildlife: Bears,Bears,,Pets & Animals,Wildlife,Bears,3.000000,False,False,False,False,True,True,True,True,False,,676,Pets & Animals: Wildlife
+771,Pets & Animals: Wildlife: Bisons,Bisons,,Pets & Animals,Wildlife,Bisons,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+105,Pets & Animals: Wildlife: Deer,Deer,,Pets & Animals,Wildlife,Deer,3.000000,False,False,False,False,True,True,True,True,True,,676,Pets & Animals: Wildlife
+776,Pets & Animals: Wildlife: Elephants,Elephants,,Pets & Animals,Wildlife,Elephants,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+27,Pets & Animals: Wildlife: Foxes,Foxes,,Pets & Animals,Wildlife,Foxes,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+514,Pets & Animals: Wildlife: Gator,Gator,,Pets & Animals,Wildlife,Gator,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+775,Pets & Animals: Wildlife: Giraffes,Giraffes,,Pets & Animals,Wildlife,Giraffes,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+777,Pets & Animals: Wildlife: Lions,Lions,,Pets & Animals,Wildlife,Lions,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+816,Pets & Animals: Wildlife: Llamas,Llamas,,Pets & Animals,Wildlife,Llamas,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+499,Pets & Animals: Wildlife: Moose,Moose,,Pets & Animals,Wildlife,Moose,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+963,Pets & Animals: Wildlife: Snakes,Snakes,,Pets & Animals,Wildlife,Snakes,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+491,Pets & Animals: Wildlife: Squirrels,Squirrels,,Pets & Animals,Wildlife,Squirrels,3.000000,False,False,False,False,True,True,True,True,True,,676,Pets & Animals: Wildlife
+778,Pets & Animals: Wildlife: Tigers,Tigers,,Pets & Animals,Wildlife,Tigers,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+113,Pets & Animals: Wildlife: Wild Animals,Wild-Animals,,Pets & Animals,Wildlife,Wild Animals,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+498,Pets & Animals: Wildlife: Wolves,Wolves,,Pets & Animals,Wildlife,Wolves,3.000000,False,False,False,False,True,True,True,True,False,,676,Pets & Animals: Wildlife
+779,Pets & Animals: Wildlife: Zebras,Zebras,,Pets & Animals,Wildlife,Zebras,3.000000,False,False,False,False,True,True,False,False,False,,676,Pets & Animals: Wildlife
+831,Political,Political,,Political,,,1.000000,False,False,False,False,False,False,False,False,False,,,
+840,Political: Black Lives Matter,Black-Lives-Matter,,Political,Black Lives Matter,,2.000000,False,False,False,False,False,False,False,False,False,,831,Political
+833,Political: Election,Election,,Political,Election,,2.000000,False,False,False,False,False,False,False,False,False,,831,Political
+838,Political: Election: Pro-Biden,Pro-Biden,,Political,Election,Pro-Biden,3.000000,False,False,False,False,False,False,False,False,False,,833,Political: Election
+988,Political: Election: Pro-Kamala,Pro-Kamala,,Political,Election,Pro-Kamala,3.000000,False,False,False,False,False,False,False,False,False,,833,Political: Election
+837,Political: Election: Pro-Trump,Pro-Trump,,Political,Election,Pro-Trump,3.000000,False,False,False,False,False,False,False,False,False,,833,Political: Election
+839,Political: Election: Vote,Vote,,Political,Election,Vote,3.000000,False,False,False,False,False,False,False,False,False,,833,Political: Election
+969,Political: Political: Guns,Guns,,Political,Political,Guns,3.000000,False,False,False,False,False,False,False,False,False,,831,Political
+968,Political: Political: Trump Flags,Trump-Flags,,Political,Political,Trump Flags,3.000000,False,False,False,False,False,False,False,False,False,,831,Political
+9,Regional,Regional,,Regional,,,1.000000,False,False,False,False,True,True,True,True,False,,,
+943,Regional: Adirondack,Adirondack,,Regional,Adirondack,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+194,Regional: Alaska,Alaska,,Regional,Alaska,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+348,Regional: Asian,Asian,,Regional,Asian,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+844,Regional: California,California,,Regional,California,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+195,Regional: Canada,Canada,,Regional,Canada,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+843,Regional: Florida,Florida,,Regional,Florida,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+845,Regional: Georgia,Georgia,,Regional,Georgia,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+37,Regional: Hawaii,Hawaii,,Regional,Hawaii,,2.000000,False,False,False,False,True,True,False,False,False,,9,Regional
+31,Regional: Ireland,Ireland,,Regional,Ireland,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+815,Regional: Kentucky,Kentucky,,Regional,Kentucky,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+800,Regional: Maryland,Maryland,,Regional,Maryland,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+846,Regional: Massachusetts,Massachusetts,,Regional,Massachusetts,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+954,Regional: Mediterranean,Mediterranean,,Regional,Mediterranean,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+351,Regional: Mexican,Mexican,,Regional,Mexican,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+847,Regional: Michigan,Michigan,,Regional,Michigan,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+197,Regional: Midwest,Midwest,,Regional,Midwest,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+848,Regional: Missouri,Missouri,,Regional,Missouri,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+198,Regional: New England,New-England,,Regional,New England,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+849,Regional: New Jersey,New-Jersey,,Regional,New Jersey,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+24,Regional: New Orleans,New-Orleans,,Regional,New Orleans,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+850,Regional: New York,New-York,,Regional,New York,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+793,Regional: North Carolina,North-Carolina,,Regional,North Carolina,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+851,Regional: Ohio,Ohio,,Regional,Ohio,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+38,Regional: Paris,Paris,,Regional,Paris,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+852,Regional: Pennsylvania,Pennsylvania,,Regional,Pennsylvania,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+962,Regional: Scotland,Scotland,,Regional,Scotland,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+199,Regional: South,South,,Regional,South,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+792,Regional: South Carolina,South-Carolina,,Regional,South Carolina,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+964,Regional: Southwest,Southwest,,Regional,Southwest,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+801,Regional: Tennessee,Tennessee,,Regional,Tennessee,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+200,Regional: Texas,Texas,,Regional,Texas,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+873,Regional: UK,UK,,Regional,UK,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+1653,Regional: Ukraine,Ukraine,,Regional,Ukraine,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+794,Regional: Virginia,Virginia,,Regional,Virginia,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+201,Regional: West Coast,West-Coast,,Regional,West Coast,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+202,Regional: Y'all,Yall,,Regional,Y'all,,2.000000,False,False,False,False,True,True,True,True,False,,9,Regional
+10,Religious,Religious,,Religious,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+270,Religious: Angels,Angels,,Religious,Angels,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+854,Religious: Bible Scriptures,Bible-Scriptures,,Religious,Bible Scriptures,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+272,Religious: Churches,Churches,,Religious,Churches,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+116,Religious: Crosses,Crosses,,Religious,Crosses,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+120,Religious: Devotional,Devotional,,Religious,Devotional,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+949,Religious: Heaven,Heaven,,Religious,Heaven,,2.000000,False,False,False,False,True,True,True,True,False,,10,Religious
+327,Religious: Hope/Faith/Peace/Joy,Hope-Faith-Peace-Joy,,Religious,Hope/Faith/Peace/Joy,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+324,Religious: Inspirational,Inspirational,,Religious,Inspirational,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+888,Religious: Memorial,Memorial,,Religious,Memorial,,2.000000,False,False,False,False,True,True,True,True,True,,10,Religious
+958,Religious: Prayer,Prayer,,Religious,Prayer,,2.000000,False,False,False,False,True,True,True,True,False,,10,Religious
+281,Seasonal,Seasonal,,Seasonal,,,1.000000,False,False,False,False,False,False,False,False,False,,,
+896,Seasonal: 4th of July,4th-Of-July,,Seasonal,4th of July,,2.000000,True,False,False,False,False,True,False,False,False,"All Holidays, Winter, Fall",281,Seasonal
+917,Seasonal: 4th of July: Dont Tread On Me,Dont-Tread-On-Me,,Seasonal,4th of July,Dont Tread On Me,3.000000,False,False,False,False,False,True,False,False,False,,896,Seasonal: 4th of July
+51,Seasonal: 4th of July: Fireworks,Fireworks,,Seasonal,4th of July,Fireworks,3.000000,False,False,False,False,False,True,False,False,False,,896,Seasonal: 4th of July
+918,Seasonal: 4th of July: Patriot,Patriot,,Seasonal,4th of July,Patriot,3.000000,False,False,False,False,False,True,False,False,False,,896,Seasonal: 4th of July
+55,Seasonal: 4th of July: Pinwheels,Pinwheels,,Seasonal,4th of July,Pinwheels,3.000000,False,False,False,False,False,True,False,False,False,,896,Seasonal: 4th of July
+919,Seasonal: 4th of July: Stars,Stars,,Seasonal,4th of July,Stars,3.000000,False,False,False,False,False,True,False,False,False,,896,Seasonal: 4th of July
+989,Seasonal: Ash Wednesday,Ash-Wednesday,,Seasonal,Ash Wednesday,,2.000000,True,False,False,False,True,False,False,False,False,"All Seasons, All Holidays",281,Seasonal
+991,Seasonal: Cemetery,Cemetery,,Seasonal,Cemetery,,2.000000,False,True,False,False,True,True,True,True,True,,281,Seasonal
+890,Seasonal: Christmas,Christmas,,Seasonal,Christmas,,2.000000,True,False,False,False,False,False,False,True,True,"All Seasons, All Holidays",281,Seasonal
+927,Seasonal: Christmas Decorations,Christmas-Decorations,,Seasonal,Christmas Decorations,,2.000000,False,False,False,False,False,False,False,True,True,,281,Seasonal
+224,Seasonal: Christmas Decorations: Candy Canes,Candy-Canes,,Seasonal,Christmas Decorations,Candy Canes,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+231,Seasonal: Christmas Decorations: Christmas Ornaments,Christmas-Ornaments,,Seasonal,Christmas Decorations,Christmas Ornaments,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+298,Seasonal: Christmas Decorations: Christmas Stockings,Christmas-Stockings,,Seasonal,Christmas Decorations,Christmas Stockings,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+225,Seasonal: Christmas Decorations: Christmas Trees,Christmas-Trees,,Seasonal,Christmas Decorations,Christmas Trees,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+330,Seasonal: Christmas Decorations: Gingerbread Man,Gingerbread-Man,,Seasonal,Christmas Decorations,Gingerbread Man,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+227,Seasonal: Christmas Decorations: Holly,Holly,,Seasonal,Christmas Decorations,Holly,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+331,Seasonal: Christmas Decorations: Nutcrackers,Nutcrackers,,Seasonal,Christmas Decorations,Nutcrackers,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+233,Seasonal: Christmas Decorations: Presents,Presents,,Seasonal,Christmas Decorations,Presents,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+238,Seasonal: Christmas Decorations: Wreaths,Wreaths,,Seasonal,Christmas Decorations,Wreaths,3.000000,False,False,False,False,False,False,False,True,True,,927,Seasonal: Christmas Decorations
+926,Seasonal: Christmas Religious,Christmas-Religious,,Seasonal,Christmas Religious,,2.000000,False,False,False,False,False,False,False,True,True,,281,Seasonal
+265,Seasonal: Christmas Religious: Blessings,Blessings,,Seasonal,Christmas Religious,Blessings,3.000000,False,False,False,False,True,True,True,True,True,,926,Seasonal: Christmas Religious
+223,Seasonal: Christmas Religious: Candles,Candles,,Seasonal,Christmas Religious,Candles,3.000000,False,False,False,False,False,False,True,True,True,,926,Seasonal: Christmas Religious
+913,Seasonal: Christmas Religious: Holy Night,Holy-Night,,Seasonal,Christmas Religious,Holy Night,3.000000,False,False,False,False,False,False,False,True,True,,926,Seasonal: Christmas Religious
+228,Seasonal: Christmas Religious: Jesus is the Reason,Jesus-is-the-Reason,,Seasonal,Christmas Religious,Jesus is the Reason,3.000000,False,False,False,False,False,False,False,True,True,,926,Seasonal: Christmas Religious
+294,Seasonal: Christmas Religious: Joy to the World,Joy-to-the-World,,Seasonal,Christmas Religious,Joy to the World,3.000000,False,False,False,False,False,False,False,True,True,,926,Seasonal: Christmas Religious
+229,Seasonal: Christmas Religious: Nativity,Nativity,,Seasonal,Christmas Religious,Nativity,3.000000,False,False,False,False,False,False,False,True,True,,926,Seasonal: Christmas Religious
+230,Seasonal: Christmas Religious: Noel,Noel,,Seasonal,Christmas Religious,Noel,3.000000,False,False,False,False,False,False,False,True,True,,926,Seasonal: Christmas Religious
+222,Seasonal: Christmas: Bells,Bells,,Seasonal,Christmas,Bells,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+329,Seasonal: Christmas: Christmas In July,Christmas-In-July,,Seasonal,Christmas,Christmas In July,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+336,Seasonal: Christmas: Elves,Elves,,Seasonal,Christmas,Elves,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+293,Seasonal: Christmas: Happy Holidays,Happy-Holidays,,Seasonal,Christmas,Happy Holidays,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+335,Seasonal: Christmas: Ho Ho Ho,Ho-Ho-Ho,,Seasonal,Christmas,Ho Ho Ho,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+914,Seasonal: Christmas: Jingle All The Way,Jingle-All-The-Way,,Seasonal,Christmas,Jingle All The Way,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+295,Seasonal: Christmas: Merry Christmas,Merry-Christmas,,Seasonal,Christmas,Merry Christmas,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+354,Seasonal: Christmas: Reindeer,Reindeer,,Seasonal,Christmas,Reindeer,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+234,Seasonal: Christmas: Santa,Santa,,Seasonal,Christmas,Santa,3.000000,False,False,False,False,False,True,True,True,True,,890,Seasonal: Christmas
+297,Seasonal: Christmas: Season's Greetings,Seasons-Greetings,,Seasonal,Christmas,Season's Greetings,3.000000,False,False,False,False,False,False,False,True,True,,890,Seasonal: Christmas
+893,Seasonal: Easter,Easter,,Seasonal,Easter,,2.000000,True,False,False,False,True,False,False,False,False,"All Holidays, Summer, Winter, Fall",281,Seasonal
+239,Seasonal: Easter: Easter Eggs,Easter-Eggs,,Seasonal,Easter,Easter Eggs,3.000000,False,False,False,False,True,False,False,False,False,,893,Seasonal: Easter
+310,Seasonal: Easter: Happy Easter,Happy-Easter,,Seasonal,Easter,Happy Easter,3.000000,False,False,False,False,True,False,False,False,False,,893,Seasonal: Easter
+904,Seasonal: Fall,Fall,,Seasonal,Fall,,2.000000,False,False,True,False,True,True,True,True,True,"All Holidays, Spring, Winter",281,Seasonal
+241,Seasonal: Fall: Fall Leaves,Fall-Leaves,,Seasonal,Fall,Fall Leaves,3.000000,False,False,False,False,False,False,True,False,False,,904,Seasonal: Fall
+1017,Seasonal: Fall: Fall Pumpkins,Fall-Pumpkins,,Seasonal,Fall,Fall Pumpkins,3.000000,False,False,False,False,False,False,True,False,False,,904,Seasonal: Fall
+312,Seasonal: Fall: Happy Fall,Happy-Fall,,Seasonal,Fall,Happy Fall,3.000000,False,False,False,False,False,False,True,False,False,,904,Seasonal: Fall
+922,Seasonal: Fall: Harvest,Harvest,,Seasonal,Fall,Harvest,3.000000,False,False,False,False,False,False,True,False,False,,904,Seasonal: Fall
+804,Seasonal: Fall: Pine Cones,Pine-Cones,,Seasonal,Fall,Pine Cones,3.000000,False,False,False,False,False,False,True,False,True,,904,Seasonal: Fall
+900,Seasonal: Father's Day,Fathers-Day,,Seasonal,Father's Day,,2.000000,True,False,False,False,False,True,False,False,False,"All Holidays, Winter, Fall",281,Seasonal
+508,Seasonal: Father's Day: Happy Father's Day,Happy-Fathers-Day,,Seasonal,Father's Day,Happy Father's Day,3.000000,False,False,False,False,False,True,False,False,False,,900,Seasonal: Father's Day
+891,Seasonal: Halloween,Halloween,,Seasonal,Halloween,,2.000000,True,False,False,False,False,False,True,False,False,"All Seasons, All Holidays",281,Seasonal
+305,Seasonal: Halloween: Bats,Bats,,Seasonal,Halloween,Bats,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+247,Seasonal: Halloween: Boo,Boo,,Seasonal,Halloween,Boo,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+246,Seasonal: Halloween: Ghosts,Ghosts,,Seasonal,Halloween,Ghosts,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+45,Seasonal: Halloween: Halloween Pumpkins,Halloween-Pumpkins,,Seasonal,Halloween,Halloween Pumpkins,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+972,Seasonal: Halloween: Halloween Scarecrow,Halloween-Scarecrow,,Seasonal,Halloween,Halloween Scarecrow,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+313,Seasonal: Halloween: Happy Halloween,Happy-Halloween,,Seasonal,Halloween,Happy Halloween,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+456,Seasonal: Halloween: Jack O Lanterns,Jack-O-Lanterns,,Seasonal,Halloween,Jack O Lanterns,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+253,Seasonal: Halloween: Masks,Masks,,Seasonal,Halloween,Masks,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+248,Seasonal: Halloween: Skull,Skull,,Seasonal,Halloween,Skull,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+249,Seasonal: Halloween: Spiders,Spiders,,Seasonal,Halloween,Spiders,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+915,Seasonal: Halloween: Sugar Skull,Sugar-Skull,,Seasonal,Halloween,Sugar Skull,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+314,Seasonal: Halloween: Trick Or Treat,Trick-Or-Treat,,Seasonal,Halloween,Trick Or Treat,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+250,Seasonal: Halloween: Witches,Witches,,Seasonal,Halloween,Witches,3.000000,False,False,False,False,False,False,True,False,False,,891,Seasonal: Halloween
+897,Seasonal: Hanukkah,Hanukkah,,Seasonal,Hanukkah,,2.000000,True,False,False,False,False,False,False,True,False,"All Seasons, All Holidays",281,Seasonal
+902,Seasonal: Kwanzaa,Kwanzaa,,Seasonal,Kwanzaa,,2.000000,True,False,False,False,False,False,False,True,False,"All Seasons, All Holidays",281,Seasonal
+992,Seasonal: Lent,Lent,,Seasonal,Lent,,2.000000,True,False,False,False,True,False,False,False,False,"All Seasons, All Holidays",281,Seasonal
+901,Seasonal: Mardi Gras,Mardi-Gras,,Seasonal,Mardi Gras,,2.000000,True,False,False,False,True,False,False,False,False,"All Seasons, All Holidays",281,Seasonal
+252,Seasonal: Mardi Gras: Fleur De Lis,Fleur-De-Lis,,Seasonal,Mardi Gras,Fleur De Lis,3.000000,False,False,False,False,True,False,False,False,False,,901,Seasonal: Mardi Gras
+506,Seasonal: Mardi Gras: Happy Mardi Gras,Happy-Mardi-Gras,,Seasonal,Mardi Gras,Happy Mardi Gras,3.000000,False,False,False,False,True,False,False,False,False,,901,Seasonal: Mardi Gras
+993,Seasonal: Memorial Day,Memorial-Day,,Seasonal,Memorial Day,,2.000000,True,False,False,False,False,True,False,False,False,"All Holidays, Winter, Fall",281,Seasonal
+899,Seasonal: Mother's Day,Mothers-Day,,Seasonal,Mother's Day,,2.000000,True,False,False,False,True,False,False,False,False,"All Holidays, Winter, Fall",281,Seasonal
+477,Seasonal: Mother's Day: Happy Mother's Day,Happy-Mothers-Day,,Seasonal,Mother's Day,Happy Mother's Day,3.000000,False,False,False,False,True,True,False,False,False,,899,Seasonal: Mother's Day
+898,Seasonal: New Year,New-Year,,Seasonal,New Year,,2.000000,True,False,False,False,False,False,False,True,False,"All Seasons, All Holidays",281,Seasonal
+510,Seasonal: New Year: Happy New Year,Happy-New-Year,,Seasonal,New Year,Happy New Year,3.000000,False,False,False,False,False,False,False,True,False,,898,Seasonal: New Year
+994,Seasonal: Palm Sunday,Palm-Sunday,,Seasonal,Palm Sunday,,2.000000,True,False,False,False,True,False,False,False,False,All Seasons,281,Seasonal
+995,Seasonal: Passover,Passover,,Seasonal,Passover,,2.000000,True,False,False,False,True,False,False,False,False,"All Seasons, All Holidays",281,Seasonal
+903,Seasonal: Spring,Spring,,Seasonal,Spring,,2.000000,False,False,True,False,True,False,False,False,False,"All Holidays, Winter, Fall",281,Seasonal
+316,Seasonal: Spring: Happy Spring,Happy-Spring,,Seasonal,Spring,Happy Spring,3.000000,False,False,False,False,True,False,False,False,False,,903,Seasonal: Spring
+823,Seasonal: Spring: Hello Spring,Hello-Spring,,Seasonal,Spring,Hello Spring,3.000000,False,False,False,False,True,False,False,False,False,,903,Seasonal: Spring
+895,Seasonal: St. Patrick's Day,St-Patricks-Day,,Seasonal,St. Patrick's Day,,2.000000,True,False,False,False,True,False,False,False,False,"All Seasons, All Holidays",281,Seasonal
+317,Seasonal: St. Patrick's Day: Happy St. Patrick's,Happy-St-Patricks,,Seasonal,St. Patrick's Day,Happy St. Patrick's,3.000000,False,False,False,False,True,False,False,False,False,,895,Seasonal: St. Patrick's Day
+256,Seasonal: St. Patrick's Day: Irish Pride,Irish-Pride,,Seasonal,St. Patrick's Day,Irish Pride,3.000000,False,False,False,False,True,False,False,False,False,,895,Seasonal: St. Patrick's Day
+257,Seasonal: St. Patrick's Day: Leprechauns,Leprechauns,,Seasonal,St. Patrick's Day,Leprechauns,3.000000,False,False,False,False,True,False,False,False,False,,895,Seasonal: St. Patrick's Day
+259,Seasonal: St. Patrick's Day: Luck of the Irish,Luck-of-the-Irish,,Seasonal,St. Patrick's Day,Luck of the Irish,3.000000,False,False,False,False,True,False,False,False,False,,895,Seasonal: St. Patrick's Day
+260,Seasonal: St. Patrick's Day: Pot Of Gold,Pot-Of-Gold,,Seasonal,St. Patrick's Day,Pot Of Gold,3.000000,False,False,False,False,True,False,False,False,False,,895,Seasonal: St. Patrick's Day
+788,Seasonal: St. Patrick's Day: Rainbow,Rainbow,,Seasonal,St. Patrick's Day,Rainbow,3.000000,False,False,False,False,True,False,False,False,False,,895,Seasonal: St. Patrick's Day
+261,Seasonal: St. Patrick's Day: Shamrock/Clovers,Shamrock-Clovers,,Seasonal,St. Patrick's Day,Shamrock/Clovers,3.000000,False,False,False,False,True,True,False,False,False,,895,Seasonal: St. Patrick's Day
+911,Seasonal: Summer,Summer,,Seasonal,Summer,,2.000000,False,False,True,False,True,True,True,False,True,"All Holidays, Winter",281,Seasonal
+60,Seasonal: Summer: Flip Flops,Flip-Flops,,Seasonal,Summer,Flip Flops,3.000000,False,False,False,False,False,True,False,False,False,,911,Seasonal: Summer
+22,Seasonal: Summer: Pool,Pool,,Seasonal,Summer,Pool,3.000000,False,False,False,False,False,False,False,False,False,,911,Seasonal: Summer
+183,Seasonal: Summer: Sun,Sun,,Seasonal,Summer,Sun,3.000000,False,False,False,False,True,True,False,False,False,,911,Seasonal: Summer
+925,Seasonal: Summer: Sunshine,Sunshine,,Seasonal,Summer,Sunshine,3.000000,False,False,False,False,False,True,False,False,False,,911,Seasonal: Summer
+184,Seasonal: Summer: Tropical,Tropical,,Seasonal,Summer,Tropical,3.000000,False,False,False,False,False,True,False,False,True,,911,Seasonal: Summer
+894,Seasonal: Thanksgiving,Thanksgiving,,Seasonal,Thanksgiving,,2.000000,True,False,False,False,False,False,True,False,False,"All Holidays, Spring, Summer, Winter",281,Seasonal
+311,Seasonal: Thanksgiving: Cornucopia,Cornucopia,,Seasonal,Thanksgiving,Cornucopia,3.000000,False,False,False,False,False,False,True,False,False,,894,Seasonal: Thanksgiving
+266,Seasonal: Thanksgiving: Give Thanks,Give-Thanks,,Seasonal,Thanksgiving,Give Thanks,3.000000,False,False,False,False,False,False,True,False,False,,894,Seasonal: Thanksgiving
+319,Seasonal: Thanksgiving: Happy Thanksgiving,Happy-Thanksgiving,,Seasonal,Thanksgiving,Happy Thanksgiving,3.000000,False,False,False,False,False,False,True,False,False,,894,Seasonal: Thanksgiving
+802,Seasonal: Thanksgiving: Pilgrim Hats,Pilgrim-Hats,,Seasonal,Thanksgiving,Pilgrim Hats,3.000000,False,False,False,False,False,False,True,False,False,,894,Seasonal: Thanksgiving
+1018,Seasonal: Thanksgiving: Thanksgiving Pumpkins,Thanksgiving-Pumpkins,,Seasonal,Thanksgiving,Thanksgiving Pumpkins,3.000000,False,False,False,False,False,False,True,False,False,,894,Seasonal: Thanksgiving
+981,Seasonal: Thanksgiving: Thanksgiving Turkey,Thanksgiving-Turkey,,Seasonal,Thanksgiving,Thanksgiving Turkey,3.000000,False,False,False,False,False,False,True,False,False,,894,Seasonal: Thanksgiving
+892,Seasonal: Valentine's Day,Valentines-Day,,Seasonal,Valentine's Day,,2.000000,True,False,False,False,True,False,False,True,False,"All Seasons, All Holidays",281,Seasonal
+267,Seasonal: Valentine's Day: Be Mine,Be-Mine,,Seasonal,Valentine's Day,Be Mine,3.000000,False,False,False,False,True,False,False,False,False,,892,Seasonal: Valentine's Day
+268,Seasonal: Valentine's Day: Be My Valentine,Be-My-Valentine,,Seasonal,Valentine's Day,Be My Valentine,3.000000,False,False,False,False,True,False,False,False,False,,892,Seasonal: Valentine's Day
+916,Seasonal: Valentine's Day: Cupid,Cupid,,Seasonal,Valentine's Day,Cupid,3.000000,False,False,False,False,True,False,False,False,False,,892,Seasonal: Valentine's Day
+320,Seasonal: Valentine's Day: Happy Valentine's,Happy-Valentines,,Seasonal,Valentine's Day,Happy Valentine's,3.000000,False,False,False,False,True,False,False,False,False,,892,Seasonal: Valentine's Day
+255,Seasonal: Valentine's Day: Hearts,Hearts,,Seasonal,Valentine's Day,Hearts,3.000000,False,False,False,False,True,False,False,False,False,,892,Seasonal: Valentine's Day
+168,Seasonal: Valentine's Day: Love,Valentines-Love,,Seasonal,Valentine's Day,Love,3.000000,False,False,False,False,True,False,False,False,False,,892,Seasonal: Valentine's Day
+905,Seasonal: Winter,Winter,,Seasonal,Winter,,2.000000,False,False,True,False,False,False,False,True,True,"All Holidays, Spring, Summer",281,Seasonal
+923,Seasonal: Winter: Let It Snow,Let-It-Snow,,Seasonal,Winter,Let It Snow,3.000000,False,False,False,False,False,False,False,True,True,,905,Seasonal: Winter
+235,Seasonal: Winter: Skates,Skates,,Seasonal,Winter,Skates,3.000000,False,False,False,False,False,False,False,True,False,,905,Seasonal: Winter
+269,Seasonal: Winter: Sleds,Sleds,,Seasonal,Winter,Sleds,3.000000,False,False,False,False,False,False,False,True,True,,905,Seasonal: Winter
+236,Seasonal: Winter: Snow,Snow,,Seasonal,Winter,Snow,3.000000,False,False,False,False,False,False,False,True,True,,905,Seasonal: Winter
+237,Seasonal: Winter: Snowman,Snowman,,Seasonal,Winter,Snowman,3.000000,False,False,False,False,False,False,False,True,True,,905,Seasonal: Winter
+998,Size,Size,Ignore for Theme Selection,Size,,,1.000000,False,False,False,True,False,False,False,False,False,,,
+1009,Size: 10 X 22,10-x-22,Ignore for Theme Selection,Size,10 X 22,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+1010,Size: 12 5 X 18,12-5-x-18,Ignore for Theme Selection,Size,12 5 X 18,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+1011,Size: 16 X 28,16-x-28,Ignore for Theme Selection,Size,16 X 28,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+1012,Size: 17 5 X 29,17-5-x-29,Ignore for Theme Selection,Size,17 5 X 29,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+1013,Size: 17 X 29,17-x-29,Ignore for Theme Selection,Size,17 X 29,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+1014,Size: 18 X 30,18-x-30,Ignore for Theme Selection,Size,18 X 30,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+1015,Size: 28 X 40,28-x-40,Ignore for Theme Selection,Size,28 X 40,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+1016,Size: 9 25 X 28 25,9-25-x-28-25,Ignore for Theme Selection,Size,9 25 X 28 25,,2.000000,False,False,False,True,False,False,False,False,False,,998,Size
+11,Sports & Recreation,Sports,,Sports & Recreation,,,1.000000,False,False,False,False,True,True,True,True,True,,,
+463,Sports & Recreation: Bicycles,Bicycles,,Sports & Recreation,Bicycles,,2.000000,False,False,False,False,True,True,True,False,False,,11,Sports & Recreation
+871,Sports & Recreation: Equestrian,Equestrian,,Sports & Recreation,Equestrian,,2.000000,False,False,False,False,True,True,True,True,False,,11,Sports & Recreation
+122,Sports & Recreation: General Sports,General-Sports,,Sports & Recreation,General Sports,,2.000000,False,False,False,False,True,True,True,True,False,,11,Sports & Recreation
+123,Sports & Recreation: Golf,Golf,,Sports & Recreation,Golf,,2.000000,False,False,False,False,True,True,True,False,False,,11,Sports & Recreation
+262,Sports & Recreation: Hot Air Balloons,Hot-Air-Balloons,,Sports & Recreation,Hot Air Balloons,,2.000000,False,False,False,False,True,True,True,False,False,,11,Sports & Recreation
+884,Sports & Recreation: Indoor games,Indoor-games,,Sports & Recreation,Indoor games,,2.000000,False,False,False,False,True,True,True,True,False,,11,Sports & Recreation
+459,Sports & Recreation: Kites,Kites,,Sports & Recreation,Kites,,2.000000,False,False,False,False,True,True,False,False,False,,11,Sports & Recreation
+681,Sports & Recreation: Motorcycles,Motorcycles,,Sports & Recreation,Motorcycles,,2.000000,False,False,False,False,True,True,True,False,False,,11,Sports & Recreation
+733,Sports & Recreation: Skiing,Skiing,,Sports & Recreation,Skiing,,2.000000,False,False,False,False,False,False,False,True,True,,11,Sports & Recreation
+466,Sports & Recreation: Soccer,Soccer,,Sports & Recreation,Soccer,,2.000000,False,False,False,False,True,True,True,True,False,,11,Sports & Recreation
+465,Sports & Recreation: Transportation,Transportation,,Sports & Recreation,Transportation,,2.000000,False,False,False,False,True,True,True,True,True,,11,Sports & Recreation
+175,Wedding: Wedding Dresses: 3,Seasonal,,Wedding,Wedding Dresses,3,3.000000,False,False,False,False,False,False,False,False,False,,Seasonal: Wedding,
+12,Welcome,Welcome-Flags,,Welcome,,,1.000000,False,False,False,False,True,True,True,True,True,,,
