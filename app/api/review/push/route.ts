@@ -32,7 +32,11 @@ import {
 } from "@/lib/review-filters";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 300; // Vercel Hobby/Pro cap; big pushes run via CLI
+// 800s is the Vercel Pro max (requires Fluid Compute, default-on for recent
+// projects). At Shopify's ~2 req/sec that's ~800 designs per push click vs
+// ~300 at the old 300s cap. For the whole readytosend queue in one shot,
+// use the CLI: `npx tsx scripts/shopify-push.ts --apply` (no timeout).
+export const maxDuration = 800;
 
 interface ReadyDesign {
   design_family: string;
