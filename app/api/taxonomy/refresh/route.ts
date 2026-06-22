@@ -212,11 +212,13 @@ async function applyPhase(): Promise<Response> {
   //    persisted td_row_ids to compute reliable rename pairs from.
   let designsRenamed = 0;
   let designsFlagged = 0;
+  let skippedRenames: { from: string; to: string; would_affect: number }[] = [];
   if (!wasBootstrap) {
     const sweep = await sweepDesignsForChanges(renamedTerms, removedTerms);
     if (sweep.error) return errorJson(500, sweep.error);
     designsRenamed = sweep.designsRenamed;
     designsFlagged = sweep.designsFlagged;
+    skippedRenames = sweep.skippedRenames;
   }
 
   // After data write succeeds, invalidate the in-memory taxonomy cache so the
@@ -248,17 +250,37 @@ async function applyPhase(): Promise<Response> {
     renamed: renamedTerms.length,
     designs_renamed: designsRenamed,
     designs_flagged: designsFlagged,
+    skipped_renames: skippedRenames,
     summary: wasBootstrap
       ? `Bootstrap: ${incoming.length} entries persisted; design sweep skipped.`
-      : `${addedCount} added, ${renamedTerms.length} renamed, ${missingIds.length} removed; ${designsRenamed} designs migrated, ${designsFlagged} flagged.`,
+      : `${addedCount} added, ${renamedTerms.length} renamed, ${missingIds.length} removed; ${designsRenamed} designs migrated, ${designsFlagged} flagged` +
+        (skippedRenames.length > 0
+          ? `; ${skippedRenames.length} rename(s) skipped (would affect >${MAX_AUTO_RENAME_DESIGNS} designs — review manually): ${skippedRenames.map((s) => `${s.from}→${s.to} (${s.would_affect})`).join(", ")}`
+          : "") +
+        ".",
   });
 }
 
 interface SweepResult {
   designsRenamed: number;
   designsFlagged: number;
+  /** Renames not auto-applied because they exceeded the safety limit. */
+  skippedRenames: { from: string; to: string; would_affect: number }[];
   error?: string;
 }
+
+/**
+ * Blast-radius cap on auto-migrated renames. A single TeamDesk row whose
+ * `search_term` is edited produces one rename pair; legitimately that touches
+ * a handful of designs. A pair that would rewrite more than this many designs
+ * is almost always a data-entry collision, not a real rename — e.g. the
+ * 2026-06-16 incident where FL Themes Id 175's term was corrected from the
+ * erroneous "Seasonal" to "Wedding-Dresses" and the sweep rewrote 444 designs
+ * that legitimately carried the broad "Seasonal" tag. Such renames are skipped
+ * (designs untouched) and surfaced for manual review instead of silently
+ * clobbering live data.
+ */
+const MAX_AUTO_RENAME_DESIGNS = 25;
 
 /**
  * Walk every rename and removal across `designs.approved_tags` /
@@ -274,6 +296,7 @@ async function sweepDesignsForChanges(
   const sb = getAdminSupabase();
   let designsRenamed = 0;
   let designsFlagged = 0;
+  const skippedRenames: { from: string; to: string; would_affect: number }[] = [];
 
   // ── Renames ─────────────────────────────────────────────────────────────
   for (const r of renames) {
@@ -283,7 +306,21 @@ async function sweepDesignsForChanges(
       .or(
         `approved_tags.cs.{${pgArrayLiteral(r.from)}},vision_tags.cs.{${pgArrayLiteral(r.from)}}`,
       );
-    if (error) return { designsRenamed, designsFlagged, error: error.message };
+    if (error) return { designsRenamed, designsFlagged, skippedRenames, error: error.message };
+
+    // Blast-radius guard: refuse to auto-rewrite a huge number of designs from
+    // one taxonomy-row edit (see MAX_AUTO_RENAME_DESIGNS). Leave them untouched
+    // and report for manual review.
+    if ((hits?.length ?? 0) > MAX_AUTO_RENAME_DESIGNS) {
+      // Don't touch any design; report it in the response summary + log so a
+      // human can confirm. (No per-design event — events.design_family is a
+      // NOT NULL FK to designs, so there's no row to attach a global note to.)
+      skippedRenames.push({ from: r.from, to: r.to, would_affect: hits!.length });
+      console.warn(
+        `[taxonomy_refresh] skipped rename ${r.from}→${r.to}: would affect ${hits!.length} designs (>${MAX_AUTO_RENAME_DESIGNS})`,
+      );
+      continue;
+    }
 
     for (const d of hits ?? []) {
       const approved = replaceInArray(d.approved_tags as string[] | null, r.from, r.to);
@@ -292,7 +329,7 @@ async function sweepDesignsForChanges(
         .from("designs")
         .update({ approved_tags: approved, vision_tags: vision })
         .eq("design_family", d.design_family);
-      if (upErr) return { designsRenamed, designsFlagged, error: upErr.message };
+      if (upErr) return { designsRenamed, designsFlagged, skippedRenames, error: upErr.message };
       await sb.from("events").insert({
         design_family: d.design_family,
         event_type: "tag_renamed",
@@ -311,7 +348,7 @@ async function sweepDesignsForChanges(
       .or(
         `approved_tags.cs.{${pgArrayLiteral(term)}},vision_tags.cs.{${pgArrayLiteral(term)}}`,
       );
-    if (error) return { designsRenamed, designsFlagged, error: error.message };
+    if (error) return { designsRenamed, designsFlagged, skippedRenames, error: error.message };
 
     for (const d of hits ?? []) {
       const approved = filterFromArray(d.approved_tags as string[] | null, term);
@@ -329,7 +366,7 @@ async function sweepDesignsForChanges(
         .from("designs")
         .update(update)
         .eq("design_family", d.design_family);
-      if (upErr) return { designsRenamed, designsFlagged, error: upErr.message };
+      if (upErr) return { designsRenamed, designsFlagged, skippedRenames, error: upErr.message };
       await sb.from("events").insert({
         design_family: d.design_family,
         event_type: "tag_deleted",
@@ -344,7 +381,7 @@ async function sweepDesignsForChanges(
     }
   }
 
-  return { designsRenamed, designsFlagged };
+  return { designsRenamed, designsFlagged, skippedRenames };
 }
 
 function replaceInArray(

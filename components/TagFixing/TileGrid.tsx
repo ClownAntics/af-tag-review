@@ -192,9 +192,16 @@ export function TileGrid({
   }, [pushing, runningVision]);
 
   const refresh = useCallback(() => {
+    // In random-sample mode, keep the current shuffled sample on screen.
+    // Reloading would swap it for the paginated first page and lose the
+    // user's place mid-audit; per-card actions mark their card done instead.
+    if (sampleMode) {
+      onCountsChanged();
+      return;
+    }
     loadPage(offset);
     onCountsChanged();
-  }, [loadPage, offset, onCountsChanged]);
+  }, [sampleMode, loadPage, offset, onCountsChanged]);
 
   // ─── Per-card hover flag action (moves design into Flagged queue) ──────
   const flagOne = useCallback(
@@ -208,6 +215,9 @@ export function TileGrid({
             body: JSON.stringify({ action: "flag" }),
           },
         );
+        // Mark the card done so it stays visible (greyed) in sample mode
+        // rather than vanishing; in paginated mode refresh() reloads anyway.
+        setDoneFamilies((s) => new Set(s).add(family));
         refresh();
       } catch (e) {
         console.error(e);
