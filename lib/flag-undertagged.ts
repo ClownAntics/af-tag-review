@@ -55,13 +55,16 @@ interface Row {
 }
 
 /**
- * A row that has never been curated by us — empty approved_tags AND never
+ * A row that has never been curated by us — zero *content* tags AND never
  * reviewed AND never pushed. These are products we adopted as-is from Shopify
  * (e.g. the non-AF catalog marked 'updated' but left uncurated), NOT designs
- * that lost their tags. The rule must not sweep them into 'flagged'.
+ * that lost their tags. Content-based (not "approved_tags empty") so that
+ * adding auto-derived facet tags like Material/Double-Sided doesn't suddenly
+ * pull them into scope — a facet-only row is still uncurated. The rule must
+ * not sweep these into 'flagged'.
  */
 const neverCurated = (r: Row): boolean =>
-  (r.approved_tags ?? []).length === 0 && !r.last_reviewed_at && !r.last_pushed_at;
+  contentTagCount(r.approved_tags) === 0 && !r.last_reviewed_at && !r.last_pushed_at;
 
 export async function flagUndertagged(
   sb: SupabaseClient,
