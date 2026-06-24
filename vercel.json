@@ -2,10 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
-      "path": "/api/cron/shopify-sync",
-      "schedule": "0 7 * * *"
-    },
-    {
       "path": "/api/cron/flag-undertagged",
       "schedule": "30 7 * * *"
     }

@@ -50,7 +50,18 @@ interface Row {
   design_family: string;
   status: string;
   approved_tags: string[] | null;
+  last_reviewed_at: string | null;
+  last_pushed_at: string | null;
 }
+
+/**
+ * A row that has never been curated by us — empty approved_tags AND never
+ * reviewed AND never pushed. These are products we adopted as-is from Shopify
+ * (e.g. the non-AF catalog marked 'updated' but left uncurated), NOT designs
+ * that lost their tags. The rule must not sweep them into 'flagged'.
+ */
+const neverCurated = (r: Row): boolean =>
+  (r.approved_tags ?? []).length === 0 && !r.last_reviewed_at && !r.last_pushed_at;
 
 export async function flagUndertagged(
   sb: SupabaseClient,
@@ -66,7 +77,7 @@ export async function flagUndertagged(
   for (let o = 0; ; o += PAGE) {
     const { data, error } = await sb
       .from("designs")
-      .select("design_family,status,approved_tags")
+      .select("design_family,status,approved_tags,last_reviewed_at,last_pushed_at")
       .neq("status", "excluded")
       .range(o, o + PAGE - 1);
     if (error) throw new Error(`flag-undertagged select: ${error.message}`);
@@ -75,7 +86,7 @@ export async function flagUndertagged(
     if (b.length < PAGE) break;
   }
 
-  const inScope = (r: Row) => statuses.includes(r.status);
+  const inScope = (r: Row) => statuses.includes(r.status) && !neverCurated(r);
   const count = notion === "total" ? totalTagCount : contentTagCount;
 
   const totalNotionCount = rows.filter(
