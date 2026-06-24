@@ -20,7 +20,11 @@ const EXCLUDE_STATUS = new Set([
   "donate",
   "inactive",
 ]);
-const accRe = /accessor|flag\s*pole|flagpole/i;
+// Real accessories carry the signal in their product_type ("…: Accessories: …",
+// poles, brackets). Titles only flag genuine physical poles — matching
+// "accessor" in a title wrongly catches themed flags like "Cowboy Accessories".
+const accTypeRe = /accessor|flag\s*pole|flagpole/i;
+const accTitleRe = /flag\s*pole|flagpole/i;
 
 interface Design {
   design_family: string;
@@ -70,10 +74,10 @@ async function main() {
   let accCount = 0, lifeCount = 0;
   for (const d of designs) {
     const isAcc =
-      (d.shopify_product_types ?? []).some((t) => accRe.test(t)) ||
-      (d.design_name ? accRe.test(d.design_name) : false);
+      (d.shopify_product_types ?? []).some((t) => accTypeRe.test(t)) ||
+      (d.design_name ? accTitleRe.test(d.design_name) : false);
     if (isAcc) {
-      const t = (d.shopify_product_types ?? []).find((x) => accRe.test(x)) ?? d.design_name ?? "";
+      const t = (d.shopify_product_types ?? []).find((x) => accTypeRe.test(x)) ?? d.design_name ?? "";
       toExclude.set(d.design_family, { reason: "accessory", detail: t });
       accCount++;
       continue; // accessory wins; no need to also check lifecycle
