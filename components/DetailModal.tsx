@@ -25,6 +25,7 @@ interface Props {
 }
 
 interface MonthUnits { month: string; units: number }
+interface TdProductStatus { sku: string; status: string }
 
 const STATUS_LABEL: Record<ReviewStatus, string> = {
   novision: "No vision yet",
@@ -49,21 +50,24 @@ export function DetailModal({ design, onClose, onFlag }: Props) {
   // so initial null state is correct without any reset effect.
   const [monthly, setMonthly] = useState<MonthUnits[] | null>(null);
   const [events, setEvents] = useState<ReviewEvent[] | null>(null);
+  const [tdProduct, setTdProduct] = useState<TdProductStatus[] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     fetch(`/api/review/design/${encodeURIComponent(design.design_family)}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
-      .then((d: { monthly: MonthUnits[]; events: ReviewEvent[] }) => {
+      .then((d: { monthly: MonthUnits[]; events: ReviewEvent[]; tdProduct?: TdProductStatus[] }) => {
         if (!cancelled) {
           setMonthly(d.monthly);
           setEvents(d.events);
+          setTdProduct(d.tdProduct ?? []);
         }
       })
       .catch(() => {
         if (!cancelled) {
           setMonthly([]);
           setEvents([]);
+          setTdProduct([]);
         }
       });
     return () => {
@@ -161,6 +165,17 @@ export function DetailModal({ design, onClose, onFlag }: Props) {
               <StatRow label="Catalog added">{formatMonthYear(design.catalog_created_date)}</StatRow>
               <StatRow label="Status">
                 <span className={`${STATUS_COLOR[status]} font-medium`}>{STATUS_LABEL[status]}</span>
+              </StatRow>
+              <StatRow label="Stock status">
+                {tdProduct === null ? (
+                  <span className="text-muted-2">…</span>
+                ) : tdProduct.length === 0 ? (
+                  <span className="text-muted-2">—</span>
+                ) : (
+                  <span className={`${tdStatusColor(tdProduct)} font-medium text-right`}>
+                    {summarizeTdStatus(tdProduct)}
+                  </span>
+                )}
               </StatRow>
             </dl>
           </div>
@@ -391,6 +406,30 @@ function MonthlyBarChart({ data }: { data: MonthUnits[] | null }) {
       </div>
     </>
   );
+}
+
+const isActiveStatus = (s: string) => /^active$/i.test(s.trim());
+
+/** Collapse per-SKU td_product statuses to one label; counts when they differ. */
+function summarizeTdStatus(td: TdProductStatus[]): string {
+  const counts = new Map<string, number>();
+  for (const t of td) {
+    const k = t.status || "—";
+    counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+  if (counts.size === 1) return [...counts.keys()][0];
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([s, n]) => `${s} (${n})`)
+    .join(", ");
+}
+
+/** Green when every variant is Active, red when none are, amber when mixed. */
+function tdStatusColor(td: TdProductStatus[]): string {
+  const statuses = td.map((t) => t.status);
+  if (statuses.every(isActiveStatus)) return "text-[#0F6E56]";
+  if (statuses.every((s) => !isActiveStatus(s))) return "text-[#A32D2D]";
+  return "text-[#BA7517]";
 }
 
 function unitsPerYear(design: Design): number | null {

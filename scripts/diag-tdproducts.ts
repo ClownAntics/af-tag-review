@@ -30,7 +30,7 @@ async function main() {
     for (let o = 0; ; o += PAGE) {
       const { data } = await sb.from("td_product").select(statusCol).range(o, o + PAGE - 1);
       const b = data ?? [];
-      all.push(...(b as Record<string, unknown>[]));
+      all.push(...(b as unknown as Record<string, unknown>[]));
       if (b.length < PAGE) break;
     }
     const tally = new Map<string, number>();

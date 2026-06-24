@@ -1,10 +1,12 @@
 import type { NextRequest } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { getAdminSupabase } from "@/lib/supabase-admin";
 import type { ReviewEvent } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 interface MonthUnits { month: string; units: number }
+interface TdProductStatus { sku: string; status: string }
 
 export async function GET(
   _req: NextRequest,
@@ -13,8 +15,10 @@ export async function GET(
   const { design_family } = await ctx.params;
   const supabase = getSupabase();
 
-  // Fetch monthly sales + events in parallel.
-  const [monthlyRes, eventsRes] = await Promise.all([
+  // Fetch the design's SKUs (for the td_product join), monthly sales, and
+  // events in parallel.
+  const [skuRes, monthlyRes, eventsRes] = await Promise.all([
+    supabase.from("designs").select("variant_skus").eq("design_family", design_family).maybeSingle(),
     // Grab most recent 24 months then reverse so the chart reads left→right oldest→newest.
     supabase
       .from("design_monthly_sales")
@@ -29,6 +33,26 @@ export async function GET(
       .order("timestamp", { ascending: false })
       .limit(50),
   ]);
+
+  // td_product carries the lifecycle Status (Active, Out of Stock -
+  // Discontinued, Inactive, Donate, …) per SKU. Joined SKU → variant_skus
+  // (falling back to design_family for non-AF rows where they're the same).
+  // Uses the admin client because td_product isn't public-read.
+  const skus = ((skuRes.data?.variant_skus as string[] | null) ?? []).filter(Boolean);
+  const lookupSkus = skus.length ? skus : [design_family];
+  let tdProduct: TdProductStatus[] = [];
+  try {
+    const { data } = await getAdminSupabase()
+      .from("td_product")
+      .select("SKU,Status")
+      .in("SKU", lookupSkus);
+    tdProduct = (data ?? []).map((r) => ({
+      sku: (r as { SKU: string }).SKU,
+      status: (r as { Status: string | null }).Status ?? "",
+    }));
+  } catch {
+    tdProduct = [];
+  }
 
   // Migration 002 must be applied to create design_monthly_sales + events.
   // Before it is, return empty arrays so the detail modal still renders the
@@ -47,5 +71,5 @@ export async function GET(
     ? []
     : ((eventsRes.data || []) as ReviewEvent[]);
 
-  return Response.json({ monthly, events });
+  return Response.json({ monthly, events, tdProduct });
 }
