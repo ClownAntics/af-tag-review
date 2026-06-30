@@ -47,6 +47,19 @@ export async function GET(req: NextRequest): Promise<Response> {
     return handleSample({ status: status as ReviewStatus, n, filters });
   }
 
+  // Sales-velocity sort (units/year). Can't ORDER BY a computed expression in
+  // PostgREST, so score + sort the whole filtered set in-route, then page +
+  // hydrate (same shape as the random-sample handler). Always fresh.
+  if (sort === "velocity_desc" || sort === "velocity_asc") {
+    return handleVelocitySort({
+      status: status as ReviewStatus,
+      filters,
+      offset,
+      limit,
+      ascending: sort === "velocity_asc",
+    });
+  }
+
   const supabase = getSupabase();
   // Cast through `unknown` so applyReviewFilters' structural type doesn't
   // tangle with PostgREST's deeply-nested generics (TS2589).
@@ -123,6 +136,93 @@ function errorResponse(status: number, msg: string): Response {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+/** Lifetime units normalized to a per-year rate. Matches DetailModal /
+ * the Staff Picks report. null = unknown (no start date) → sinks in sort. */
+function unitsPerYear(units: number, catalogCreated: string | null, firstSale: string | null): number | null {
+  if (!units) return 0;
+  const start = catalogCreated || firstSale;
+  if (!start) return null;
+  const ms = Date.parse(start);
+  if (isNaN(ms)) return null;
+  const days = Math.max(30, (Date.now() - ms) / 86400000);
+  return units / (days / 365.25);
+}
+
+/**
+ * Sales-velocity (units/year) sort. PostgREST can't order by the computed
+ * rate, so: page through the matching set's sales fields (keys only), score
+ * each, sort, slice to the requested window, then hydrate the full rows for
+ * just that window (re-ordered to match). Cheap enough for the catalog's size.
+ */
+async function handleVelocitySort({
+  status,
+  filters,
+  offset,
+  limit,
+  ascending,
+}: {
+  status: ReviewStatus;
+  filters: ReturnType<typeof parseFiltersFromSearch>;
+  offset: number;
+  limit: number;
+  ascending: boolean;
+}): Promise<Response> {
+  const supabase = getSupabase();
+
+  // 1. Pull keys + sales fields for every matching row (paginated past the
+  //    1000-row PostgREST cap).
+  const scored: { family: string; v: number | null }[] = [];
+  const PAGE = 1000;
+  for (let o = 0; ; o += PAGE) {
+    const base = supabase
+      .from("designs")
+      .select("design_family,units_total,catalog_created_date,first_sale_date")
+      .eq("status", status) as unknown as Parameters<typeof applyReviewFilters>[0];
+    const filtered = applyReviewFilters(base, filters);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (filtered as any).range(o, o + PAGE - 1);
+    if (error) return errorResponse(500, error.message);
+    const rows = (data ?? []) as {
+      design_family: string;
+      units_total: number | null;
+      catalog_created_date: string | null;
+      first_sale_date: string | null;
+    }[];
+    for (const r of rows) {
+      scored.push({
+        family: r.design_family,
+        v: unitsPerYear(r.units_total ?? 0, r.catalog_created_date, r.first_sale_date),
+      });
+    }
+    if (rows.length < PAGE) break;
+  }
+
+  // 2. Sort by velocity; unknowns (null) sink to the bottom regardless of dir.
+  scored.sort((a, b) => {
+    const av = a.v ?? -1;
+    const bv = b.v ?? -1;
+    if (av === bv) return a.family.localeCompare(b.family);
+    return ascending ? av - bv : bv - av;
+  });
+
+  const total = scored.length;
+  const pageKeys = scored.slice(offset, offset + limit).map((s) => s.family);
+  if (pageKeys.length === 0) {
+    return Response.json({ designs: [], total, offset, limit });
+  }
+
+  // 3. Hydrate the page, preserving sorted order (in() doesn't guarantee it).
+  const { data: full, error: fullErr } = await supabase
+    .from("designs")
+    .select(SELECT_FIELDS)
+    .in("design_family", pageKeys);
+  if (fullErr) return errorResponse(500, fullErr.message);
+  const byFamily = new Map((full ?? []).map((d) => [(d as unknown as Design).design_family, d as unknown as Design]));
+  const designs = pageKeys.map((k) => byFamily.get(k)).filter((d): d is Design => !!d);
+
+  return Response.json({ designs, total, offset, limit });
 }
 
 /**

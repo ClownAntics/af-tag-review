@@ -36,8 +36,11 @@ export function TileGrid({
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   // Sort override. "default" = the per-tile order (recency/alpha); the others
-  // sort by lifetime units sold via the queue endpoint's `sort` param.
-  const [sortMode, setSortMode] = useState<"default" | "units_desc" | "units_asc">("default");
+  // sort by lifetime units sold or sales velocity (units/yr) via the queue
+  // endpoint's `sort` param.
+  const [sortMode, setSortMode] = useState<
+    "default" | "velocity_desc" | "velocity_asc" | "units_desc" | "units_asc"
+  >("default");
   const [runningVision, setRunningVision] = useState(false);
   const [runProgress, setRunProgress] = useState<{ done: number; total: number } | null>(null);
   const [processingFamilies, setProcessingFamilies] = useState<Set<string>>(new Set());
@@ -711,8 +714,10 @@ export function TileGrid({
             className="text-sm px-2.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-50"
           >
             <option value="default">Sort: Default</option>
-            <option value="units_desc">Sort: Top sellers ↓</option>
-            <option value="units_asc">Sort: Fewest sales ↑</option>
+            <option value="velocity_desc">Sort: Units/yr ↓ (top velocity)</option>
+            <option value="velocity_asc">Sort: Units/yr ↑</option>
+            <option value="units_desc">Sort: Units sold ↓ (lifetime)</option>
+            <option value="units_asc">Sort: Units sold ↑</option>
           </select>
           {sampleAvailable && (
             <button
