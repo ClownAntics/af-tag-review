@@ -44,10 +44,12 @@ function fmtRate(r: number | null): string {
   return `${Math.round(r).toLocaleString()}/yr`;
 }
 
+const nameOf = (r: StaffPickRow) => r.design.design_name || r.design.design_family || "";
+
 function cmp(a: StaffPickRow, b: StaffPickRow, key: SortKey): number {
   switch (key) {
     case "design":
-      return (a.design.design_name || a.design.design_family).localeCompare(b.design.design_name || b.design.design_family);
+      return nameOf(a).localeCompare(nameOf(b));
     case "manufacturer":
       return (a.design.manufacturer ?? "").localeCompare(b.design.manufacturer ?? "");
     case "picked_by":
@@ -55,7 +57,7 @@ function cmp(a: StaffPickRow, b: StaffPickRow, key: SortKey): number {
     case "picked":
       return (a.picked_at ?? "").localeCompare(b.picked_at ?? "");
     case "status":
-      return a.design.status.localeCompare(b.design.status);
+      return (a.design.status ?? "").localeCompare(b.design.status ?? "");
     case "sales":
       return (a.sales_per_year ?? -1) - (b.sales_per_year ?? -1);
   }
@@ -68,7 +70,7 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
   const sorted = [...rows].sort((a, b) => {
     const c = cmp(a, b, sort.key);
     if (c !== 0) return sort.dir === "asc" ? c : -c;
-    return a.design.design_family.localeCompare(b.design.design_family);
+    return (a.design.design_family ?? "").localeCompare(b.design.design_family ?? "");
   });
 
   const toggle = (key: SortKey) =>
