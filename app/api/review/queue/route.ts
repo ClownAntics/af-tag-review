@@ -31,6 +31,10 @@ export async function GET(req: NextRequest): Promise<Response> {
   const offset = parseInt(sp.get("offset") || "0", 10);
   const limit = Math.min(parseInt(sp.get("limit") || "100", 10), 500);
   const filters = parseFiltersFromSearch(sp);
+  // Optional override of the per-tile default ordering. "units_desc/asc" sorts
+  // by lifetime units sold (a real column, so it paginates correctly across
+  // the whole set). Anything else falls through to the per-status default.
+  const sort = sp.get("sort");
 
   // Random sample mode: ?sample=N returns N random rows from the matching
   // set. PostgREST can't `ORDER BY random()`, so we fetch all keys first,
@@ -67,6 +71,12 @@ export async function GET(req: NextRequest): Promise<Response> {
   const ordered = (() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const f = filtered as any;
+    // Sales sort overrides the per-tile default when requested.
+    if (sort === "units_desc" || sort === "units_asc") {
+      return f
+        .order("units_total", { ascending: sort === "units_asc", nullsFirst: false })
+        .order("design_family", { ascending: true });
+    }
     switch (status as ReviewStatus) {
       case "pending":
         return f

@@ -35,6 +35,9 @@ export function TileGrid({
   const [designs, setDesigns] = useState<Design[] | null>(null);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
+  // Sort override. "default" = the per-tile order (recency/alpha); the others
+  // sort by lifetime units sold via the queue endpoint's `sort` param.
+  const [sortMode, setSortMode] = useState<"default" | "units_desc" | "units_asc">("default");
   const [runningVision, setRunningVision] = useState(false);
   const [runProgress, setRunProgress] = useState<{ done: number; total: number } | null>(null);
   const [processingFamilies, setProcessingFamilies] = useState<Set<string>>(new Set());
@@ -68,8 +71,9 @@ export function TileGrid({
     async (newOffset: number) => {
       setLoading(true);
       try {
+        const sortQs = sortMode !== "default" ? `&sort=${sortMode}` : "";
         const r = await fetch(
-          `/api/review/queue?status=${status}&offset=${newOffset}&limit=${PAGE_SIZE}${filterQs ? `&${filterQs}` : ""}`,
+          `/api/review/queue?status=${status}&offset=${newOffset}&limit=${PAGE_SIZE}${filterQs ? `&${filterQs}` : ""}${sortQs}`,
         );
         if (!r.ok) throw new Error(await r.text());
         const d = (await r.json()) as { designs: Design[]; total: number };
@@ -82,7 +86,7 @@ export function TileGrid({
         setLoading(false);
       }
     },
-    [status, filterQs],
+    [status, filterQs, sortMode],
   );
 
   const loadSample = useCallback(async () => {
@@ -699,6 +703,17 @@ export function TileGrid({
           </p>
         </div>
         <div className="flex gap-2">
+          <select
+            value={sortMode}
+            onChange={(e) => setSortMode(e.target.value as typeof sortMode)}
+            disabled={loading || sampleMode}
+            title="Sort the grid by sales"
+            className="text-sm px-2.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-50"
+          >
+            <option value="default">Sort: Default</option>
+            <option value="units_desc">Sort: Top sellers ↓</option>
+            <option value="units_asc">Sort: Fewest sales ↑</option>
+          </select>
           {sampleAvailable && (
             <button
               type="button"
