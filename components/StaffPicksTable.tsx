@@ -8,8 +8,10 @@
  */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Design } from "@/lib/types";
+import type { Design, ReviewFilters } from "@/lib/types";
+import { EMPTY_REVIEW_FILTERS } from "@/lib/types";
 import { DetailModal } from "@/components/DetailModal";
+import { FilterBar } from "@/components/TagFixing/FilterBar";
 
 export interface StaffPickRow {
   design: Design;
@@ -46,6 +48,24 @@ function fmtRate(r: number | null): string {
 
 const nameOf = (r: StaffPickRow) => r.design.design_name || r.design.design_family || "";
 
+/** Client-side mirror of lib/review-filters.ts applyReviewFilters. */
+function matchesReviewFilters(d: Design, f: ReviewFilters): boolean {
+  if (f.manufacturer !== "all" && d.manufacturer !== f.manufacturer) return false;
+  if (f.themeName !== "all" && !(d.theme_names ?? []).includes(f.themeName)) return false;
+  if (f.subTheme !== "all" && !(d.sub_themes ?? []).includes(f.subTheme)) return false;
+  if (f.subSubTheme !== "all" && !(d.sub_sub_themes ?? []).includes(f.subSubTheme)) return false;
+  if (f.productType !== "all" && !(d.shopify_product_types ?? []).includes(f.productType)) return false;
+  if (f.tag !== "all") {
+    const canon = f.tag;
+    const lower = canon.toLowerCase();
+    const approved = d.approved_tags ?? [];
+    const shopify = d.shopify_tags ?? [];
+    const hit = approved.includes(canon) || shopify.includes(canon) || (lower !== canon && shopify.includes(lower));
+    if (!hit) return false;
+  }
+  return true;
+}
+
 function cmp(a: StaffPickRow, b: StaffPickRow, key: SortKey): number {
   switch (key) {
     case "design":
@@ -69,6 +89,7 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
   const [busy, setBusy] = useState<string | null>(null);
   // Click a picker (chip or "Picked by" cell) to show only their picks.
   const [pickerFilter, setPickerFilter] = useState<string | null>(null);
+  const [filters, setFilters] = useState<ReviewFilters>(EMPTY_REVIEW_FILTERS);
 
   const removePick = async (family: string) => {
     if (!confirm("Remove this staff pick?\n\nIt'll be un-starred and queued in Ready-to-send so the removal pushes to Shopify on the next push.")) return;
@@ -89,10 +110,12 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
     }
   };
 
-  const liveRows = rows.filter((r) => !removed.has(r.design.design_family));
+  const liveRows = rows
+    .filter((r) => !removed.has(r.design.design_family))
+    .filter((r) => matchesReviewFilters(r.design, filters));
 
-  // Per-person tally from the full (unfiltered) set, so all pickers stay
-  // visible to toggle even while a filter is active.
+  // Per-person tally within the filter-narrowed set, but BEFORE the picker
+  // filter, so all pickers stay visible to toggle.
   const tally = (() => {
     const m = new Map<string, number>();
     for (const r of liveRows) {
@@ -126,6 +149,10 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
 
   return (
     <>
+      <div className="mb-4">
+        <FilterBar filters={filters} onChange={setFilters} />
+      </div>
+
       {tally.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
           {tally.map(([who, n]) => {
@@ -229,6 +256,12 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
           ))}
         </tbody>
       </table>
+
+      {sorted.length === 0 && (
+        <p className="text-sm text-muted italic py-6 text-center">
+          No staff picks match the current filters.
+        </p>
+      )}
 
       {selected && (
         <DetailModal key={selected.design_family} design={selected} onClose={() => setSelected(null)} />
