@@ -6,10 +6,15 @@
  */
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { StaffPicksTable, type StaffPickRow } from "@/components/StaffPicksTable";
+import type { Design } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 const STAFF_PICK_TAG = "Staff-Pick";
+
+// Full Design columns so the detail popup has everything (tags, vision, skus…).
+const DESIGN_SELECT =
+  "design_family,design_name,units_total,catalog_created_date,first_sale_date,product_types,shopify_product_types,shopify_tags,approved_tags,vision_tags,vision_raw,theme_names,sub_themes,sub_sub_themes,classification,status,has_monogram,has_personalized,has_preprint,last_reviewed_at,last_pushed_at,manufacturer,variant_skus,image_url,first_seen_at";
 
 /** Lifetime units normalized to a per-year rate. Mirrors DetailModal. */
 function unitsPerYear(units: number, catalogCreated: string | null, firstSale: string | null): number | null {
@@ -23,27 +28,18 @@ function unitsPerYear(units: number, catalogCreated: string | null, firstSale: s
 async function loadPicks(): Promise<StaffPickRow[]> {
   const sb = getAdminSupabase();
 
-  // 1. Designs currently carrying the Staff-Pick tag (+ sales fields).
-  const designs: {
-    design_family: string;
-    design_name: string | null;
-    image_url: string | null;
-    manufacturer: string | null;
-    status: string;
-    units_total: number | null;
-    catalog_created_date: string | null;
-    first_sale_date: string | null;
-  }[] = [];
+  // 1. Full Design rows currently carrying the Staff-Pick tag.
+  const designs: Design[] = [];
   const PAGE = 1000;
   for (let o = 0; ; o += PAGE) {
     const { data, error } = await sb
       .from("designs")
-      .select("design_family,design_name,image_url,manufacturer,status,units_total,catalog_created_date,first_sale_date")
+      .select(DESIGN_SELECT)
       .contains("approved_tags", [STAFF_PICK_TAG])
       .range(o, o + PAGE - 1);
     if (error) throw new Error(error.message);
-    const b = data ?? [];
-    designs.push(...(b as typeof designs));
+    const b = (data ?? []) as unknown as Design[];
+    designs.push(...b);
     if (b.length < PAGE) break;
   }
 
@@ -63,20 +59,12 @@ async function loadPicks(): Promise<StaffPickRow[]> {
     }
   }
 
-  return designs.map((d) => {
-    const units = d.units_total ?? 0;
-    return {
-      design_family: d.design_family,
-      design_name: d.design_name,
-      image_url: d.image_url,
-      manufacturer: d.manufacturer,
-      status: d.status,
-      picked_by: latest.get(d.design_family)?.actor ?? null,
-      picked_at: latest.get(d.design_family)?.timestamp ?? null,
-      units_total: units,
-      sales_per_year: unitsPerYear(units, d.catalog_created_date, d.first_sale_date),
-    };
-  });
+  return designs.map((d) => ({
+    design: d,
+    picked_by: latest.get(d.design_family)?.actor ?? null,
+    picked_at: latest.get(d.design_family)?.timestamp ?? null,
+    sales_per_year: unitsPerYear(d.units_total ?? 0, d.catalog_created_date ?? null, d.first_sale_date ?? null),
+  }));
 }
 
 export default async function StaffPicksPage() {
