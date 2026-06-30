@@ -91,6 +91,12 @@ export default function Home() {
             Settings
           </button>
           <a
+            href="/staff-picks"
+            className="hover:text-foreground hover:underline"
+          >
+            Staff picks
+          </a>
+          <a
             href="https://github.com/ClownAntics/af-tag-review/blob/main/docs/USER_GUIDE.md"
             target="_blank"
             rel="noopener noreferrer"
