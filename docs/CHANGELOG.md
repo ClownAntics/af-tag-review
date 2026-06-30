@@ -6,6 +6,20 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 
 ---
 
+## 2026-06 — Staff Picks report + per-user attribution
+
+### Added
+- **Staff Picks report** (`Staff picks` in the header nav). A dedicated page listing every design currently tagged `Staff-Pick`, each row showing a thumbnail, **who picked it** and **when** (from the `staff_picked` audit events), the design's **sales velocity (units/yr)**, and manufacturer.
+  - **Sortable columns** — click any header to sort, click again to flip ascending/descending.
+  - **Filter by person** — click a "Picked by" email or a per-person tally chip to show only that person's picks; Clear filter resets.
+  - **Full filter bar** — the same Manufacturer / Theme / Sub / Sub-sub / Tag / Type filters as the main grid, composed with the person filter.
+  - **Row → detail popup** — click a row to open the standard design popup (image, sales chart, tags, stock status, history).
+  - **✕ Remove** per row — un-stars the design and re-queues it to Ready-to-send (push to drop it from the storefront). The convenient way to remove a pick that's sitting in Ready-to-send, where the Updated tile's ★ isn't shown.
+- **Real per-user attribution.** With Google sign-in enabled, every action (staff picks, flags, pushes, …) now stamps the signed-in user's email on its event `actor` instead of the hardcoded `blake`, so the report shows who actually picked each design. Picks made before login was turned on still read `blake`.
+- **New app icon.** Tab favicon is now a green tag glyph instead of the default.
+
+---
+
 ## 2026-05 — Excluded status, Shopify product type / variant SKUs / images, bulk exclude, duplicate consolidation
 
 ### Added (continued)

@@ -220,19 +220,34 @@ Click any design's image card (outside of flagged hover context) → opens a mod
 
 ## Staff Picks
 
+### Marking a pick (★ on the Updated tile)
+
 The Updated tile cards show a ☆ star button in the top-left.
 
 - **Click ☆ → ⭐** — adds the `Staff-Pick` tag to the design's `approved_tags`, recomputes theme columns, and moves the design to Ready-to-send. A toast confirms: `★ Staff Pick added · {family} moved to Ready-to-send`.
-- **Click ⭐ → ☆** — removes the tag and re-queues. Both directions need a push for Shopify to see the change.
+- **Click ⭐ → ☆** — removes the tag and re-queues. Both directions need a **push** for Shopify to see the change — a starred design sits in Ready-to-send until you push it (then it returns to Updated, starred).
 
-To use this for a storefront collection:
+### The Staff Picks report
+
+Open it from **`Staff picks`** in the header nav. It lists every design currently tagged `Staff-Pick`, one row each:
+
+- **Columns:** thumbnail + name/SKU · **Manufacturer** · **Picked by** · **Picked** (date/time) · **Sales/yr** · ✕ Remove.
+- **Picked by / Picked** come from the audit log (the latest `staff_picked` event's user + timestamp). Signed in with Google, this is the **real person's email**; picks made before login was enabled show `blake`.
+- **Sales/yr** is sales velocity — lifetime units ÷ years in catalog (same number the design popup uses). Hover it for lifetime units.
+- **Sort any column** — click a header to sort by it; click again to flip ascending/descending. The active column shows ↑/↓, the rest ↕.
+- **Filter by person** — click a **Picked by** email, or one of the per-person tally chips at the top, to show only that person's picks. Click the active chip again, or **Clear filter**, to reset.
+- **Filter bar** — the same Manufacturer / Theme / Sub / Sub-sub / Tag / Type filters as the main app, applied to the picks. Composes with the person filter (e.g. Theme = Seasonal *and* one person's chip).
+- **Open details** — click a row to open the design popup (image, sales chart, current tags, stock status, full history).
+- **Remove a pick** — click **✕ Remove** on a row. It un-stars the design (drops `Staff-Pick`) and re-queues it to Ready-to-send. **Push** Ready-to-send afterwards to drop it from the storefront. This is the easy way to remove a pick that's currently in Ready-to-send (where the Updated tile's ★ isn't shown).
+
+### Wiring it to a storefront collection
 
 1. **Add `Staff-Pick` to FL Themes in TeamDesk** once. Settings → "Open TeamDesk table ↗". Add a row: Name=`Staff Picks`, no Sub, Search Term=`Staff-Pick`. Save.
 2. **Settings → ↻ Refresh from TeamDesk** so the typeahead and Tag filter dropdown know about it.
 3. Star designs from the Updated tile. Push the batch.
 4. **In Shopify Admin** create a Collection with rule `Product tag is staff-pick`. It auto-populates with your picked designs.
 
-To find every existing Staff Pick: Filter Bar → Tag → search `staff` → pick `Staff-Pick`. All six tiles narrow to just the picks.
+The **Staff picks** report is the quickest way to see everything that's currently picked. (You can also narrow any tile to picks via Filter Bar → Tag → `Staff-Pick`.)
 
 ---
 
