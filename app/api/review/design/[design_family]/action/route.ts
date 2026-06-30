@@ -20,12 +20,11 @@
  */
 import type { NextRequest } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { getActor } from "@/lib/auth";
 import type { Design, ReviewStatus } from "@/lib/types";
 import { mapTagsToThemes } from "@/lib/vision";
 
 export const dynamic = "force-dynamic";
-
-const ACTOR = "blake"; // hardcoded pre-auth
 
 type Body =
   | { action: "flag" }
@@ -54,6 +53,7 @@ export async function POST(
   }
 
   const supabase = getSupabase();
+  const actor = await getActor();
 
   // Load current state — we need it for merge semantics on accept/reject vision.
   // shopify_product_ids is loaded so mark_fine can refuse to queue a design
@@ -314,7 +314,7 @@ export async function POST(
   const { error: eventErr } = await supabase.from("events").insert({
     design_family,
     event_type: eventType,
-    actor: ACTOR,
+    actor,
     payload: eventPayload,
   });
   if (eventErr) {

@@ -10,6 +10,7 @@
 import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { parseSku } from "@/lib/sku-parser";
+import { getActor } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -80,11 +81,12 @@ export async function POST(req: NextRequest): Promise<Response> {
   if (updateErr) return errorResponse(500, `update: ${updateErr.message}`);
 
   // One event per flagged design.
+  const actor = await getActor();
   await sb.from("events").insert(
     toFlag.map((f) => ({
       design_family: f,
       event_type: "flagged",
-      actor: "blake",
+      actor,
       payload: { source: "paste_skus" },
     })),
   );

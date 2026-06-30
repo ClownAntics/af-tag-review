@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
+    "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.103.3",
     "csv-parse": "^6.2.1",
     "next": "16.2.4",

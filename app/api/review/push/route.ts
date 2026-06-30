@@ -25,6 +25,7 @@
  */
 import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
+import { getActor } from "@/lib/auth";
 import { updateProductTags } from "@/lib/shopify";
 import {
   applyReviewFilters,
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   const filters = parseFiltersFromSearch(req.nextUrl.searchParams);
 
   const sb = getAdminSupabase();
+  const actor = await getActor();
   // Cast through `unknown` so applyReviewFilters' structural type doesn't
   // tangle with PostgREST's deeply-nested generics (TS2589) — mirrors the
   // same pattern used in /api/review/queue.
@@ -192,7 +194,7 @@ export async function POST(req: NextRequest): Promise<Response> {
         await sb.from("events").insert({
           design_family: d.design_family,
           event_type: "pushed",
-          actor: "blake",
+          actor,
           payload: {
             product_ids: productIds,
             tag_count: newTags.length,

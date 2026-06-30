@@ -36,6 +36,7 @@ import {
 } from "@/lib/taxonomy-diff";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { invalidateTaxonomyCache } from "@/lib/taxonomy-source";
+import { getActor } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -234,7 +235,7 @@ async function applyPhase(): Promise<Response> {
       designs_flagged_count: designsFlagged,
       designs_renamed_count: designsRenamed,
       was_bootstrap: wasBootstrap,
-      actor: "blake",
+      actor: await getActor(),
     });
     if (error) {
       // Audit failure shouldn't roll back the data — log and continue.

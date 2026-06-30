@@ -29,11 +29,10 @@
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { listProducts, productToFamily } from "@/lib/shopify";
 import { mapTagsToThemes } from "@/lib/vision";
+import { getActor } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
-
-const ACTOR = "blake";
 
 export async function POST(req: Request): Promise<Response> {
   if (!process.env.SHOPIFY_ADMIN_TOKEN || !process.env.SHOPIFY_STORE) {
@@ -54,6 +53,7 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const sb = getAdminSupabase();
+  const actor = await getActor();
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -105,7 +105,7 @@ export async function POST(req: Request): Promise<Response> {
           ([family, prior]) => ({
             design_family: family,
             event_type: "reset_from_shopify",
-            actor: ACTOR,
+            actor,
             payload: { prior_status: prior },
           }),
         );

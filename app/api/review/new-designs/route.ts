@@ -15,11 +15,10 @@
  */
 import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
+import { getActor } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-
-const ACTOR = "blake";
 
 interface NewRow {
   design_family: string;
@@ -108,6 +107,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   const skipped = rows.length - candidates.length;
 
   // Batch update + audit events.
+  const actor = await getActor();
   const familyList = candidates.map((r) => r.design_family);
   const BATCH = 200;
   let flagged = 0;
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     const events = slice.map((family) => ({
       design_family: family,
       event_type: "flagged",
-      actor: ACTOR,
+      actor,
       payload: { reason: "new_from_shopify_sync", days },
     }));
     const { error: evtErr } = await sb.from("events").insert(events);

@@ -17,11 +17,10 @@
  */
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { isAccessoryFamily } from "@/lib/accessory-rules";
+import { getActor } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-
-const ACTOR = "blake";
 
 interface Row {
   design_family: string;
@@ -90,6 +89,7 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const sb = getAdminSupabase();
+  const actor = await getActor();
   const families = rows.map((r) => r.design_family);
 
   // Update all matching rows in one go with `.in()`. Postgres handles big IN
@@ -107,7 +107,7 @@ export async function POST(req: Request): Promise<Response> {
   const eventRows = rows.map((r) => ({
     design_family: r.design_family,
     event_type: "bulk_excluded",
-    actor: ACTOR,
+    actor,
     payload: {
       from_status: r.status,
       reason: "matches accessory_rules",

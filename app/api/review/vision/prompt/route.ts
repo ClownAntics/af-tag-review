@@ -9,10 +9,9 @@
  */
 import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
+import { getActor } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
-
-const ACTOR = "blake";
 
 export async function GET(): Promise<Response> {
   const sb = getAdminSupabase();
@@ -65,7 +64,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       version: nextVersion,
       prompt,
       is_current: true,
-      created_by: ACTOR,
+      created_by: await getActor(),
     })
     .select("version,created_at")
     .single();
