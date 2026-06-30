@@ -7,6 +7,7 @@
  * (sales velocity / "sales ability").
  */
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Design } from "@/lib/types";
 import { DetailModal } from "@/components/DetailModal";
 
@@ -64,14 +65,38 @@ function cmp(a: StaffPickRow, b: StaffPickRow, key: SortKey): number {
 }
 
 export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
+  const router = useRouter();
   const [sort, setSort] = useState<{ key: SortKey; dir: Dir }>({ key: "picked", dir: "desc" });
   const [selected, setSelected] = useState<Design | null>(null);
+  const [removed, setRemoved] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState<string | null>(null);
 
-  const sorted = [...rows].sort((a, b) => {
-    const c = cmp(a, b, sort.key);
-    if (c !== 0) return sort.dir === "asc" ? c : -c;
-    return (a.design.design_family ?? "").localeCompare(b.design.design_family ?? "");
-  });
+  const removePick = async (family: string) => {
+    if (!confirm("Remove this staff pick?\n\nIt'll be un-starred and queued in Ready-to-send so the removal pushes to Shopify on the next push.")) return;
+    setBusy(family);
+    try {
+      const res = await fetch(`/api/review/design/${encodeURIComponent(family)}/action`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "unstar" }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setRemoved((s) => new Set(s).add(family)); // hide immediately
+      router.refresh(); // re-sync the server list
+    } catch (e) {
+      alert(`Failed to remove: ${(e as Error).message}`);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const sorted = [...rows]
+    .filter((r) => !removed.has(r.design.design_family))
+    .sort((a, b) => {
+      const c = cmp(a, b, sort.key);
+      if (c !== 0) return sort.dir === "asc" ? c : -c;
+      return (a.design.design_family ?? "").localeCompare(b.design.design_family ?? "");
+    });
 
   const toggle = (key: SortKey) =>
     setSort((prev) => (prev.key === key ? { key, dir: prev.dir === "asc" ? "desc" : "asc" } : { key, dir: DEFAULT_DIR[key] }));
@@ -98,6 +123,7 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
             <Th k="picked" label="Picked" />
             <Th k="sales" label="Sales/yr" className="text-right pr-3" />
             <Th k="status" label="Status" />
+            <th className="py-2 font-medium" />
           </tr>
         </thead>
         <tbody>
@@ -129,6 +155,20 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
                 {fmtRate(sales_per_year)}
               </td>
               <td className="py-2 text-muted">{d.status}</td>
+              <td className="py-2 pl-2 text-right whitespace-nowrap">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void removePick(d.design_family);
+                  }}
+                  disabled={busy === d.design_family}
+                  className="text-xs text-muted hover:text-[#A32D2D] disabled:opacity-50"
+                  title="Remove staff pick (un-star)"
+                >
+                  {busy === d.design_family ? "…" : "✕ Remove"}
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
