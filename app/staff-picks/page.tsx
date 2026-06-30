@@ -4,6 +4,7 @@
  * velocity (units/year). Sortable by pick date or sales. Server component;
  * gated by the auth middleware like the rest of the app.
  */
+import Link from "next/link";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { StaffPicksTable, type StaffPickRow } from "@/components/StaffPicksTable";
 import type { Design } from "@/lib/types";
@@ -76,10 +77,6 @@ export default async function StaffPicksPage() {
     error = (e as Error).message;
   }
 
-  const byPicker = new Map<string, number>();
-  for (const p of picks) byPicker.set(p.picked_by ?? "unknown", (byPicker.get(p.picked_by ?? "unknown") ?? 0) + 1);
-  const tally = [...byPicker.entries()].sort((a, b) => b[1] - a[1]);
-
   return (
     <main className="max-w-5xl mx-auto px-6 py-8 space-y-5 w-full">
       <header className="flex items-baseline justify-between gap-4 flex-wrap">
@@ -90,27 +87,15 @@ export default async function StaffPicksPage() {
             <code className="text-xs">Staff-Pick</code> · who picked each · sortable by sales.
           </p>
         </div>
-        <a href="/" className="text-xs text-muted hover:text-foreground hover:underline">
+        <Link href="/" className="text-xs text-muted hover:text-foreground hover:underline">
           ← Back to Tag Review
-        </a>
+        </Link>
       </header>
 
       {error && (
         <p className="text-sm text-[#A32D2D] bg-[#FBEAEA] border border-[#F0C9C9] rounded-md px-3 py-2">
           Failed to load: {error}
         </p>
-      )}
-
-      {tally.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {tally.map(([who, n]) => (
-            <span key={who} className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-border bg-zinc-50">
-              <span className="font-mono">{who}</span>
-              <span className="text-muted-2">·</span>
-              <span className="font-medium">{n}</span>
-            </span>
-          ))}
-        </div>
       )}
 
       {picks.length === 0 && !error ? (

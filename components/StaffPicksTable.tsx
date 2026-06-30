@@ -67,6 +67,8 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
   const [selected, setSelected] = useState<Design | null>(null);
   const [removed, setRemoved] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState<string | null>(null);
+  // Click a picker (chip or "Picked by" cell) to show only their picks.
+  const [pickerFilter, setPickerFilter] = useState<string | null>(null);
 
   const removePick = async (family: string) => {
     if (!confirm("Remove this staff pick?\n\nIt'll be un-starred and queued in Ready-to-send so the removal pushes to Shopify on the next push.")) return;
@@ -87,8 +89,21 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
     }
   };
 
-  const sorted = [...rows]
-    .filter((r) => !removed.has(r.design.design_family))
+  const liveRows = rows.filter((r) => !removed.has(r.design.design_family));
+
+  // Per-person tally from the full (unfiltered) set, so all pickers stay
+  // visible to toggle even while a filter is active.
+  const tally = (() => {
+    const m = new Map<string, number>();
+    for (const r of liveRows) {
+      const who = r.picked_by ?? "unknown";
+      m.set(who, (m.get(who) ?? 0) + 1);
+    }
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  })();
+
+  const sorted = liveRows
+    .filter((r) => !pickerFilter || (r.picked_by ?? "unknown") === pickerFilter)
     .sort((a, b) => {
       const c = cmp(a, b, sort.key);
       if (c !== 0) return sort.dir === "asc" ? c : -c;
@@ -111,6 +126,40 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
 
   return (
     <>
+      {tally.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {tally.map(([who, n]) => {
+            const active = pickerFilter === who;
+            return (
+              <button
+                key={who}
+                type="button"
+                onClick={() => setPickerFilter(active ? null : who)}
+                className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border ${
+                  active
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-border bg-zinc-50 hover:bg-zinc-100"
+                }`}
+                title={active ? "Show all picks" : `Show only ${who}'s picks`}
+              >
+                <span className="font-mono">{who}</span>
+                <span className={active ? "" : "text-muted-2"}>·</span>
+                <span className="font-medium">{n}</span>
+              </button>
+            );
+          })}
+          {pickerFilter && (
+            <button
+              type="button"
+              onClick={() => setPickerFilter(null)}
+              className="text-xs text-muted hover:text-foreground underline"
+            >
+              Clear filter
+            </button>
+          )}
+        </div>
+      )}
+
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="text-left text-xs text-muted border-b border-border">
@@ -145,7 +194,19 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
                 </div>
               </td>
               <td className="py-2 pr-3 text-muted">{d.manufacturer ?? "—"}</td>
-              <td className="py-2 pr-3 font-mono text-[13px]">{picked_by ?? "—"}</td>
+              <td className="py-2 pr-3">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPickerFilter(picked_by ?? "unknown");
+                  }}
+                  className="font-mono text-[13px] text-left hover:underline hover:text-foreground"
+                  title={`Show only ${picked_by ?? "unknown"}'s picks`}
+                >
+                  {picked_by ?? "—"}
+                </button>
+              </td>
               <td className="py-2 pr-3 text-muted whitespace-nowrap">{fmtDate(picked_at)}</td>
               <td className="py-2 pr-3 text-right whitespace-nowrap tabular-nums" title={`${(d.units_total ?? 0).toLocaleString()} lifetime units`}>
                 {fmtRate(sales_per_year)}
