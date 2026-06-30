@@ -82,9 +82,9 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
                 <div className="flex items-center gap-2.5">
                   {d.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={d.image_url} alt="" width={32} height={42} className="rounded object-cover bg-zinc-100 shrink-0" />
+                    <img src={d.image_url} alt="" width={64} height={84} className="w-16 h-[84px] rounded object-cover bg-zinc-100 shrink-0" />
                   ) : (
-                    <div className="w-8 h-[42px] rounded bg-zinc-100 shrink-0" />
+                    <div className="w-16 h-[84px] rounded bg-zinc-100 shrink-0" />
                   )}
                   <div className="min-w-0">
                     <div className="truncate">{d.design_name || d.design_family}</div>
