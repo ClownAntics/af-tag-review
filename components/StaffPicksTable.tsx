@@ -18,7 +18,7 @@ export interface StaffPickRow {
   sales_per_year: number | null;
 }
 
-type SortKey = "design" | "manufacturer" | "picked_by" | "picked" | "sales" | "status";
+type SortKey = "design" | "manufacturer" | "picked_by" | "picked" | "sales";
 type Dir = "asc" | "desc";
 
 // First click on a column lands on the most useful direction for that data.
@@ -28,7 +28,6 @@ const DEFAULT_DIR: Record<SortKey, Dir> = {
   picked_by: "asc",
   picked: "desc",
   sales: "desc",
-  status: "asc",
 };
 
 function fmtDate(iso: string | null): string {
@@ -57,8 +56,6 @@ function cmp(a: StaffPickRow, b: StaffPickRow, key: SortKey): number {
       return (a.picked_by ?? "").localeCompare(b.picked_by ?? "");
     case "picked":
       return (a.picked_at ?? "").localeCompare(b.picked_at ?? "");
-    case "status":
-      return (a.design.status ?? "").localeCompare(b.design.status ?? "");
     case "sales":
       return (a.sales_per_year ?? -1) - (b.sales_per_year ?? -1);
   }
@@ -122,7 +119,6 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
             <Th k="picked_by" label="Picked by" />
             <Th k="picked" label="Picked" />
             <Th k="sales" label="Sales/yr" className="text-right pr-3" />
-            <Th k="status" label="Status" />
             <th className="py-2 font-medium" />
           </tr>
         </thead>
@@ -154,7 +150,6 @@ export function StaffPicksTable({ rows }: { rows: StaffPickRow[] }) {
               <td className="py-2 pr-3 text-right whitespace-nowrap tabular-nums" title={`${(d.units_total ?? 0).toLocaleString()} lifetime units`}>
                 {fmtRate(sales_per_year)}
               </td>
-              <td className="py-2 text-muted">{d.status}</td>
               <td className="py-2 pl-2 text-right whitespace-nowrap">
                 <button
                   type="button"
