@@ -182,12 +182,32 @@ function resolveToTerm(raw: string): string | null {
   if (valid.has(raw)) return raw;
   if (!_labelToTerm) {
     _labelToTerm = new Map();
-    for (const e of _entriesRef ?? []) {
-      // Register lowercase label, lowercase name, and lowercase "name: sub"
-      // for Level-1 / Level-2 rows so name-only or parent-only emissions resolve.
+    const entries = _entriesRef ?? [];
+    for (const e of entries) {
+      // Register lowercase label, lowercase name, lowercase "name: sub", and
+      // the lowercased Search Term (+ hyphens-as-spaces) so case/spacing
+      // variants and name-only / parent-only emissions resolve.
       _labelToTerm.set(e.label.toLowerCase(), e.term);
       _labelToTerm.set(e.name.toLowerCase(), e.term);
       if (e.sub) _labelToTerm.set(`${e.name}: ${e.sub}`.toLowerCase(), e.term);
+      _labelToTerm.set(e.term.toLowerCase(), e.term);
+      _labelToTerm.set(e.term.toLowerCase().replace(/-/g, " "), e.term);
+    }
+    // Also map each entry's bare LEAF (last ":" segment of the label) when it's
+    // unambiguous, so Claude emitting just the leaf concept — e.g. "Welcome"
+    // for the term "Welcome-Flags" (label "Love & Happiness: Welcome") —
+    // resolves instead of failing validation. Skip leaves shared by multiple
+    // entries to avoid mis-resolving; don't clobber a more specific mapping.
+    const leafCount = new Map<string, number>();
+    for (const e of entries) {
+      const leaf = e.label.split(":").pop()?.trim().toLowerCase();
+      if (leaf) leafCount.set(leaf, (leafCount.get(leaf) ?? 0) + 1);
+    }
+    for (const e of entries) {
+      const leaf = e.label.split(":").pop()?.trim().toLowerCase();
+      if (leaf && leafCount.get(leaf) === 1 && !_labelToTerm.has(leaf)) {
+        _labelToTerm.set(leaf, e.term);
+      }
     }
   }
   const byLabel = _labelToTerm.get(raw.toLowerCase());
