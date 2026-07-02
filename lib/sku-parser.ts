@@ -4,7 +4,8 @@
  * Examples:
  *   AFGFSU0419     → garden,        AFSU0419, none
  *   AFHFSU0430     → house,         AFSU0430, none
- *   AFGBSP0004     → garden-banner, AFSP0004, none
+ *   AFGBSP0004     → garden-banner, AFGBSP0004, none  (own family — not merged with flags)
+ *   AFDRSP0016     → doormat,       AFDRSP0016, none  (own family — not merged with flags)
  *   AFGFMS0509WH   → garden,        AFMS0509, preprint
  *   AFGFMS0447-CF  → garden,        AFMS0447, personalized
  *   AFGFMS0136M    → garden,        AFMS0136, monogram
@@ -12,7 +13,7 @@
  * Returns null for excluded/unrecognised SKUs.
  */
 
-export type ProductType = "garden" | "house" | "garden-banner" | "unknown";
+export type ProductType = "garden" | "house" | "garden-banner" | "doormat" | "unknown";
 export type Variant = "none" | "preprint" | "personalized" | "monogram";
 
 export interface ParsedSku {
@@ -27,6 +28,19 @@ const PRODUCT_TYPE_MAP: Record<string, ProductType> = {
   GF: "garden",
   HF: "house",
   GB: "garden-banner",
+  DR: "doormat",
+};
+
+// Garden + House flags share the same artwork per design number, so they
+// collapse into one family (prefix "AF"). Garden-Banner (GB) and Doormat (DR)
+// reuse the number across DIFFERENT artwork, so they get their own family
+// namespace ("AFGB" / "AFDR") and never merge with the flags.
+const FAMILY_PREFIX: Record<ProductType, string> = {
+  garden: "AF",
+  house: "AF",
+  unknown: "AF",
+  "garden-banner": "AFGB",
+  doormat: "AFDR",
 };
 
 const EXCLUDED_SKUS = new Set(["CUSTOMGARDENSKU", "CUSTOMHOUSESKU"]);
@@ -43,7 +57,9 @@ export function parseSku(rawSku: string): ParsedSku | null {
   let body = sku;
   let variant: Variant = "none";
 
-  if (body.endsWith("-CF")) {
+  if (body.endsWith("-CF") || body.endsWith("-CD")) {
+    // -CF / -CD are personalized ("custom") variants (e.g. AFDRSP0016-CD
+    // "Personalized Doormat"). Strip so they collapse onto the base design.
     variant = "personalized";
     body = body.slice(0, -3);
   } else if (body.endsWith("WH")) {
@@ -71,7 +87,7 @@ export function parseSku(rawSku: string): ParsedSku | null {
   const productType: ProductType = PRODUCT_TYPE_MAP[productCode] ?? "unknown";
 
   return {
-    designFamily: `AF${designBody}`,
+    designFamily: `${FAMILY_PREFIX[productType]}${designBody}`,
     productType,
     variant,
     themeCode: m[1],

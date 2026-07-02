@@ -5,7 +5,14 @@ the top. Status: 🔴 open · 🟡 partial · 🟢 fixed.
 
 ---
 
-## 🔴 P1 — SKU collapse merges unrelated designs (banner/doormat) ⭐ high impact
+## 🟡 P1 — SKU collapse merges unrelated designs (banner/doormat) ⭐ high impact
+**Update (2026-07):** `parseSku` now splits GB→`AFGB…` and DR→`AFDR…` into
+their own families (GF+HF still merge). Migration
+`scripts/migrate-split-banner-doormat.ts` ran: 111 flag families trimmed to
+GF/HF, 49 banner + 104 doormat families created, **264 designs flagged for
+Blake's review**. Remaining: review the flagged set → re-vision the new
+banner/doormat + clean any residual pollution on the flags → re-push.
+
 `lib/sku-parser.ts` keys `design_family` as `"AF" + <theme+number>`, **ignoring
 the product-type code** (`GF`/`HF`/`GB`/`DR`). Garden + House flags are the same
 art (correct to merge), but **Garden-Banner (`GB`) and Doormat (`DR`) with the
