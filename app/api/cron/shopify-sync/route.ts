@@ -1,20 +1,22 @@
 /**
- * Nightly cron: pull the current Shopify catalog into Supabase.
+ * Shopify catalog sync engine (MANUAL only — NOT scheduled).
+ *
+ * Pulls the current Shopify catalog into Supabase. This route is the sync
+ * engine; it is triggered on demand by the Settings "↻ Sync now" button
+ * (via /api/sync/shopify, which forwards here with the CRON_SECRET). There is
+ * deliberately NO cron entry for it in vercel.json — catalog import is a
+ * manual process by design.
  *
  * Mirrors the apply-path of `scripts/shopify-pull.ts` (the CLI keeps its
  * dry-run + CSV writing on top). Any meaningful change to the sync logic
  * should land in both places until we factor a shared `lib/shopify-sync.ts`.
  *
- * Auth: Vercel cron requests include `Authorization: Bearer $CRON_SECRET`.
- * Manual calls from a logged-in admin can pass the same secret. Requests
- * without the secret return 401.
+ * Auth: requests must include `Authorization: Bearer $CRON_SECRET`; the
+ * /api/sync/shopify proxy adds it server-side. Requests without it return 401.
  *
  * Response: JSON summary
  *   { ok, productsSeen, productsMatched, families, inserted, updated,
  *     excluded, orphansFound, orphansSkippedSafety, durationMs }
- *
- * Schedule: vercel.json → 3am ET (= 7am UTC) daily.
- *   Vercel Hobby limits crons to once-per-day, which is plenty here.
  */
 import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";

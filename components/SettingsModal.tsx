@@ -10,10 +10,10 @@
  *   - Bulk exclude accessories — preview + one-click exclude of every design
  *     whose Shopify product_type matches the accessory rule. Per-card
  *     ↩ Include reverses individual exclusions from the Excluded tile.
- *   - Sync from Shopify — non-destructive "Sync now" button that runs the
- *     same job as the 3am cron (insert new families, update drift,
- *     auto-exclude Shopify-deleted orphans). Shows "Last synced X ago" from
- *     `shopify_sync_log` so you know if the cron is firing.
+ *   - Sync from Shopify — non-destructive "Sync now" button (insert new
+ *     families, update drift, auto-exclude Shopify-deleted orphans). Catalog
+ *     sync is MANUAL only — there is no scheduled cron; run it here on demand.
+ *     Shows "Last synced X ago" from `shopify_sync_log`.
  *   - Reset everything (danger zone) — nuclear `/api/review/reset-all`
  *     stream that wipes review state back to No-vision and re-pulls. Requires
  *     typing RESET to confirm.
@@ -766,8 +766,9 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
               Pull the current Shopify catalog: insert new designs as{" "}
               <em>No vision</em>, refresh stale product IDs / tags / images,
               and auto-exclude designs whose Shopify products were deleted.
-              Non-destructive — review state is preserved. The nightly cron
-              runs this same job at 3am ET; click below to run it on demand.
+              Non-destructive — review state is preserved. Catalog sync is{" "}
+              <strong>manual only</strong> (no nightly cron) — run it here
+              whenever you want to pull the latest.
             </p>
 
             {lastSync && (
