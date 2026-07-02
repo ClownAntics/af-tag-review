@@ -910,7 +910,7 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
 
                 {mistagProgress.suspectList.length === 0 && (
                   <div className="text-xs text-muted italic">
-                    No suspects — every sampled design's stored primary
+                    No suspects — every sampled design&apos;s stored primary
                     still matches what Claude sees now.
                   </div>
                 )}
