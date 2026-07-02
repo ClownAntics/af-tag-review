@@ -190,8 +190,16 @@ export function skuToAfDesignFamily(sku: string | null | undefined): string | nu
   if (!sku) return null;
   const m = sku
     .toUpperCase()
-    .match(/^AF(?:GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(?:-[A-Z]{1,3}|[A-Z]{1,2})?$/);
-  return m ? `AF${m[1]}` : null;
+    .match(/^AF(GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(?:-[A-Z]{1,3}|[A-Z]{1,2})?$/);
+  if (!m) return null;
+  const code = m[1];
+  const body = m[2];
+  // Garden + House (+ Mailbox) share artwork per design number → collapse to
+  // "AF". Garden-Banner (GB) and Doormat (DR) reuse numbers across DIFFERENT
+  // artwork, so they get their own family namespace and never merge with the
+  // flags. Must stay in sync with parseSku() in lib/sku-parser.ts.
+  const prefix = code === "GB" ? "AFGB" : code === "DR" ? "AFDR" : "AF";
+  return `${prefix}${body}`;
 }
 
 /**
