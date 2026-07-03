@@ -39,12 +39,14 @@ Decided (D3): **curate ALL non-excluded products**, all vendors. 5,091 non-AF
 designs live as-is. Material-tag (`scripts/set-material-tags.ts`) + safe-merge
 to readytosend. Pairs naturally with T5 (facet tags). Big job — own session.
 
-### T7 🔴 Push behavior (was D1)
-Push still REPLACES Shopify tags with themes-only `approved_tags`, wiping
-functional/brand tags (`america-forever`, `Garden Flag`, `House Flags`…) that
-smart collections + the filter bar depend on. Blake: fix later — but **must
-land before any bulk push**, or collections empty out. Fix = merge-push
-(preserve non-theme tags) + emit facet tags (T5).
+### T7 🟢 Push behavior (was D1). DONE 2026-07-03.
+Push is now a MERGE: only canonical taxonomy terms are owned (synced to
+approved_tags, stale ones removed — case/space-insensitive match, so legacy
+"4th of July" matches `4th-Of-July`); all other live tags preserved
+(`america-forever`, `Garden Flag`, sizes, app tags). `shopify_tags` mirror now
+records what Shopify actually stored. Both paths updated: the app route +
+`scripts/shopify-push.ts`. Verified live on AFFA0015. Bulk pushes are safe
+now; T5 (facet tags) is unblocked.
 
 ---
 
