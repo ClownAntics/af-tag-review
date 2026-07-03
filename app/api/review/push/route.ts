@@ -32,6 +32,7 @@ import { getAdminSupabase } from "@/lib/supabase-admin";
 import { getActor } from "@/lib/auth";
 import { mergeProductTags, normalizeTagKey } from "@/lib/shopify";
 import { getTaxonomy } from "@/lib/taxonomy-source";
+import { facetTagsForDesign, OWNED_FACET_KEYS, type FacetFlags } from "@/lib/facet-tags";
 import {
   applyReviewFilters,
   parseFiltersFromSearch,
@@ -44,11 +45,17 @@ export const dynamic = "force-dynamic";
 // use the CLI: `npx tsx scripts/shopify-push.ts --apply` (no timeout).
 export const maxDuration = 800;
 
-interface ReadyDesign {
+interface ReadyDesign extends FacetFlags {
   design_family: string;
   approved_tags: string[];
   shopify_product_ids: number[] | null;
+  shopify_product_types: string[] | null;
 }
+
+const PUSH_COLUMNS =
+  "design_family,approved_tags,shopify_product_ids,shopify_product_types," +
+  "is_double_sided,is_reversible,is_premiersoft,is_suede_reflections," +
+  "is_glittertrends,is_printed_in_usa,is_envirofriendly";
 
 export async function POST(req: NextRequest): Promise<Response> {
   if (!process.env.SHOPIFY_ADMIN_TOKEN || !process.env.SHOPIFY_STORE) {
@@ -76,7 +83,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   // same pattern used in /api/review/queue.
   const base = sb
     .from("designs")
-    .select("design_family,approved_tags,shopify_product_ids")
+    .select(PUSH_COLUMNS)
     .eq("status", "readytosend") as unknown as Parameters<
     typeof applyReviewFilters
   >[0];
@@ -126,17 +133,21 @@ export async function POST(req: NextRequest): Promise<Response> {
       let familiesPushed = 0;
       let productsFailed = 0;
 
-      // T7 merge-push: the pipeline only OWNS canonical taxonomy terms — it
-      // syncs those to approved_tags and preserves every other live tag
-      // (brand/functional tags that smart collections + the theme filter bar
-      // depend on). Stale taxonomy tags on the product are removed.
-      const ownedKeys: ReadonlySet<string> = new Set(
-        (await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
-      );
+      // T7 merge-push: the pipeline OWNS canonical taxonomy terms + the
+      // size/material facet vocabulary (T5) — it syncs those and preserves
+      // every other live tag (brand/functional tags that smart collections +
+      // the theme filter bar depend on). Stale owned tags are removed.
+      const ownedKeys: ReadonlySet<string> = new Set([
+        ...(await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
+        ...OWNED_FACET_KEYS,
+      ]);
 
       for (const d of designs) {
         const productIds = d.shopify_product_ids ?? [];
-        const newTags = [...new Set(d.approved_tags ?? [])].sort();
+        // T5: emit storefront facet tags (size/material from product_type,
+        // features from flags) alongside the curated theme tags.
+        const facets = facetTagsForDesign(d.shopify_product_types, d);
+        const newTags = [...new Set([...(d.approved_tags ?? []), ...facets])].sort();
         if (productIds.length === 0) {
           emit({
             type: "skipped",

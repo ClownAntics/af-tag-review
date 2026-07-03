@@ -26,6 +26,7 @@ import { writeFileSync } from "node:fs";
 import { getAdminClient } from "./_supabase-admin";
 import { mergeProductTags, normalizeTagKey } from "../lib/shopify";
 import { getTaxonomy } from "../lib/taxonomy-source";
+import { facetTagsForDesign, OWNED_FACET_KEYS, type FacetFlags } from "../lib/facet-tags";
 
 interface Args {
   limit: number | null;
@@ -44,13 +45,14 @@ function parseArgs(): Args {
   return out;
 }
 
-interface ReadyDesign {
+interface ReadyDesign extends FacetFlags {
   design_family: string;
   design_name: string;
   manufacturer: string | null;
   approved_tags: string[];
   shopify_product_ids: number[] | null;
   shopify_tags: string[] | null;
+  shopify_product_types: string[] | null;
 }
 
 async function main() {
@@ -61,14 +63,18 @@ async function main() {
   let q = sb
     .from("designs")
     .select(
-      "design_family,design_name,manufacturer,approved_tags,shopify_product_ids,shopify_tags",
+      "design_family,design_name,manufacturer,approved_tags,shopify_product_ids,shopify_tags," +
+        "shopify_product_types,is_double_sided,is_reversible,is_premiersoft," +
+        "is_suede_reflections,is_glittertrends,is_printed_in_usa,is_envirofriendly",
     )
     .eq("status", "readytosend")
     .order("design_family");
   if (args.limit) q = q.limit(args.limit);
   const { data, error } = await q;
   if (error) throw error;
-  const designs = (data ?? []) as ReadyDesign[];
+  // Cast through unknown: PostgREST can't infer column types from a
+  // concatenated select string (same pattern as the push route).
+  const designs = (data ?? []) as unknown as ReadyDesign[];
   console.log(`[push] ${designs.length} designs in readytosend.`);
 
   const skipped: Array<{ family: string; reason: string }> = [];
@@ -87,8 +93,10 @@ async function main() {
       skipped.push({ family: d.design_family, reason: "no shopify_product_ids — re-run shopify-pull" });
       continue;
     }
-    const newTags = [...new Set(d.approved_tags ?? [])].sort();
-    if (newTags.length === 0) {
+    // T5: curated theme tags ∪ derived storefront facet tags.
+    const facets = facetTagsForDesign(d.shopify_product_types, d);
+    const newTags = [...new Set([...(d.approved_tags ?? []), ...facets])].sort();
+    if ((d.approved_tags ?? []).length === 0) {
       skipped.push({ family: d.design_family, reason: "approved_tags empty — won't push a blank tag set" });
       continue;
     }
@@ -145,10 +153,12 @@ async function main() {
   let productsWritten = 0;
   let productsFailed = 0;
 
-  // T7 merge-push: the owned set = canonical taxonomy terms (normalized).
-  const ownedKeys: ReadonlySet<string> = new Set(
-    (await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
-  );
+  // T7 merge-push: owned = canonical taxonomy terms + size/material facet
+  // vocabulary (T5). Feature tags are additive-only (not owned).
+  const ownedKeys: ReadonlySet<string> = new Set([
+    ...(await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
+    ...OWNED_FACET_KEYS,
+  ]);
 
   for (const plan of plans) {
     const results = await Promise.all(
