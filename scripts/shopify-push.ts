@@ -7,10 +7,13 @@
  *   npx tsx scripts/shopify-push.ts --apply      # actually PUT to Shopify
  *
  * Scope: every design with status='readytosend'. For each, look up its
- * shopify_product_ids (populated by scripts/shopify-pull.ts), and PUT the
- * product's tags to `approved_tags` — full replace, nothing preserved, per
- * the decision recorded in memory. AF families span multiple products; each
- * gets the same tag set.
+ * shopify_product_ids (populated by scripts/shopify-pull.ts), and MERGE-push
+ * tags (T7, 2026-07-03): only canonical taxonomy terms are owned/replaced by
+ * the pipeline; every other live tag (brand `america-forever`, functional
+ * `Garden Flag`, size/material, app tags) is preserved — smart collections
+ * and the theme filter bar depend on them. Stale taxonomy tags on the
+ * product are removed. AF families span multiple products; each gets the
+ * same approved set merged against its own live tags.
  *
  * Dry-run writes shopify_push_diff.csv summarizing old vs new tags per
  * product. --apply then:
@@ -21,7 +24,8 @@
  */
 import { writeFileSync } from "node:fs";
 import { getAdminClient } from "./_supabase-admin";
-import { updateProductTags } from "../lib/shopify";
+import { mergeProductTags, normalizeTagKey } from "../lib/shopify";
+import { getTaxonomy } from "../lib/taxonomy-source";
 
 interface Args {
   limit: number | null;
@@ -141,12 +145,17 @@ async function main() {
   let productsWritten = 0;
   let productsFailed = 0;
 
+  // T7 merge-push: the owned set = canonical taxonomy terms (normalized).
+  const ownedKeys: ReadonlySet<string> = new Set(
+    (await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
+  );
+
   for (const plan of plans) {
     const results = await Promise.all(
       plan.productIds.map(async (id) => {
         try {
-          await updateProductTags(id, plan.newTags);
-          return { id, ok: true as const };
+          const stored = await mergeProductTags(id, plan.newTags, ownedKeys);
+          return { id, ok: true as const, storedTags: stored.tags };
         } catch (e) {
           return { id, ok: false as const, error: (e as Error).message };
         }
@@ -173,13 +182,22 @@ async function main() {
       continue;
     }
 
-    // All products for this family succeeded.
+    // All products for this family succeeded. Mirror what Shopify ACTUALLY
+    // stored (union across products) — includes preserved non-taxonomy tags.
+    const storedUnion = [
+      ...new Set(
+        results
+          .flatMap((r) => (r.ok ? r.storedTags.split(",") : []))
+          .map((t) => t.trim())
+          .filter(Boolean),
+      ),
+    ].sort();
     const { error: updErr } = await sb
       .from("designs")
       .update({
         status: "updated",
         last_pushed_at: new Date().toISOString(),
-        shopify_tags: plan.newTags,
+        shopify_tags: storedUnion,
       })
       .eq("design_family", plan.family);
     if (updErr) {

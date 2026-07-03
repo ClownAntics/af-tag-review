@@ -117,6 +117,62 @@ export async function updateProductTags(
   throw new Error(`Shopify: exhausted retries updating product ${productId}`);
 }
 
+/**
+ * Normalize a tag for owned-tag comparison: lowercase, spaces → hyphens.
+ * Shopify lowercases tags on store, and legacy data mixes "4th of July" with
+ * "4th-of-july" — both must match the taxonomy term `4th-Of-July`.
+ */
+export function normalizeTagKey(tag: string): string {
+  return tag.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+/**
+ * Merge-push a product's tags (T7): replace only the tags the curation
+ * pipeline OWNS (canonical taxonomy Search Terms — `ownedKeys` holds their
+ * normalizeTagKey forms), preserving every other live tag (brand tags like
+ * `america-forever`, functional tags like `Garden Flag` that smart
+ * collections + the theme filter bar depend on, app/size/material tags…).
+ *
+ *   next = (current − owned) ∪ approvedTags
+ *
+ * Consequence: a stale taxonomy tag on the live product (e.g. a leftover
+ * `memorial-day` the curation dropped) is REMOVED by the next push, while
+ * non-taxonomy tags survive. Returns Shopify's stored result so callers can
+ * mirror the real final tag set.
+ */
+export async function mergeProductTags(
+  productId: number,
+  approvedTags: string[],
+  ownedKeys: ReadonlySet<string>,
+): Promise<{ id: number; tags: string }> {
+  const url = `${baseUrl()}/products/${productId}.json?fields=id,tags`;
+  let current: string[] = [];
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, { headers: authHeader() });
+    if (res.status === 429 && attempt < 5) {
+      const retry = Number(res.headers.get("Retry-After") ?? "2");
+      await sleep((retry + attempt) * 1000);
+      continue;
+    }
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Shopify GET ${productId} ${res.status}: ${body.slice(0, 400)}`);
+    }
+    const data = (await res.json()) as { product: { tags: string } };
+    current = (data.product.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+    break;
+  }
+  const preserved = current.filter((t) => !ownedKeys.has(normalizeTagKey(t)));
+  // De-dupe against approved (case/space-insensitive) so we don't send both
+  // "Double-Sided" (preserved) and a same-key approved tag twice.
+  const approvedKeys = new Set(approvedTags.map(normalizeTagKey));
+  const next = [
+    ...approvedTags,
+    ...preserved.filter((t) => !approvedKeys.has(normalizeTagKey(t))),
+  ].sort();
+  return updateProductTags(productId, next);
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }

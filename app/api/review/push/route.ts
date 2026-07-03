@@ -1,6 +1,10 @@
 /**
  * Push curated tags to JFF Shopify for ready-to-send designs.
  *
+ * MERGE-PUSH (T7): only canonical taxonomy terms are owned by the pipeline —
+ * they're synced to approved_tags; all other live tags (brand, functional,
+ * size/material, app tags) are preserved. See mergeProductTags in lib/shopify.
+ *
  * Request: POST /api/review/push?<filter params>
  *   body: optional { design_families?: string[] }
  *     - non-empty array       → push only those families (filters ignored)
@@ -26,7 +30,8 @@
 import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { getActor } from "@/lib/auth";
-import { updateProductTags } from "@/lib/shopify";
+import { mergeProductTags, normalizeTagKey } from "@/lib/shopify";
+import { getTaxonomy } from "@/lib/taxonomy-source";
 import {
   applyReviewFilters,
   parseFiltersFromSearch,
@@ -121,6 +126,14 @@ export async function POST(req: NextRequest): Promise<Response> {
       let familiesPushed = 0;
       let productsFailed = 0;
 
+      // T7 merge-push: the pipeline only OWNS canonical taxonomy terms — it
+      // syncs those to approved_tags and preserves every other live tag
+      // (brand/functional tags that smart collections + the theme filter bar
+      // depend on). Stale taxonomy tags on the product are removed.
+      const ownedKeys: ReadonlySet<string> = new Set(
+        (await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
+      );
+
       for (const d of designs) {
         const productIds = d.shopify_product_ids ?? [];
         const newTags = [...new Set(d.approved_tags ?? [])].sort();
@@ -146,8 +159,8 @@ export async function POST(req: NextRequest): Promise<Response> {
         const results = await Promise.all(
           productIds.map(async (id) => {
             try {
-              await updateProductTags(id, newTags);
-              return { id, ok: true as const };
+              const stored = await mergeProductTags(id, newTags, ownedKeys);
+              return { id, ok: true as const, storedTags: stored.tags };
             } catch (e) {
               return { id, ok: false as const, error: (e as Error).message };
             }
@@ -175,12 +188,23 @@ export async function POST(req: NextRequest): Promise<Response> {
           continue;
         }
 
+        // Mirror what Shopify ACTUALLY stored (union across the family's
+        // products) — with merge-push this includes preserved non-taxonomy
+        // tags, not just approved_tags.
+        const storedUnion = [
+          ...new Set(
+            results
+              .flatMap((r) => (r.ok ? r.storedTags.split(",") : []))
+              .map((t) => t.trim())
+              .filter(Boolean),
+          ),
+        ].sort();
         const { error: updErr } = await sb
           .from("designs")
           .update({
             status: "updated",
             last_pushed_at: new Date().toISOString(),
-            shopify_tags: newTags,
+            shopify_tags: storedUnion,
           })
           .eq("design_family", d.design_family);
         if (updErr) {
