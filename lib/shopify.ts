@@ -170,12 +170,14 @@ export async function* listProducts(
  * Matches: AFGF|AFHF|AFGB|AFDR|AFMC + {2-letter region}{4-digit id}
  * + optional suffix.
  *
- * The suffix is permissive on purpose: it represents a personalization
- * variant of the *same artwork* (`-CF` = custom field, `-CG` = custom
- * greeting, `WH` = preprint/white, `A`–`Z` = monogram letter, etc.), so all
- * variants must collapse onto the same design_family. New suffix codes have
- * surfaced in the catalog over time (-CG was the most recent), so we accept
- * any `-XX[X]` or 1–2 trailing letters rather than enumerating the known set.
+ * The suffix is permissive on purpose. `-CF`/`-CD`/`-CG` (personalized) and
+ * `WH` (preprint) are variants of the *same artwork* and collapse onto the
+ * base design_family. A single trailing letter `A`–`Z` is a MONOGRAM variant —
+ * a DIFFERENT design from the non-monogram base — so all 26 letters collapse
+ * into one monogram family per number, keyed with an "M" suffix
+ * (`AFGFFA0001A` → `AFFA0001M`, while `AFGFFA0001` → `AFFA0001`). New suffix
+ * codes have surfaced over time (-CG was the most recent), so we accept any
+ * `-XX[X]` or 1–2 trailing letters rather than enumerating the known set.
  *
  * **Case-insensitive on the SKU as a whole**, then the canonical family is
  * built in uppercase. Shopify has some variant SKUs like `AFhFSP0677` (note
@@ -190,16 +192,21 @@ export function skuToAfDesignFamily(sku: string | null | undefined): string | nu
   if (!sku) return null;
   const m = sku
     .toUpperCase()
-    .match(/^AF(GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(?:-[A-Z]{1,3}|[A-Z]{1,2})?$/);
+    .match(/^AF(GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(-[A-Z]{1,3}|[A-Z]{1,2})?$/);
   if (!m) return null;
   const code = m[1];
   const body = m[2];
+  const suffix = m[3] ?? "";
   // Garden + House (+ Mailbox) share artwork per design number → collapse to
   // "AF". Garden-Banner (GB) and Doormat (DR) reuse numbers across DIFFERENT
   // artwork, so they get their own family namespace and never merge with the
-  // flags. Must stay in sync with parseSku() in lib/sku-parser.ts.
+  // flags. Single trailing letter = monogram → own "M"-suffixed family (the
+  // base design has no monogram; merging polluted its tags). WH preprint and
+  // -CF/-CD/-CG personalized stay with the base.
+  // Must stay in sync with parseSku() in lib/sku-parser.ts.
   const prefix = code === "GB" ? "AFGB" : code === "DR" ? "AFDR" : "AF";
-  return `${prefix}${body}`;
+  const mono = /^[A-Z]$/.test(suffix) ? "M" : "";
+  return `${prefix}${body}${mono}`;
 }
 
 /**

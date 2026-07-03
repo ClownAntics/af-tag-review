@@ -8,7 +8,12 @@
  *   AFDRSP0016     → doormat,       AFDRSP0016, none  (own family — not merged with flags)
  *   AFGFMS0509WH   → garden,        AFMS0509, preprint
  *   AFGFMS0447-CF  → garden,        AFMS0447, personalized
- *   AFGFMS0136M    → garden,        AFMS0136, monogram
+ *   AFGFMS0136M    → garden,        AFMS0136M, monogram  (own family — see below)
+ *
+ * Monogram variants (single trailing letter) are a DIFFERENT design from the
+ * non-monogram base (base "Apples & Pears" has no letter on it), so all 26
+ * letters collapse into ONE monogram family per design number, keyed with an
+ * "M" suffix (`AFFA0001M`) — separate from the base family (`AFFA0001`).
  *
  * Returns null for excluded/unrecognised SKUs.
  */
@@ -57,9 +62,10 @@ export function parseSku(rawSku: string): ParsedSku | null {
   let body = sku;
   let variant: Variant = "none";
 
-  if (body.endsWith("-CF") || body.endsWith("-CD")) {
-    // -CF / -CD are personalized ("custom") variants (e.g. AFDRSP0016-CD
-    // "Personalized Doormat"). Strip so they collapse onto the base design.
+  if (body.endsWith("-CF") || body.endsWith("-CD") || body.endsWith("-CG")) {
+    // -CF / -CD / -CG are personalized ("custom") variants per product type
+    // (e.g. AFDRSP0016-CD "Personalized Doormat", AFGFMS0577-CG custom
+    // garden). Strip so they collapse onto the base design.
     variant = "personalized";
     body = body.slice(0, -3);
   } else if (body.endsWith("WH")) {
@@ -86,8 +92,13 @@ export function parseSku(rawSku: string): ParsedSku | null {
 
   const productType: ProductType = PRODUCT_TYPE_MAP[productCode] ?? "unknown";
 
+  // Monogram variants form their own family per design number ("M" suffix) —
+  // the base design has no monogram, so merging them polluted the base's tags.
+  // Must stay in sync with skuToAfDesignFamily() in lib/shopify.ts.
+  const monoSuffix = variant === "monogram" ? "M" : "";
+
   return {
-    designFamily: `${FAMILY_PREFIX[productType]}${designBody}`,
+    designFamily: `${FAMILY_PREFIX[productType]}${designBody}${monoSuffix}`,
     productType,
     variant,
     themeCode: m[1],
