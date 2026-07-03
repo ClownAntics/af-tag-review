@@ -22,12 +22,11 @@ one-line theme edit to add `Double-Sided` to the Features dropdown. NO
 metafields needed. NOTE: creds = justforfunflags store; clownantics.com is a
 separate Shopify store. Diagnostic: `scripts/diag-facets-readonly.ts`.
 
-### T6 🔴 Mailbox covers (MC) — same-art check
-`AFMC…` SKUs aren't in `parseSku`'s type map → fall through to the flag family
-(e.g. `AFMCSU0073WH` under `AFSU0073` "Bright Sunflower Welcome" — looks
-correct, same art). Verify empirically: compare every AFMC product title vs its
-flag family title; mismatches = wrongly merged (like GB/DR were). If reuse is
-found, split MC like GB/DR (twin functions `parseSku` + `skuToAfDesignFamily`).
+### T6 🟢 Mailbox covers (MC) — same-art check. DONE 2026-07-03.
+Verified: only 9 AF families carry an `AFMC…` SKU; all 9 MC products share
+their flag family's artwork (7 exact title matches, 2 wording-only diffs).
+No number-reuse like GB/DR — the collapse-into-flag-family behavior is
+correct. Scan: `scripts/scan-mailbox-covers.ts`.
 
 ### T3 🔴 Product-type fixes in Shopify (Blake)
 CSV: `C:\Users\gbcab\Downloads\product-type-mismatches.csv` — 220 rows (65
