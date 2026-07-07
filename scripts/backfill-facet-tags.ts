@@ -21,7 +21,7 @@
  */
 import { getAdminClient } from "./_supabase-admin";
 import { updateProductTags, normalizeTagKey } from "../lib/shopify";
-import { facetTagsForDesign, OWNED_FACET_KEYS, type FacetFlags } from "../lib/facet-tags";
+import { featureTags, sizeMaterialTags, OWNED_FACET_KEYS, type FacetFlags } from "../lib/facet-tags";
 
 const API = "2025-01";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -34,18 +34,23 @@ interface Row extends FacetFlags {
   approved_tags: string[] | null;
 }
 
-async function getProductsBatch(ids: number[]): Promise<Map<number, string[]>> {
+async function getProductsBatch(
+  ids: number[],
+): Promise<Map<number, { tags: string[]; type: string }>> {
   const store = process.env.SHOPIFY_STORE, tok = process.env.SHOPIFY_ADMIN_TOKEN!;
-  const out = new Map<number, string[]>();
+  const out = new Map<number, { tags: string[]; type: string }>();
   for (let i = 0; i < ids.length; i += 250) {
     const chunk = ids.slice(i, i + 250);
-    const url = `https://${store}.myshopify.com/admin/api/${API}/products.json?ids=${chunk.join(",")}&limit=250&fields=id,tags`;
+    const url = `https://${store}.myshopify.com/admin/api/${API}/products.json?ids=${chunk.join(",")}&limit=250&fields=id,tags,product_type`;
     for (let a = 0; ; a++) {
       const res = await fetch(url, { headers: { "X-Shopify-Access-Token": tok, "Content-Type": "application/json" } });
       if (res.status === 429 && a < 5) { await sleep((Number(res.headers.get("Retry-After") ?? "2") + a) * 1000); continue; }
       if (!res.ok) { if (a < 5) { await sleep(500 * (a + 1)); continue; } throw new Error(`batch GET ${res.status}`); }
       for (const p of (await res.json()).products ?? []) {
-        out.set(p.id, ((p.tags ?? "") as string).split(",").map((t) => t.trim()).filter(Boolean));
+        out.set(p.id, {
+          tags: ((p.tags ?? "") as string).split(",").map((t) => t.trim()).filter(Boolean),
+          type: ((p.product_type ?? "") as string).trim(),
+        });
       }
       break;
     }
@@ -75,6 +80,10 @@ async function main() {
       .select("design_family,status,shopify_product_ids,shopify_product_types,approved_tags,is_double_sided,is_reversible,is_premiersoft,is_suede_reflections,is_glittertrends,is_printed_in_usa,is_envirofriendly")
       .neq("status", "excluded")
       .not("shopify_product_ids", "is", null)
+      // Stable order is REQUIRED for .range() paging — without it Postgres
+      // may reshuffle rows between pages (concurrent updates move heap rows)
+      // and silently skip designs.
+      .order("design_family")
       .range(o, o + 999);
     if (error) throw error;
     rows.push(...((data ?? []) as Row[]));
@@ -83,14 +92,17 @@ async function main() {
   const designs = limit ? rows.slice(0, limit) : rows;
   console.log(`Designs with live products: ${rows.length}${limit ? ` (limited to ${designs.length})` : ""}`);
 
-  // Product → design facet map. approvedKeys guards owned-tag removal:
-  // curation trumps derivation (e.g. a doormat whose approved_tags carry
-  // `Printed` keeps it even though "Doormats: Regular" can't derive it).
-  const wanted = new Map<number, { family: string; facets: string[]; approvedKeys: Set<string> }>();
+  // Product → design map. Size/material are PER-PRODUCT (from each product's
+  // own product_type — the family-level union wrongly put `standard-garden`
+  // on house flags in the first backfill run); features are family-level.
+  // approvedKeys guards owned-tag removal: curation trumps derivation (e.g. a
+  // doormat whose approved_tags carry `Printed` keeps it even though
+  // "Doormats: Regular" can't derive it).
+  const wanted = new Map<number, { family: string; features: string[]; approvedKeys: Set<string> }>();
   for (const d of designs) {
-    const facets = facetTagsForDesign(d.shopify_product_types, d);
+    const features = featureTags(d);
     const approvedKeys = new Set((d.approved_tags ?? []).map(normalizeTagKey));
-    for (const pid of d.shopify_product_ids ?? []) wanted.set(pid, { family: d.design_family, facets, approvedKeys });
+    for (const pid of d.shopify_product_ids ?? []) wanted.set(pid, { family: d.design_family, features, approvedKeys });
   }
 
   console.log(`Reading ${wanted.size} products (batched)…`);
@@ -99,15 +111,17 @@ async function main() {
   // Plan changes.
   const changes: { pid: number; family: string; next: string[]; added: string[]; removed: string[] }[] = [];
   for (const [pid, w] of wanted) {
-    const current = live.get(pid);
-    if (!current) continue; // product gone — pull will reconcile
-    const facetKeys = new Set(w.facets.map(normalizeTagKey));
+    const product = live.get(pid);
+    if (!product) continue; // product gone — pull will reconcile
+    const current = product.tags;
+    const facets = [...new Set([...sizeMaterialTags([product.type]), ...w.features])].sort();
+    const facetKeys = new Set(facets.map(normalizeTagKey));
     const kept = current.filter((t) => {
       const k = normalizeTagKey(t);
       return !OWNED_FACET_KEYS.has(k) || facetKeys.has(k) || w.approvedKeys.has(k);
     });
     const keptKeys = new Set(kept.map(normalizeTagKey));
-    const next = [...kept, ...w.facets.filter((f) => !keptKeys.has(normalizeTagKey(f)))].sort();
+    const next = [...kept, ...facets.filter((f) => !keptKeys.has(normalizeTagKey(f)))].sort();
     if (eqSet(next.map(normalizeTagKey), current.map(normalizeTagKey))) continue;
     const curKeys = new Set(current.map(normalizeTagKey));
     changes.push({

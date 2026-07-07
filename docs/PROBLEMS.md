@@ -1,7 +1,55 @@
 # Problems / cleanup backlog + handoff
 
 Running list of open work. Status: 🔴 open · 🟡 partial · 🟢 done.
-Last updated end of the 2026-07-03 session.
+Last updated 2026-07-07.
+
+---
+
+## ▶ 2026-07-07 SESSION — Blake's intake list
+
+### 🟢 P8 — THE MYSTERY DELETER (P5's cause) — SOLVED + DEFUSED 2026-07-07
+`af-sales-research`'s weekly GitHub Actions cron (`refresh-all.ts` step 6 =
+`cleanup-designs.ts --apply`) pruned the SHARED `designs` table to "active AF
+flags only" — mass-deleting ~6,900 tag-review rows (all non-AF, all non-flag
+types, excluded rows, anything not Active in td_product). Happened 2026-06
+(the P5 incident, 9,709→2,935) and again 2026-07-06 08:27 UTC (confirmed in
+Supabase API logs: batched `DELETE /rest/v1/designs?design_family=in.(TL…)`)
+— which also ate the monogram split and caused the 45 failing pushes.
+**Fix**: step removed from refresh-all (af-sales-research 7d22ce2), script
+marked DO-NOT-RUN. Catalog re-imported (+6,899 rows as novision, 4 true
+orphans auto-excluded). **Follow-up open**: the sales dashboard now shows
+non-AF/inactive rows — it needs READ-time filtering (manufacturer='AF' +
+active via td_product or a `dashboard_designs` view).
+
+### 🔴 P9 — filter-counts.json generator under-counts (Blake's #1+#2)
+Storefront Material/Features facets nearly empty on garden flags: the counts
+generator's per-type groups only include `Sublimated (Printed)` product types,
+so burlap/applique/linen/lustre products (tags ARE live — 131 burlap verified)
+and most feature tags count 0 and get hidden. Generator runs daily ~10:37 UTC,
+pushes the asset into Shopify (theme repo is just the shopify[bot] mirror) —
+**location unknown, Blake to identify**. Fix = include all Small/Large Flags
+leaf types per group.
+
+### 🟢 P10 — Wrong doormats in 4th of July (Blake's #3). FIXED 2026-07-07.
+8 doormats carried stale legacy `4th-of-july`; removed from the 4 wrong ones
+(Sunflower Greeting, Please Wait, Fern Leaves, Personalized Sunflower), kept
+on the 4 genuine (Independence Day ×2, Celebrate Freedom, All American Old
+Wood — Option B generic-patriotic rule).
+
+### 🟢 P11 — Cemetery/Memorial collections showed Memorial Day flags (Blake's #5). FIXED.
+Smart collections `memorial` + `memorial-1` ruled on tag `Memorial-Day`/
+`memorial-day` (the holiday). Rules updated via API → `tag=memorial`
+(Religious: Memorial concept). May look sparse until more designs carry it.
+
+### 🟢 P12 — Monograms out of the pipeline (Blake 2026-07-06).
+45 mono-only families excluded; sync now SKIPS monogram products permanently
+(`productToFamily` returns null for `…M` families). Flag action now ALWAYS
+clears approved_tags (legacy noise can't survive re-review; old tags in event
+payload). Wreaths taxonomy: generic `Wreaths` = `Flowers: Wreaths` (L2),
+Christmas-scoped = `Christmas-Wreaths`; 13 non-Christmas designs reverted
+after the rename sweep.
+
+---
 
 ---
 

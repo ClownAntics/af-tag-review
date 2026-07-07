@@ -82,6 +82,9 @@ export async function flagUndertagged(
       .from("designs")
       .select("design_family,status,approved_tags,last_reviewed_at,last_pushed_at")
       .neq("status", "excluded")
+      // Stable order is required for .range() paging — unordered pages can
+      // skip rows when concurrent updates move them (2026-07-03 incident).
+      .order("design_family")
       .range(o, o + PAGE - 1);
     if (error) throw new Error(`flag-undertagged select: ${error.message}`);
     const b = (data ?? []) as Row[];
