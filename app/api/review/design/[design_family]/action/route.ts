@@ -97,24 +97,26 @@ export async function POST(
 
   switch (body.action) {
     case "flag": {
-      // When flagging from readytosend / updated, the user is saying "this
-      // previous review was wrong — start over." Clear approved_tags so
-      // vision's new suggestions aren't polluted by the old curation.
-      // From pending, preserve approved_tags (user may be mid-curation).
-      // From novision / flagged, nothing to clear.
-      const wipeApproved =
-        state.status === "readytosend" || state.status === "updated";
-      const basePatch: Record<string, unknown> = {
-        status: "flagged" satisfies ReviewStatus,
-        vision_tags: [],
-      };
-      patch = wipeApproved
-        ? await withThemes({ ...basePatch, approved_tags: [] }, [])
-        : basePatch;
+      // Flag ALWAYS means "start over": clear approved_tags so vision's new
+      // suggestions aren't polluted by old curation or legacy Shopify-seeded
+      // tags. (Blake 2026-07-06 — previously flagging from `pending`
+      // preserved tags "mid-curation", which kept legacy noise like a stray
+      // Welcome-Flags alive through re-review. Old tags stay recoverable in
+      // the event payload.)
+      const wipeApproved = (state.approved_tags ?? []).length > 0;
+      patch = await withThemes(
+        {
+          status: "flagged" satisfies ReviewStatus,
+          vision_tags: [],
+          approved_tags: [],
+        },
+        [],
+      );
       eventType = "flagged";
       eventPayload = {
         from_status: state.status,
         cleared_approved: wipeApproved,
+        previous_approved_tags: state.approved_tags ?? [],
       };
       break;
     }

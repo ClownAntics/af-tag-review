@@ -133,20 +133,27 @@ export function normalizeTagKey(tag: string): string {
  * `america-forever`, functional tags like `Garden Flag` that smart
  * collections + the theme filter bar depend on, app/size/material tags…).
  *
- *   next = (current − owned) ∪ approvedTags
+ *   next = (current − owned) ∪ approvedTags ∪ perProductTags(product_type)
  *
  * Consequence: a stale taxonomy tag on the live product (e.g. a leftover
  * `memorial-day` the curation dropped) is REMOVED by the next push, while
  * non-taxonomy tags survive. Returns Shopify's stored result so callers can
  * mirror the real final tag set.
+ *
+ * `perProductTags` (optional) computes tags from THIS product's own
+ * product_type — size/material facet tags differ across a family's garden /
+ * house / mailbox products, so they cannot come from the family-level union
+ * (that put `standard-garden` on house flags — the 2026-07-03 backfill bug).
  */
 export async function mergeProductTags(
   productId: number,
   approvedTags: string[],
   ownedKeys: ReadonlySet<string>,
+  perProductTags?: (productType: string) => string[],
 ): Promise<{ id: number; tags: string }> {
-  const url = `${baseUrl()}/products/${productId}.json?fields=id,tags`;
+  const url = `${baseUrl()}/products/${productId}.json?fields=id,tags,product_type`;
   let current: string[] = [];
+  let productType = "";
   for (let attempt = 0; ; attempt++) {
     const res = await fetch(url, { headers: authHeader() });
     if (res.status === 429 && attempt < 5) {
@@ -158,18 +165,25 @@ export async function mergeProductTags(
       const body = await res.text();
       throw new Error(`Shopify GET ${productId} ${res.status}: ${body.slice(0, 400)}`);
     }
-    const data = (await res.json()) as { product: { tags: string } };
+    const data = (await res.json()) as { product: { tags: string; product_type?: string } };
     current = (data.product.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+    productType = (data.product.product_type ?? "").trim();
     break;
   }
-  const preserved = current.filter((t) => !ownedKeys.has(normalizeTagKey(t)));
-  // De-dupe against approved (case/space-insensitive) so we don't send both
-  // "Double-Sided" (preserved) and a same-key approved tag twice.
-  const approvedKeys = new Set(approvedTags.map(normalizeTagKey));
-  const next = [
-    ...approvedTags,
-    ...preserved.filter((t) => !approvedKeys.has(normalizeTagKey(t))),
-  ].sort();
+  // De-dupe by normalized key (approved "Printed" + facet "printed" → one),
+  // first occurrence wins so curated casing is kept.
+  const emit: string[] = [];
+  const emitKeys = new Set<string>();
+  for (const t of [...approvedTags, ...(perProductTags ? perProductTags(productType) : [])]) {
+    const k = normalizeTagKey(t);
+    if (emitKeys.has(k)) continue;
+    emitKeys.add(k);
+    emit.push(t);
+  }
+  const preserved = current.filter(
+    (t) => !ownedKeys.has(normalizeTagKey(t)) && !emitKeys.has(normalizeTagKey(t)),
+  );
+  const next = [...emit, ...preserved].sort();
   return updateProductTags(productId, next);
 }
 
@@ -302,6 +316,14 @@ export function productToFamily(
   product: ShopifyProduct,
 ): { design_family: string; manufacturer: string } | null {
   const manufacturer = normalizeVendor(product.vendor || "");
+  // Monogram products (single-letter SKU tails → "…M" families) are OUT of
+  // the tag pipeline entirely (Blake 2026-07-06: most have no non-monogram
+  // base design; the 45 mono-only families were excluded). Skip them here so
+  // syncs never re-insert them.
+  for (const v of product.variants ?? []) {
+    const af = skuToAfDesignFamily(v.sku);
+    if (af && /\dM$/.test(af)) return null;
+  }
   // AF: group by artwork, not by product — garden + house share design_family.
   for (const v of product.variants ?? []) {
     const af = skuToAfDesignFamily(v.sku);
