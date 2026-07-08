@@ -3,8 +3,12 @@
  * just the visible 40 the Bulk-actions dropdown covers. Powers the "Flag all N
  * matching" button; the natural feeder for "Run vision on all flagged".
  *
- * POST /api/review/bulk/flag-all?status=updated[&<filter params>]
+ * POST /api/review/bulk/flag-all?status=updated[&untagged=1][&<filter params>]
  *   → { flagged: number }
+ *
+ * `untagged=1` narrows to designs with no approved_tags — the non-AF
+ * live-as-is backlog (curated designs all carry tags). Lets "Flag all
+ * untagged" target just the uncurated set without a vendor filter.
  *
  * Per Blake's flag rule (2026-07-06): flagging ALWAYS clears approved_tags (and
  * derived theme columns + vision_tags) so vision re-runs clean, unpolluted by
@@ -34,6 +38,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     return json(400, { error: `status must be one of ${FLAGGABLE.join(", ")}` });
   }
   const filters = parseFiltersFromSearch(sp);
+  const untaggedOnly = sp.get("untagged") === "1";
   const sb = getAdminSupabase();
 
   // 1. Collect the matching families (+ their current approved_tags for the
@@ -41,10 +46,14 @@ export async function POST(req: NextRequest): Promise<Response> {
   const rows: { design_family: string; approved_tags: string[] | null }[] = [];
   const PAGE = 1000;
   for (let o = 0; ; o += PAGE) {
-    const base = sb
+    let base = sb
       .from("designs")
       .select("design_family,approved_tags")
       .eq("status", status) as unknown as Parameters<typeof applyReviewFilters>[0];
+    // Untagged = empty approved_tags array (PostgREST: array length 0). Rows
+    // are seeded with `[]` not null, so eq.{} matches; also cover null.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (untaggedOnly) base = (base as any).or("approved_tags.is.null,approved_tags.eq.{}");
     const filtered = applyReviewFilters(base, filters);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (filtered as any).order("design_family").range(o, o + PAGE - 1);

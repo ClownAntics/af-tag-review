@@ -59,6 +59,9 @@ export function TileGrid({
   const [newCount, setNewCount] = useState<number | null>(null);
   const [flaggingNew, setFlaggingNew] = useState(false);
   const [flaggingAll, setFlaggingAll] = useState(false);
+  // Count of untagged (no approved_tags) designs at this status+filters — the
+  // uncurated backlog (non-AF live-as-is). Drives the "Flag all untagged" button.
+  const [untaggedCount, setUntaggedCount] = useState<number | null>(null);
   const NEW_WINDOW_DAYS = 7;
 
   // Tiles where "flag all matching" makes sense (mirrors the flag-all route).
@@ -222,6 +225,60 @@ export function TileGrid({
       setFlaggingAll(false);
     }
   }, [flaggingAll, count, status, filterQs, onCountsChanged, loadPage]);
+
+  // Reusable "flag all untagged" — the uncurated backlog at this status. Only
+  // touches designs with empty approved_tags (skips your curated designs), so
+  // it's safe to click even on the Updated tile.
+  const flagAllUntagged = useCallback(async () => {
+    if (flaggingAll || !untaggedCount) return;
+    const filterNote = filterQs ? " (matching current filters)" : "";
+    if (
+      !confirm(
+        `Flag all ${untaggedCount} untagged ${status} design${untaggedCount === 1 ? "" : "s"}${filterNote} for vision review?\n\n` +
+          `These have no curated tags yet (the live-as-is backlog). Then use "Run vision on all flagged" to tag them.`,
+      )
+    )
+      return;
+    setFlaggingAll(true);
+    try {
+      const res = await fetch(
+        `/api/review/bulk/flag-all?status=${status}&untagged=1${filterQs ? `&${filterQs}` : ""}`,
+        { method: "POST" },
+      );
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? `flag failed (${res.status})`);
+      }
+      const { flagged } = (await res.json()) as { flagged: number };
+      setUntaggedCount(0);
+      onCountsChanged();
+      loadPage(0);
+      setPushToast({ message: `Flagged ${flagged} untagged design${flagged === 1 ? "" : "s"} for vision.`, variant: "success" });
+    } catch (e) {
+      console.error("flag-all-untagged failed:", e);
+      setPushToast({ message: `Flag failed: ${(e as Error).message}`, variant: "error" });
+    } finally {
+      setFlaggingAll(false);
+    }
+  }, [flaggingAll, untaggedCount, status, filterQs, onCountsChanged, loadPage]);
+
+  // Fetch the untagged count for flaggable tiles (cheap head count).
+  useEffect(() => {
+    if (!FLAGGABLE_STATUSES.includes(status)) { setUntaggedCount(null); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(
+          `/api/review/families?status=${status}&untagged=1&countOnly=1${filterQs ? `&${filterQs}` : ""}`,
+        );
+        if (!r.ok) return;
+        const { total } = (await r.json()) as { total: number };
+        if (!cancelled) setUntaggedCount(total);
+      } catch { /* leave null */ }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, filterQs]);
 
   // Warn before unload while a push or vision run is active. The server keeps
   // working on Vercel even after the tab closes, but the in-flight progress
@@ -899,17 +956,30 @@ export function TileGrid({
               </button>
             </>
           )}
-          {/* Flag ALL matching (every page), not just the visible 40. Feeds
-              the Flagged tile's "Run vision on all" button. */}
-          {FLAGGABLE_STATUSES.includes(status) && (count ?? 0) > 0 && (
+          {/* Flag all UNTAGGED (the uncurated backlog) — safe on any tile, it
+              never touches curated designs. Feeds "Run vision on all flagged". */}
+          {FLAGGABLE_STATUSES.includes(status) && (untaggedCount ?? 0) > 0 && (
+            <button
+              type="button"
+              onClick={flagAllUntagged}
+              disabled={flaggingAll}
+              className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background border border-foreground hover:bg-zinc-800 disabled:opacity-60"
+              title={`Flag every untagged ${status} design (all pages, no curated tags) for vision review`}
+            >
+              {flaggingAll ? "Flagging…" : `⚑ Flag all ${untaggedCount} untagged`}
+            </button>
+          )}
+          {/* Flag ALL matching incl. curated (every page). Only when there are
+              tagged designs too — else the untagged button already covers all. */}
+          {FLAGGABLE_STATUSES.includes(status) && (count ?? 0) > (untaggedCount ?? 0) && (
             <button
               type="button"
               onClick={flagAllMatching}
               disabled={flaggingAll}
               className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-60"
-              title={`Flag every ${status} design matching the current filters (all pages) for vision review`}
+              title={`Flag EVERY ${status} design matching current filters (all pages), including curated ones — clears their tags`}
             >
-              {flaggingAll ? "Flagging…" : `⚑ Flag all ${count} ${filterQs ? "matching" : status}`}
+              {flaggingAll ? "Flagging…" : `⚑ Flag all ${count}${filterQs ? " matching" : ""}`}
             </button>
           )}
           {/* Bulk actions on every tile. Acts on the currently-visible page

@@ -25,17 +25,37 @@ export async function GET(req: NextRequest): Promise<Response> {
     return json(400, { error: "status query param required" });
   }
   const filters = parseFiltersFromSearch(sp);
+  const untaggedOnly = sp.get("untagged") === "1";
+  const countOnly = sp.get("countOnly") === "1";
   const sb = getSupabase();
+
+  // countOnly: cheap exact count via a head request — used to label buttons
+  // without pulling the whole family list.
+  if (countOnly) {
+    let base = sb
+      .from("designs")
+      .select("design_family", { count: "exact", head: true })
+      .eq("status", status) as unknown as Parameters<typeof applyReviewFilters>[0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (untaggedOnly) base = (base as any).or("approved_tags.is.null,approved_tags.eq.{}");
+    const filtered = applyReviewFilters(base, filters);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { count, error } = await (filtered as any);
+    if (error) return json(500, { error: error.message });
+    return json(200, { families: [], total: count ?? 0 });
+  }
 
   const families: string[] = [];
   const PAGE = 1000;
   for (let o = 0; ; o += PAGE) {
     // Cast through unknown so the filter helper's structural type doesn't
     // tangle with PostgREST generics (same pattern as the queue route).
-    const base = sb
+    let base = sb
       .from("designs")
       .select("design_family")
       .eq("status", status) as unknown as Parameters<typeof applyReviewFilters>[0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (untaggedOnly) base = (base as any).or("approved_tags.is.null,approved_tags.eq.{}");
     const filtered = applyReviewFilters(base, filters);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (filtered as any)
