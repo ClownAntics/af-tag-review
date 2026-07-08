@@ -58,7 +58,11 @@ export function TileGrid({
   // whenever the tile loads or after flag-all-new completes.
   const [newCount, setNewCount] = useState<number | null>(null);
   const [flaggingNew, setFlaggingNew] = useState(false);
+  const [flaggingAll, setFlaggingAll] = useState(false);
   const NEW_WINDOW_DAYS = 7;
+
+  // Tiles where "flag all matching" makes sense (mirrors the flag-all route).
+  const FLAGGABLE_STATUSES: ReviewStatus[] = ["novision", "pending", "readytosend", "updated"];
 
   // Random sample mode (audit-style spot-check). Available on Ready-to-send
   // + Updated tiles where browsing thousands sequentially is impractical.
@@ -179,6 +183,45 @@ export function TileGrid({
       setFlaggingNew(false);
     }
   }, [status, newCount, flaggingNew, onCountsChanged, loadPage]);
+
+  // Flag EVERY design matching the current tile + filters (all pages), not just
+  // the visible 40 the Bulk-actions dropdown covers. Flagging clears tags
+  // (Blake's rule) so vision re-runs clean. The natural feeder for the Flagged
+  // tile's "Run vision on all" button.
+  const flagAllMatching = useCallback(async () => {
+    if (flaggingAll) return;
+    const total = count ?? 0;
+    if (total === 0) return;
+    const filterNote = filterQs ? " (matching current filters)" : "";
+    if (
+      !confirm(
+        `Flag all ${total} ${status} design${total === 1 ? "" : "s"}${filterNote} for vision review?\n\n` +
+          `This moves them to Flagged and CLEARS their approved tags (previous tags are recoverable). ` +
+          `Then use "Run vision on all flagged" to tag them.`,
+      )
+    )
+      return;
+    setFlaggingAll(true);
+    try {
+      const res = await fetch(
+        `/api/review/bulk/flag-all?status=${status}${filterQs ? `&${filterQs}` : ""}`,
+        { method: "POST" },
+      );
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? `flag failed (${res.status})`);
+      }
+      const { flagged } = (await res.json()) as { flagged: number };
+      onCountsChanged();
+      loadPage(0);
+      setPushToast({ message: `Flagged ${flagged} design${flagged === 1 ? "" : "s"} for vision.`, variant: "success" });
+    } catch (e) {
+      console.error("flag-all failed:", e);
+      setPushToast({ message: `Flag failed: ${(e as Error).message}`, variant: "error" });
+    } finally {
+      setFlaggingAll(false);
+    }
+  }, [flaggingAll, count, status, filterQs, onCountsChanged, loadPage]);
 
   // Warn before unload while a push or vision run is active. The server keeps
   // working on Vercel even after the tab closes, but the in-flight progress
@@ -855,6 +898,19 @@ export function TileGrid({
                     : `↑ Push all ${total} to Shopify →`}
               </button>
             </>
+          )}
+          {/* Flag ALL matching (every page), not just the visible 40. Feeds
+              the Flagged tile's "Run vision on all" button. */}
+          {FLAGGABLE_STATUSES.includes(status) && (count ?? 0) > 0 && (
+            <button
+              type="button"
+              onClick={flagAllMatching}
+              disabled={flaggingAll}
+              className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-60"
+              title={`Flag every ${status} design matching the current filters (all pages) for vision review`}
+            >
+              {flaggingAll ? "Flagging…" : `⚑ Flag all ${count} ${filterQs ? "matching" : status}`}
+            </button>
           )}
           {/* Bulk actions on every tile. Acts on the currently-visible page
               (designs.length, capped at PAGE_SIZE = 40). Each button confirms
