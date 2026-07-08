@@ -893,24 +893,39 @@ export function TileGrid({
               >
                 Clear all
               </button>
-              <button
-                type="button"
-                onClick={runVision}
-                disabled={runningVision || waitingCount === 0}
-                className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-60"
-                title="Vision only the designs loaded on this page"
-              >
-                ⚡ This page ({waitingCount})
-              </button>
-              {total > waitingCount && (
+              {/* When everything fits on one page, one primary button covers
+                  all flagged. Only split into page-vs-all when there are more
+                  flagged than are loaded (multiple pages). */}
+              {total > waitingCount ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={runVision}
+                    disabled={runningVision || waitingCount === 0}
+                    className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-60"
+                    title="Vision only the designs loaded on this page"
+                  >
+                    ⚡ This page ({waitingCount})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={runVisionAllFlagged}
+                    disabled={runningVision || total === 0}
+                    className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background border border-foreground hover:bg-zinc-800 disabled:opacity-60"
+                    title="Vision every flagged design (all pages), matching current filters. Runs in batches — keep the tab open."
+                  >
+                    ⚡ Run vision on all {total} flagged →
+                  </button>
+                </>
+              ) : (
                 <button
                   type="button"
-                  onClick={runVisionAllFlagged}
-                  disabled={runningVision || total === 0}
+                  onClick={runVision}
+                  disabled={runningVision || waitingCount === 0}
                   className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background border border-foreground hover:bg-zinc-800 disabled:opacity-60"
-                  title="Vision every flagged design (all pages), matching current filters. Runs in batches — keep the tab open."
+                  title="Run Claude vision on every flagged design"
                 >
-                  ⚡ Run vision on all {total} flagged →
+                  ⚡ Run vision on {waitingCount} flagged →
                 </button>
               )}
             </>
