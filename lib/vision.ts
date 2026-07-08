@@ -236,6 +236,47 @@ export interface VisionResult {
   dropped_conflicting?: string[];
 }
 
+// A holiday design belongs in its holiday collection, not the generic season
+// one (Blake 2026-07-08): "if xmas not winter". So when vision emits a holiday
+// tag we drop that holiday's parent season term. Mirrors the taxonomy
+// is_spring/summer/fall/winter flags on each is_holiday entry (see
+// scripts/resolve-holiday-season.ts, which does the same catalog-wide cleanup).
+const HOLIDAY_TO_SEASONS: Record<string, string[]> = {
+  "4th-Of-July": ["Summer"],
+  "Ash-Wednesday": ["Spring"],
+  "Chinese-New-Year": ["Winter"],
+  Christmas: ["Winter"],
+  Easter: ["Spring"],
+  "Fathers-Day": ["Summer"],
+  Halloween: ["Fall"],
+  Hanukkah: ["Winter"],
+  Kwanzaa: ["Winter"],
+  Lent: ["Spring"],
+  "Mardi-Gras": ["Spring"],
+  "Memorial-Day": ["Summer"],
+  "Mothers-Day": ["Spring"],
+  "New-Year": ["Winter"],
+  "Palm-Sunday": ["Spring"],
+  Passover: ["Spring"],
+  "St-Patricks-Day": ["Spring"],
+  Thanksgiving: ["Fall"],
+  "Valentines-Day": ["Spring", "Winter"],
+};
+const SEASON_TERMS = new Set(["Spring", "Summer", "Fall", "Winter"]);
+
+/** Drop generic season terms whose holiday is also present. Returns the kept
+ *  tags and any season terms removed (for auditability). */
+function dropHolidaySeasonConflicts(tags: string[]): { kept: string[]; dropped: string[] } {
+  const present = new Set(tags);
+  const remove = new Set<string>();
+  for (const [holiday, seasons] of Object.entries(HOLIDAY_TO_SEASONS)) {
+    if (!present.has(holiday)) continue;
+    for (const s of seasons) if (present.has(s)) remove.add(s);
+  }
+  if (remove.size === 0) return { kept: tags, dropped: [] };
+  return { kept: tags.filter((t) => !remove.has(t)), dropped: [...remove] };
+}
+
 function extractFirstJsonObject(s: string): string | null {
   const start = s.indexOf("{");
   if (start < 0) return null;
@@ -329,7 +370,17 @@ async function parseResponse(raw: string): Promise<VisionResult | { error: strin
   if (primary) union.add(primary);
   const expanded = await expandToIncludeAncestors(Array.from(union));
 
-  return { tags: expanded, primary, reasoning, dropped_conflicting: droppedConflicting };
+  // Final sanity pass: a holiday design shouldn't carry its generic season
+  // (Christmas→not Winter, 4th-Of-July→not Summer, …). Run after ancestor
+  // expansion so a season pulled in as a parent is also caught.
+  const { kept: cleaned, dropped: droppedSeasons } = dropHolidaySeasonConflicts(expanded);
+
+  return {
+    tags: cleaned,
+    primary,
+    reasoning,
+    dropped_conflicting: [...droppedConflicting, ...droppedSeasons],
+  };
 }
 
 export interface TagOneInput {
