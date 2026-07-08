@@ -366,99 +366,132 @@ export function TileGrid({
     [refresh],
   );
 
+  // Core runner: vision-tag an explicit family list, streaming progress.
+  // Families are processed in CHUNKs so each request finishes well under the
+  // vision route's 300s Vercel cap — this is what lets "all flagged" (hundreds)
+  // run from the browser without timing out. Returns when all chunks are done
+  // or the user aborts.
+  const VISION_CHUNK = 50;
+  const runVisionOnFamilies = useCallback(
+    async (families: string[]) => {
+      if (families.length === 0 || runningVision) return;
+
+      // Soft cap warning at 100+ designs. Sonnet 4.6 runs ~$0.006/design and
+      // ~3s/design at concurrency 3. Give the user explicit cost/time up front.
+      if (families.length > 100) {
+        const est$ = (families.length * 0.006).toFixed(2);
+        const estMin = Math.max(1, Math.round((families.length * 3) / 60));
+        const ok = window.confirm(
+          `Run Claude vision on ${families.length} designs?\n\n` +
+            `Estimated cost: ~$${est$}\n` +
+            `Estimated time: ~${estMin} min\n\n` +
+            `Runs in batches — keep this tab open. OK to proceed, Cancel to go back.`,
+        );
+        if (!ok) return;
+      }
+
+      setRunningVision(true);
+      setRunProgress({ done: 0, total: families.length });
+      abortRef.current = new AbortController();
+      let done = 0;
+
+      try {
+        for (let i = 0; i < families.length; i += VISION_CHUNK) {
+          if (abortRef.current.signal.aborted) break;
+          const chunk = families.slice(i, i + VISION_CHUNK);
+          const res = await fetch("/api/review/vision/run", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ design_families: chunk }),
+            signal: abortRef.current.signal,
+          });
+          if (!res.ok || !res.body) throw new Error(await res.text());
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+          while (true) {
+            const { done: finished, value } = await reader.read();
+            if (finished) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+            for (const line of lines) {
+              if (!line.trim()) continue;
+              try {
+                const evt = JSON.parse(line) as
+                  | { type: "start"; family: string }
+                  | { type: "ok"; family: string }
+                  | { type: "error"; family: string; error: string };
+                if (evt.type === "start") {
+                  setProcessingFamilies((s) => {
+                    const next = new Set(s);
+                    next.add(evt.family);
+                    return next;
+                  });
+                } else if (evt.type === "ok" || evt.type === "error") {
+                  setProcessingFamilies((s) => {
+                    const next = new Set(s);
+                    next.delete(evt.family);
+                    return next;
+                  });
+                  if (evt.type === "ok") {
+                    setDoneFamilies((s) => {
+                      const next = new Set(s);
+                      next.add(evt.family);
+                      return next;
+                    });
+                  }
+                  done++;
+                  setRunProgress({ done, total: families.length });
+                }
+              } catch {
+                // Skip malformed lines.
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // AbortError is expected when user clicks Cancel — don't log as crash.
+        if ((e as Error).name !== "AbortError") {
+          console.error("vision run failed:", e);
+        }
+      } finally {
+        setRunningVision(false);
+        // All done (or aborted) — reload so completed designs show as pending.
+        setTimeout(() => {
+          setRunProgress(null);
+          refresh();
+        }, 600);
+      }
+    },
+    [runningVision, refresh],
+  );
+
+  // Existing button: vision on the currently-loaded page (minus done ones).
   const runVision = useCallback(async () => {
-    if (!designs || runningVision) return;
+    if (!designs) return;
     const families = designs
       .filter((d) => !doneFamilies.has(d.design_family))
       .map((d) => d.design_family);
-    if (families.length === 0) return;
+    await runVisionOnFamilies(families);
+  }, [designs, doneFamilies, runVisionOnFamilies]);
 
-    // Soft cap warning at 100+ designs. Sonnet 4.6 runs ~$0.006/design and
-    // ~3s/design at concurrency 3. Give the user explicit cost/time up front.
-    if (families.length > 100) {
-      const est$ = (families.length * 0.006).toFixed(2);
-      const estMin = Math.max(1, Math.round((families.length * 3) / 60));
-      const ok = window.confirm(
-        `Run Claude vision on ${families.length} designs?\n\n` +
-          `Estimated cost: ~$${est$}\n` +
-          `Estimated time: ~${estMin} min\n\n` +
-          `OK to proceed, Cancel to go back.`,
-      );
-      if (!ok) return;
-    }
-
-    setRunningVision(true);
-    setRunProgress({ done: 0, total: families.length });
-    abortRef.current = new AbortController();
-
+  // New button: vision on EVERY flagged design (all pages), respecting the
+  // active filters. Fetches the full family list, then chunks through it.
+  const runVisionAllFlagged = useCallback(async () => {
+    if (runningVision) return;
     try {
-      // Stream progress over a chunked fetch.
-      const res = await fetch("/api/review/vision/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ design_families: families }),
-        signal: abortRef.current.signal,
-      });
-      if (!res.ok || !res.body) throw new Error(await res.text());
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let done = 0;
-      while (true) {
-        const { done: finished, value } = await reader.read();
-        if (finished) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          try {
-            const evt = JSON.parse(line) as
-              | { type: "start"; family: string }
-              | { type: "ok"; family: string }
-              | { type: "error"; family: string; error: string };
-            if (evt.type === "start") {
-              setProcessingFamilies((s) => {
-                const next = new Set(s);
-                next.add(evt.family);
-                return next;
-              });
-            } else if (evt.type === "ok" || evt.type === "error") {
-              setProcessingFamilies((s) => {
-                const next = new Set(s);
-                next.delete(evt.family);
-                return next;
-              });
-              if (evt.type === "ok") {
-                setDoneFamilies((s) => {
-                  const next = new Set(s);
-                  next.add(evt.family);
-                  return next;
-                });
-              }
-              done++;
-              setRunProgress({ done, total: families.length });
-            }
-          } catch {
-            // Skip malformed lines.
-          }
-        }
-      }
+      const r = await fetch(
+        `/api/review/families?status=flagged${filterQs ? `&${filterQs}` : ""}`,
+      );
+      if (!r.ok) throw new Error(await r.text());
+      const { families } = (await r.json()) as { families: string[] };
+      await runVisionOnFamilies(families);
     } catch (e) {
-      // AbortError is expected when user clicks Cancel — don't log as crash.
-      if ((e as Error).name !== "AbortError") {
-        console.error("vision run failed:", e);
-      }
-    } finally {
-      setRunningVision(false);
-      // All done (or aborted) — reload so completed designs show as pending.
-      setTimeout(() => {
-        setRunProgress(null);
-        refresh();
-      }, 600);
+      console.error("run-all-flagged failed:", e);
     }
-  }, [designs, runningVision, doneFamilies, refresh]);
+  }, [runningVision, filterQs, runVisionOnFamilies]);
 
   const pushToShopify = useCallback(async () => {
     if (!designs || pushing) return;
@@ -764,10 +797,22 @@ export function TileGrid({
                 type="button"
                 onClick={runVision}
                 disabled={runningVision || waitingCount === 0}
-                className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background border border-foreground hover:bg-zinc-800 disabled:opacity-60"
+                className="text-sm px-3.5 py-2 rounded-md border border-border bg-white hover:bg-zinc-50 disabled:opacity-60"
+                title="Vision only the designs loaded on this page"
               >
-                ⚡ Run vision on {waitingCount} design{waitingCount === 1 ? "" : "s"} →
+                ⚡ This page ({waitingCount})
               </button>
+              {total > waitingCount && (
+                <button
+                  type="button"
+                  onClick={runVisionAllFlagged}
+                  disabled={runningVision || total === 0}
+                  className="text-sm px-3.5 py-2 rounded-md bg-foreground text-background border border-foreground hover:bg-zinc-800 disabled:opacity-60"
+                  title="Vision every flagged design (all pages), matching current filters. Runs in batches — keep the tab open."
+                >
+                  ⚡ Run vision on all {total} flagged →
+                </button>
+              )}
             </>
           )}
           {status === "readytosend" && (
