@@ -113,12 +113,15 @@ export async function GET(): Promise<Response> {
         if (canonical) sets.tags.add(canonical);
       }
       for (const v of r.shopify_product_types || []) {
-        // Filter out garbage values: some products in Shopify have a raw
-        // product id (e.g. "EV432556") dumped into the product_type field
-        // instead of a real category. Hide those from the dropdown — they
-        // still live in the row so we don't lose data; this is purely a
-        // picker-UX cleanup. Fix-at-source is in Shopify.
-        if (/^EV\d+$/.test(v)) continue;
+        // Filter out garbage values that some products carry in Shopify's
+        // product_type field instead of a real category:
+        //   - a raw product id ("EV432556"), or
+        //   - a comma-joined TAG LIST ("Checkered, Double-Sided, studio-m, …")
+        //     — real product types use a colon hierarchy and never a comma.
+        // ~73 non-AF products (Studio M, Magnet Works, Custom Decor, Carson)
+        // have this; hiding them keeps the Type picker usable. Data still
+        // lives on the row; fix-at-source is in Shopify Admin.
+        if (/^EV\d+$/.test(v) || v.includes(",")) continue;
         sets.productTypes.add(v);
       }
       if (r.manufacturer) sets.manufacturers.add(r.manufacturer);
