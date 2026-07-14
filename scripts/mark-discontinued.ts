@@ -41,11 +41,14 @@ async function main() {
   console.log(`td_product SKUs: ${skuStatus.size}`);
 
   // 2. Designs (non-excluded) — decide per family.
-  const rows: { design_family: string; design_name: string | null; status: string; variant_skus: string[] | null }[] = [];
+  const rows: { design_family: string; design_name: string | null; status: string; variant_skus: string[] | null; is_active: boolean }[] = [];
   for (let o = 0; ; o += PAGE) {
+    // ALL designs — including already-excluded ones, so discontinued flags
+    // that were excluded earlier (accessories pass, etc.) still get the red
+    // is_active=false marker.
     const { data, error } = await sb.from("designs")
-      .select("design_family,design_name,status,variant_skus")
-      .neq("status", "excluded").order("design_family").range(o, o + PAGE - 1);
+      .select("design_family,design_name,status,variant_skus,is_active")
+      .order("design_family").range(o, o + PAGE - 1);
     if (error) throw error;
     rows.push(...((data ?? []) as typeof rows));
     if ((data ?? []).length < PAGE) break;
@@ -68,6 +71,7 @@ async function main() {
 
   let done = 0;
   for (const r of toMark) {
+    if (r.is_active === false && r.status === "excluded") continue; // already marked
     const { error } = await sb.from("designs").update({ is_active: false, status: "excluded" }).eq("design_family", r.design_family);
     if (error) { console.warn(`  ${r.design_family}: ${error.message}`); continue; }
     await sb.from("events").insert({ design_family: r.design_family, event_type: "excluded", actor: "blake-via-claude",
