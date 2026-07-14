@@ -316,14 +316,10 @@ export function productToFamily(
   product: ShopifyProduct,
 ): { design_family: string; manufacturer: string } | null {
   const manufacturer = normalizeVendor(product.vendor || "");
-  // Monogram products (single-letter SKU tails → "…M" families) are OUT of
-  // the tag pipeline entirely (Blake 2026-07-06: most have no non-monogram
-  // base design; the 45 mono-only families were excluded). Skip them here so
-  // syncs never re-insert them.
-  for (const v of product.variants ?? []) {
-    const af = skuToAfDesignFamily(v.sku);
-    if (af && /\dM$/.test(af)) return null;
-  }
+  // Monograms ARE in the pipeline again (Blake 2026-07-09, reversing the
+  // 2026-07-06 exclude decision). They still collapse into their own "…M"
+  // families via skuToAfDesignFamily (base design stays separate), but are no
+  // longer skipped here — so syncs group and keep them like any other design.
   // AF: group by artwork, not by product — garden + house share design_family.
   for (const v of product.variants ?? []) {
     const af = skuToAfDesignFamily(v.sku);
