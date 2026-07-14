@@ -20,7 +20,7 @@ const ALL_STATUSES: ReviewStatus[] = [
 // Returns designs at a given status, paginated + filtered. The review UI loads
 // ~100 at a time and advances through them; larger queues should paginate.
 const SELECT_FIELDS =
-  "design_family,design_name,units_total,catalog_created_date,first_sale_date,product_types,shopify_product_types,shopify_tags,approved_tags,vision_tags,vision_raw,theme_names,sub_themes,sub_sub_themes,classification,status,has_monogram,has_personalized,has_preprint,last_reviewed_at,last_pushed_at,manufacturer,variant_skus,image_url,first_seen_at";
+  "design_family,design_name,units_total,catalog_created_date,first_sale_date,product_types,shopify_product_types,shopify_tags,approved_tags,vision_tags,vision_raw,theme_names,sub_themes,sub_sub_themes,classification,status,has_monogram,has_personalized,has_preprint,last_reviewed_at,last_pushed_at,manufacturer,variant_skus,image_url,first_seen_at,is_active";
 
 export async function GET(req: NextRequest): Promise<Response> {
   const sp = req.nextUrl.searchParams;

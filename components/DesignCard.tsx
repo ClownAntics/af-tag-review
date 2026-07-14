@@ -125,15 +125,20 @@ export function DesignCard({
         <div className="text-sm leading-snug line-clamp-2 min-h-[2.5em]">
           {design.design_name || design.design_family}
         </div>
-        <div className="text-[11px] font-mono text-muted-2">
+        {/* SKU line turns red when the design is discontinued/OOS — every
+            variant is discontinued in TeamDesk (is_active === false). */}
+        <div
+          className={`text-[11px] font-mono ${design.is_active === false ? "text-red-600" : "text-muted-2"}`}
+          title={design.is_active === false ? "Discontinued / out of stock (all variants)" : undefined}
+        >
           {variants.map((v, i) => (
             <span key={v.sku}>
-              {i > 0 && <span className="mx-1 text-muted-2">/</span>}
+              {i > 0 && <span className="mx-1">/</span>}
               <a
                 href={`${JF_ADMIN_SEARCH}${v.sku}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground hover:underline"
+                className="hover:underline"
                 title={`Open ${v.sku} in JF Shopify admin`}
               >
                 {v.sku}
