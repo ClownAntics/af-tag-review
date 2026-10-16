@@ -35,15 +35,34 @@ export interface ShopifyProduct {
   variants: ShopifyVariant[];
 }
 
-function baseUrl(): string {
-  const store = process.env.SHOPIFY_STORE;
-  if (!store) throw new Error("SHOPIFY_STORE env var is not set");
+/**
+ * Which Shopify store to talk to. "jf" (JustForFunFlags) is the default and
+ * reads SHOPIFY_STORE / SHOPIFY_ADMIN_TOKEN. "fl" (Flagsrus) reads
+ * SHOPIFY_FL_STORE / SHOPIFY_FL_ADMIN_TOKEN — used by the FL tag push.
+ */
+export type StoreTarget = "jf" | "fl";
+
+const STORE_ENV: Record<StoreTarget, { store: string; token: string }> = {
+  jf: { store: "SHOPIFY_STORE", token: "SHOPIFY_ADMIN_TOKEN" },
+  fl: { store: "SHOPIFY_FL_STORE", token: "SHOPIFY_FL_ADMIN_TOKEN" },
+};
+
+export function isStoreConfigured(target: StoreTarget): boolean {
+  const e = STORE_ENV[target];
+  return !!process.env[e.store] && !!process.env[e.token];
+}
+
+function baseUrl(target: StoreTarget = "jf"): string {
+  const key = STORE_ENV[target].store;
+  const store = process.env[key];
+  if (!store) throw new Error(`${key} env var is not set`);
   return `https://${store}.myshopify.com/admin/api/${API_VERSION}`;
 }
 
-function authHeader(): HeadersInit {
-  const tok = process.env.SHOPIFY_ADMIN_TOKEN;
-  if (!tok) throw new Error("SHOPIFY_ADMIN_TOKEN env var is not set");
+function authHeader(target: StoreTarget = "jf"): HeadersInit {
+  const key = STORE_ENV[target].token;
+  const tok = process.env[key];
+  if (!tok) throw new Error(`${key} env var is not set`);
   return { "X-Shopify-Access-Token": tok, "Content-Type": "application/json" };
 }
 
@@ -65,9 +84,12 @@ function extractNextPageInfo(linkHeader: string | null): string | null {
   return null;
 }
 
-async function fetchJson<T>(url: string): Promise<{ data: T; linkHeader: string | null }> {
+async function fetchJson<T>(
+  url: string,
+  target: StoreTarget = "jf",
+): Promise<{ data: T; linkHeader: string | null }> {
   for (let attempt = 0; attempt < 5; attempt++) {
-    const res = await fetch(url, { headers: authHeader() });
+    const res = await fetch(url, { headers: authHeader(target) });
     if (res.status === 429) {
       // Respect Retry-After when given, otherwise back off linearly. Shopify's
       // leaky-bucket lets 2 req/sec; occasional 429s are expected on big pulls.
@@ -94,12 +116,13 @@ async function fetchJson<T>(url: string): Promise<{ data: T; linkHeader: string 
 export async function updateProductTags(
   productId: number,
   tags: string[],
+  target: StoreTarget = "jf",
 ): Promise<{ id: number; tags: string }> {
-  const url = `${baseUrl()}/products/${productId}.json`;
+  const url = `${baseUrl(target)}/products/${productId}.json`;
   for (let attempt = 0; attempt < 5; attempt++) {
     const res = await fetch(url, {
       method: "PUT",
-      headers: authHeader(),
+      headers: authHeader(target),
       body: JSON.stringify({ product: { id: productId, tags: tags.join(", ") } }),
     });
     if (res.status === 429) {
@@ -170,11 +193,27 @@ export async function mergeProductTags(
     productType = (data.product.product_type ?? "").trim();
     break;
   }
-  // De-dupe by normalized key (approved "Printed" + facet "printed" → one),
-  // first occurrence wins so curated casing is kept.
+  const next = computeMergedTags(
+    current,
+    [...approvedTags, ...(perProductTags ? perProductTags(productType) : [])],
+    ownedKeys,
+  );
+  return updateProductTags(productId, next);
+}
+
+/**
+ * Pure merge (no I/O): next = (current − owned) ∪ emit. De-dupes by
+ * normalized key (approved "Printed" + facet "printed" → one); first
+ * occurrence wins so curated casing is kept.
+ */
+export function computeMergedTags(
+  current: string[],
+  emitTags: string[],
+  ownedKeys: ReadonlySet<string>,
+): string[] {
   const emit: string[] = [];
   const emitKeys = new Set<string>();
-  for (const t of [...approvedTags, ...(perProductTags ? perProductTags(productType) : [])]) {
+  for (const t of emitTags) {
     const k = normalizeTagKey(t);
     if (emitKeys.has(k)) continue;
     emitKeys.add(k);
@@ -183,8 +222,15 @@ export async function mergeProductTags(
   const preserved = current.filter(
     (t) => !ownedKeys.has(normalizeTagKey(t)) && !emitKeys.has(normalizeTagKey(t)),
   );
-  const next = [...emit, ...preserved].sort();
-  return updateProductTags(productId, next);
+  return [...emit, ...preserved].sort();
+}
+
+/** True when two tag lists hold the same tags (Shopify compares case-insensitively). */
+export function sameTagSet(a: string[], b: string[]): boolean {
+  const norm = (xs: string[]) => [...new Set(xs.map((t) => t.trim().toLowerCase()))].sort();
+  const x = norm(a);
+  const y = norm(b);
+  return x.length === y.length && x.every((v, i) => v === y[i]);
 }
 
 function sleep(ms: number): Promise<void> {
@@ -200,6 +246,8 @@ export interface ListProductsOptions {
   max?: number;
   /** Millisecond delay between pages to stay under rate limits. Default: 400ms. */
   delayMs?: number;
+  /** Store to read from. Default: "jf". */
+  target?: StoreTarget;
 }
 
 /**
@@ -213,13 +261,14 @@ export async function* listProducts(
   const limit = opts.limit ?? 250;
   const max = opts.max ?? Infinity;
   const delayMs = opts.delayMs ?? 400;
+  const target = opts.target ?? "jf";
 
   let url: string | null =
-    `${baseUrl()}/products.json?status=${status}&limit=${limit}&fields=id,title,handle,vendor,status,tags,product_type,image,variants`;
+    `${baseUrl(target)}/products.json?status=${status}&limit=${limit}&fields=id,title,handle,vendor,status,tags,product_type,image,variants`;
   let yielded = 0;
 
   while (url && yielded < max) {
-    const { data, linkHeader } = await fetchJson<{ products: ShopifyProduct[] }>(url);
+    const { data, linkHeader } = await fetchJson<{ products: ShopifyProduct[] }>(url, target);
     for (const p of data.products) {
       yield p;
       yielded++;
@@ -227,7 +276,7 @@ export async function* listProducts(
     }
     const nextPageInfo = extractNextPageInfo(linkHeader);
     if (!nextPageInfo) break;
-    url = `${baseUrl()}/products.json?page_info=${encodeURIComponent(nextPageInfo)}&limit=${limit}`;
+    url = `${baseUrl(target)}/products.json?page_info=${encodeURIComponent(nextPageInfo)}&limit=${limit}`;
     await sleep(delayMs);
   }
 }

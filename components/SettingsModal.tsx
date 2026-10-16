@@ -149,6 +149,10 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   const [syncResult, setSyncResult] = useState<ShopifySyncSummary | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<LastShopifySync | null>(null);
+  const [flRunning, setFlRunning] = useState<null | "dry" | "apply">(null);
+  const [flStatus, setFlStatus] = useState<string | null>(null);
+  const [flError, setFlError] = useState<string | null>(null);
+  const [flSamples, setFlSamples] = useState<string[]>([]);
   const [mistagCount, setMistagCount] = useState(20);
   const [mistagRunning, setMistagRunning] = useState(false);
   const [mistagProgress, setMistagProgress] = useState<MistagProgress | null>(null);
@@ -485,6 +489,67 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
     }
   }, [syncing, onResetComplete]);
 
+  // Push curated tags to FL (Flagsrus), matched by SKU. Streams NDJSON from
+  // /api/review/push-fl. Dry run first; apply is resumable (re-click).
+  const runFlPush = useCallback(
+    async (apply: boolean) => {
+      if (flRunning) return;
+      setFlRunning(apply ? "apply" : "dry");
+      setFlError(null);
+      setFlStatus("Scanning FL catalog…");
+      setFlSamples([]);
+      try {
+        const r = await fetch("/api/review/push-fl", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ apply }),
+        });
+        if (!r.ok || !r.body) {
+          const t = await r.text();
+          throw new Error(t || `HTTP ${r.status}`);
+        }
+        const reader = r.body.getReader();
+        const dec = new TextDecoder();
+        let buf = "";
+        const samples: string[] = [];
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          let nl: number;
+          while ((nl = buf.indexOf("\n")) >= 0) {
+            const line = buf.slice(0, nl).trim();
+            buf = buf.slice(nl + 1);
+            if (!line) continue;
+            const ev = JSON.parse(line);
+            if (ev.type === "progress") {
+              setFlStatus(`Scanned ${ev.scanned} · matched ${ev.matched} · ${apply ? `pushed ${ev.pushed}` : `would change ${ev.changed}`}`);
+            } else if (ev.type === "change" && samples.length < 8) {
+              samples.push(`${ev.family}: +${ev.added.join(", ") || "—"}${ev.removed.length ? `  −${ev.removed.join(", ")}` : ""}`);
+              setFlSamples([...samples]);
+            } else if (ev.type === "error") {
+              setFlError(`${ev.family} ${ev.product_id}: ${ev.error}`);
+            } else if (ev.type === "fatal") {
+              throw new Error(ev.error);
+            } else if (ev.type === "done") {
+              setFlStatus(
+                apply
+                  ? `✓ Pushed ${ev.pushed} FL products (${ev.unchanged} already correct, ${ev.failed} failed)` +
+                      (ev.stopped_early ? " — time limit hit, click Push again to continue" : "")
+                  : `Dry run: ${ev.changed} of ${ev.matched} matched FL products would change (${ev.unchanged} already correct)`,
+              );
+            }
+          }
+        }
+      } catch (e) {
+        setFlError((e as Error).message);
+      } finally {
+        setFlRunning(null);
+      }
+    },
+    [flRunning],
+  );
+
   const runReset = useCallback(async () => {
     if (confirmText !== "RESET" || running) return;
     setRunning(true);
@@ -818,6 +883,51 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
                     Note: {syncResult.orphansSkippedSafety}
                   </div>
                 )}
+              </div>
+            )}
+          </section>
+
+          <div className="border-t border-border -mx-6" />
+
+          {/* ─── Push tags to FL (Flagsrus) ───────────────────────────── */}
+          <section className="space-y-3">
+            <h3 className="text-sm font-medium">Push tags to FL</h3>
+            <p className="text-xs text-muted">
+              Copy curated tags from every <em>Updated</em> design to the
+              matching Flagsrus products (matched by SKU). Only theme tags and
+              size/material tags are replaced; everything else on the FL
+              product is kept. Run a dry run first. Safe to re-run — products
+              already correct are skipped, so a second click resumes.
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => runFlPush(false)}
+                disabled={!!flRunning}
+                className="flex-1 text-sm px-3.5 py-2 rounded-md border border-border hover:bg-zinc-50 disabled:opacity-60"
+              >
+                {flRunning === "dry" ? "Checking…" : "Dry run"}
+              </button>
+              <button
+                type="button"
+                onClick={() => runFlPush(true)}
+                disabled={!!flRunning}
+                className="flex-1 text-sm px-3.5 py-2 rounded-md bg-foreground text-background hover:bg-zinc-800 disabled:opacity-60"
+              >
+                {flRunning === "apply" ? "Pushing… (keep open)" : "↑ Push to FL"}
+              </button>
+            </div>
+            {flStatus && <div className="text-xs text-muted">{flStatus}</div>}
+            {flSamples.length > 0 && (
+              <ul className="text-[11px] text-muted space-y-0.5 font-mono">
+                {flSamples.map((s) => (
+                  <li key={s} className="truncate">{s}</li>
+                ))}
+              </ul>
+            )}
+            {flError && (
+              <div className="text-xs bg-[#FDECEC] border border-[#A32D2D]/30 text-[#A32D2D] px-3 py-2 rounded-md">
+                ✗ {flError}
               </div>
             )}
           </section>
