@@ -198,7 +198,12 @@ async function run(req: NextRequest): Promise<Response> {
   if (inserts.length > 0) {
     for (let i = 0; i < inserts.length; i += 200) {
       const batch = inserts.slice(i, i + 200);
-      const { error } = await sb.from("designs").insert(batch);
+      // ignoreDuplicates: a family the existence check above missed (seen
+      // 2026-10-16: "duplicate key … designs_pkey") is left untouched instead
+      // of aborting the whole sync. Never overwrites review state.
+      const { error } = await sb
+        .from("designs")
+        .upsert(batch, { onConflict: "design_family", ignoreDuplicates: true });
       if (error) return errorJson(500, `insert batch at ${i}: ${error.message}`);
     }
   }
