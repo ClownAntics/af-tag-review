@@ -25,7 +25,7 @@
 import { writeFileSync } from "node:fs";
 import { getAdminClient } from "./_supabase-admin";
 import { mergeProductTags, normalizeTagKey } from "../lib/shopify";
-import { getTaxonomy } from "../lib/taxonomy-source";
+import { getOwnedTaxonomyKeys } from "../lib/taxonomy-source";
 import { facetTagsForDesign, OWNED_FACET_KEYS, type FacetFlags } from "../lib/facet-tags";
 
 interface Args {
@@ -156,7 +156,7 @@ async function main() {
   // T7 merge-push: owned = canonical taxonomy terms + size/material facet
   // vocabulary (T5). Feature tags are additive-only (not owned).
   const ownedKeys: ReadonlySet<string> = new Set([
-    ...(await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
+    ...(await getOwnedTaxonomyKeys(normalizeTagKey)),
     ...OWNED_FACET_KEYS,
   ]);
 

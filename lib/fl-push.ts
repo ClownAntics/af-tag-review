@@ -29,7 +29,7 @@ import {
   sameTagSet,
   updateProductTags,
 } from "./shopify";
-import { getTaxonomy } from "./taxonomy-source";
+import { getOwnedTaxonomyKeys } from "./taxonomy-source";
 import { featureTags, OWNED_FACET_KEYS, sizeMaterialTags, type FacetFlags } from "./facet-tags";
 
 interface FlDesign extends FacetFlags {
@@ -114,7 +114,7 @@ export async function* runFlPush(
   }
 
   const ownedKeys: ReadonlySet<string> = new Set([
-    ...(await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
+    ...(await getOwnedTaxonomyKeys(normalizeTagKey)),
     ...OWNED_FACET_KEYS,
   ]);
 

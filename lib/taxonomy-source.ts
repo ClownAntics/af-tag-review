@@ -24,6 +24,9 @@ export interface TaxonomyEntry {
   level: 1 | 2 | 3;
   label: string;
   conflicts?: string[];
+  /** TeamDesk isBusinessTheme? — merchandising tags (in-stock, new-product,
+   *  fire-sale, Reversible…) that the push must never own/remove. */
+  business?: boolean;
 }
 
 export interface Taxonomy {
@@ -41,6 +44,7 @@ interface PersistedRow {
   level: number;
   label: string;
   conflicts_with: string[] | null;
+  is_business_theme: boolean | null;
 }
 
 const TTL_MS = 60_000;
@@ -73,7 +77,7 @@ async function loadFromSupabase(): Promise<Taxonomy> {
   const { data, error } = await sb
     .from("taxonomy_entries")
     .select(
-      "td_row_id, search_term, name, sub_theme, sub_sub_theme, level, label, conflicts_with",
+      "td_row_id, search_term, name, sub_theme, sub_sub_theme, level, label, conflicts_with, is_business_theme",
     );
   if (error) throw new Error(error.message);
 
@@ -95,6 +99,7 @@ async function loadFromSupabase(): Promise<Taxonomy> {
       level: r.level,
       label: r.label,
       conflicts: r.conflicts_with ?? undefined,
+      business: !!r.is_business_theme || r.name === "Business",
     });
   }
   // Sort by (name, sub, subSub) so the typeahead's default list is
@@ -116,4 +121,19 @@ function compareEntries(a: TaxonomyEntry, b: TaxonomyEntry): number {
 function bakedFallback(): Taxonomy {
   const entries = (bakedTaxonomy.entries ?? []) as TaxonomyEntry[];
   return { entries, source: "baked" };
+}
+
+/**
+ * Normalized tag keys the push pipelines OWN (replace/remove on push):
+ * every taxonomy Search Term EXCEPT business/merchandising themes. Business
+ * tags (in-stock, new-product, fire-sale, Reversible, …) are set by Product
+ * Hub / ops, not by curation, so a push must leave them alone.
+ */
+export async function getOwnedTaxonomyKeys(
+  normalize: (t: string) => string,
+): Promise<string[]> {
+  const { entries } = await getTaxonomy();
+  return entries
+    .filter((e) => !(e.business || e.name === "Business"))
+    .map((e) => normalize(e.term));
 }

@@ -31,7 +31,7 @@ import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { getActor } from "@/lib/auth";
 import { mergeProductTags, normalizeTagKey } from "@/lib/shopify";
-import { getTaxonomy } from "@/lib/taxonomy-source";
+import { getOwnedTaxonomyKeys } from "@/lib/taxonomy-source";
 import { facetTagsForDesign, OWNED_FACET_KEYS, type FacetFlags } from "@/lib/facet-tags";
 import {
   applyReviewFilters,
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       // every other live tag (brand/functional tags that smart collections +
       // the theme filter bar depend on). Stale owned tags are removed.
       const ownedKeys: ReadonlySet<string> = new Set([
-        ...(await getTaxonomy()).entries.map((e) => normalizeTagKey(e.term)),
+        ...(await getOwnedTaxonomyKeys(normalizeTagKey)),
         ...OWNED_FACET_KEYS,
       ]);
 
