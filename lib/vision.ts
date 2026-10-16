@@ -210,7 +210,10 @@ function resolveToTerm(raw: string): string | null {
       }
     }
   }
-  const byLabel = _labelToTerm.get(raw.toLowerCase());
+  const key = raw.trim().toLowerCase();
+  // Also try hyphens-as-spaces: Claude sometimes slugifies a sub-theme name
+  // ("NFL-Football" for label "Sports & Recreation: NFL Football", term "NFL").
+  const byLabel = _labelToTerm.get(key) ?? _labelToTerm.get(key.replace(/-/g, " "));
   return byLabel || null;
 }
 
