@@ -26,7 +26,7 @@ import { writeFileSync } from "node:fs";
 import { getAdminClient } from "./_supabase-admin";
 import { mergeProductTags, normalizeTagKey } from "../lib/shopify";
 import { getOwnedTaxonomyKeys } from "../lib/taxonomy-source";
-import { facetTagsForDesign, OWNED_FACET_KEYS, type FacetFlags } from "../lib/facet-tags";
+import { featureTags, sizeMaterialTags, OWNED_FACET_KEYS, type FacetFlags } from "../lib/facet-tags";
 
 interface Args {
   limit: number | null;
@@ -93,9 +93,10 @@ async function main() {
       skipped.push({ family: d.design_family, reason: "no shopify_product_ids — re-run shopify-pull" });
       continue;
     }
-    // T5: curated theme tags ∪ derived storefront facet tags.
-    const facets = facetTagsForDesign(d.shopify_product_types, d);
-    const newTags = [...new Set([...(d.approved_tags ?? []), ...facets])].sort();
+    // T5: curated theme tags ∪ family-level feature tags. Size/material are
+    // per-product — computed inside mergeProductTags from each product's own
+    // product_type (a family spans garden/house/mailbox types).
+    const newTags = [...new Set([...(d.approved_tags ?? []), ...featureTags(d)])].sort();
     if ((d.approved_tags ?? []).length === 0) {
       skipped.push({ family: d.design_family, reason: "approved_tags empty — won't push a blank tag set" });
       continue;
@@ -164,7 +165,9 @@ async function main() {
     const results = await Promise.all(
       plan.productIds.map(async (id) => {
         try {
-          const stored = await mergeProductTags(id, plan.newTags, ownedKeys);
+          const stored = await mergeProductTags(id, plan.newTags, ownedKeys, (type) =>
+            sizeMaterialTags([type]),
+          );
           return { id, ok: true as const, storedTags: stored.tags };
         } catch (e) {
           return { id, ok: false as const, error: (e as Error).message };

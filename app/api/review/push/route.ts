@@ -32,7 +32,7 @@ import { getAdminSupabase } from "@/lib/supabase-admin";
 import { getActor } from "@/lib/auth";
 import { mergeProductTags, normalizeTagKey } from "@/lib/shopify";
 import { getOwnedTaxonomyKeys } from "@/lib/taxonomy-source";
-import { facetTagsForDesign, OWNED_FACET_KEYS, type FacetFlags } from "@/lib/facet-tags";
+import { featureTags, sizeMaterialTags, OWNED_FACET_KEYS, type FacetFlags } from "@/lib/facet-tags";
 import {
   applyReviewFilters,
   parseFiltersFromSearch,
@@ -144,10 +144,12 @@ export async function POST(req: NextRequest): Promise<Response> {
 
       for (const d of designs) {
         const productIds = d.shopify_product_ids ?? [];
-        // T5: emit storefront facet tags (size/material from product_type,
-        // features from flags) alongside the curated theme tags.
-        const facets = facetTagsForDesign(d.shopify_product_types, d);
-        const newTags = [...new Set([...(d.approved_tags ?? []), ...facets])].sort();
+        // T5: emit storefront facet tags with the curated theme tags.
+        // Features are family-level (flag columns); size/material are
+        // PER-PRODUCT (a family spans garden/house/mailbox types) — computed
+        // inside mergeProductTags from each product's own product_type, so a
+        // house flag in a mixed family doesn't inherit the garden size tag.
+        const newTags = [...new Set([...(d.approved_tags ?? []), ...featureTags(d)])].sort();
         if (productIds.length === 0) {
           emit({
             type: "skipped",
@@ -170,7 +172,9 @@ export async function POST(req: NextRequest): Promise<Response> {
         const results = await Promise.all(
           productIds.map(async (id) => {
             try {
-              const stored = await mergeProductTags(id, newTags, ownedKeys);
+              const stored = await mergeProductTags(id, newTags, ownedKeys, (type) =>
+                sizeMaterialTags([type]),
+              );
               return { id, ok: true as const, storedTags: stored.tags };
             } catch (e) {
               return { id, ok: false as const, error: (e as Error).message };
