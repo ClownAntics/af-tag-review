@@ -92,7 +92,14 @@ export async function flagUndertagged(
     if (b.length < PAGE) break;
   }
 
-  const inScope = (r: Row) => statuses.includes(r.status) && !neverCurated(r);
+  // Respect human review: once a reviewer has approved a design
+  // (last_reviewed_at set), its tag set is intentional — a plain doormat,
+  // a "Line Closed" sign, or a monogram legitimately carries one theme tag.
+  // Re-flagging those every night put reviewed work back in the queue
+  // (Blake 2026-10-21). Only ever flag designs a human hasn't reviewed yet.
+  const reviewed = (r: Row) => r.last_reviewed_at != null;
+  const inScope = (r: Row) =>
+    statuses.includes(r.status) && !neverCurated(r) && !reviewed(r);
   const count = notion === "total" ? totalTagCount : contentTagCount;
 
   const totalNotionCount = rows.filter(
