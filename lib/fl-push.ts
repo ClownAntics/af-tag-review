@@ -30,6 +30,7 @@ import {
   updateProductTags,
 } from "./shopify";
 import { getOwnedTaxonomyKeys } from "./taxonomy-source";
+import { isIgnoredFlProduct } from "./fl-sync";
 import { featureTags, OWNED_FACET_KEYS, sizeMaterialTags, type FacetFlags } from "./facet-tags";
 
 interface FlDesign extends FacetFlags {
@@ -132,6 +133,7 @@ export async function* runFlPush(
   for await (const p of listProducts({ target: "fl", status: "active,draft" })) {
     scanned++;
     if (scanned % 500 === 0) yield { type: "progress", scanned, matched, changed, pushed };
+    if (isIgnoredFlProduct(p)) continue;
 
     let design: FlDesign | undefined;
     for (const v of p.variants ?? []) {

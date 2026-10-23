@@ -6,7 +6,8 @@
  * different product IDs, plus some JF doesn't carry. This sync:
  *
  *   1. Builds a SKU → design_family map from every design's variant_skus.
- *   2. Pages the FL catalog (active + draft). Each FL product resolves to a
+ *   2. Pages the FL catalog (active + draft, minus ignored types like
+ *      "Sets" — see isIgnoredFlProduct). Each FL product resolves to a
  *      family by variant SKU first, then by the same SKU → family rule the JF
  *      sync uses (productToFamily), so a new FL-only variant of a known AF
  *      artwork still lands on that design.
@@ -71,6 +72,14 @@ export interface FlSyncResult {
 
 const SAFE_MIN_FAMILIES = 500;
 
+/**
+ * FL products the pipeline ignores entirely — never linked, imported or
+ * pushed. "Sets" (~1,800 draft bundle products) per Blake 2026-10-23.
+ */
+export function isIgnoredFlProduct(p: { product_type?: string | null }): boolean {
+  return (p.product_type ?? "").trim().toLowerCase() === "sets";
+}
+
 const sortNums = (xs: number[]) => [...xs].sort((a, b) => a - b);
 const sortStrs = (xs: string[]) => [...xs].sort();
 const sameArr = <T>(a: T[], b: T[]) => a.length === b.length && a.every((v, i) => v === b[i]);
@@ -128,6 +137,7 @@ export async function runFlSync(sb: SupabaseClient, opts: FlSyncOptions): Promis
   let productsMatched = 0;
   for await (const p of listProducts({ target: "fl", status: "active,draft" })) {
     productsSeen++;
+    if (isIgnoredFlProduct(p)) continue;
     let family: string | null = null;
     for (const v of p.variants ?? []) {
       const k = (v.sku ?? "").trim().toUpperCase();
