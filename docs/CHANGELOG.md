@@ -16,6 +16,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 - **Sync FL catalog** (Settings). Links each design to its Flagsrus products by SKU (new `fl_product_ids` / `fl_product_types` / `fl_tags` / `fl_last_pushed_at` columns, migration 013) and imports products that are only on FL as new No-vision designs. FL-only designs are reviewed like any other and push to FL only. Dry run first. CLI: `scripts/fl-pull.ts`.
 - **FL ↗ link** in the design popup opens the SKU in the FL Shopify admin.
 - The old "Push tags to FL" section is now **Backfill FL tags** — catches FL up for designs pushed before this change.
+- **FL is add-only.** FL's ~2,500 smart collections key on its own legacy tags (`spring`, `summer`, `4th-of-july`…) that share names with taxonomy terms, so the JF merge rule would pull ~20,000 product placements out of FL collections. On FL the push only adds curated tags — it never removes or respells an existing tag. `scripts/audit-fl-collections.ts` measures the collection impact of both modes.
+- FL "Sets" products are ignored by the sync and backfill; `WH-CF` SKUs now collapse onto their base AF design.
 
 ---
 

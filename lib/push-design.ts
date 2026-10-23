@@ -19,6 +19,15 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { isStoreConfigured, mergeProductTags, type StoreTarget } from "./shopify";
 import { featureTags, sizeMaterialTags, type FacetFlags } from "./facet-tags";
 
+/**
+ * FL is ADD-ONLY for now (2026-10-23): FL's 2,500 smart collections key on
+ * its own legacy slug tags (`spring`, `summer`, `4th-of-july`…) that collide
+ * with taxonomy terms, so removing "stale" owned tags on FL would pull
+ * ~1,100 products out of collections (scripts/audit-fl-collections.ts).
+ * FL products get curated tags added; nothing is removed. JF is unchanged.
+ */
+export const FL_OWNED_KEYS: ReadonlySet<string> = new Set();
+
 export interface PushableDesign extends FacetFlags {
   design_family: string;
   approved_tags: string[] | null;
@@ -76,7 +85,8 @@ export async function pushDesign(
     Promise.all(
       ids.map(async (id) => {
         try {
-          const stored = await mergeProductTags(id, newTags, ownedKeys, perProduct, store);
+          const keys = store === "fl" ? FL_OWNED_KEYS : ownedKeys;
+          const stored = await mergeProductTags(id, newTags, keys, perProduct, store);
           return { store, id, ok: true as const, storedTags: stored.tags };
         } catch (e) {
           return { store, id, ok: false as const, error: (e as Error).message };

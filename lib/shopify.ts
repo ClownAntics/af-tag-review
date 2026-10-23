@@ -216,6 +216,20 @@ export function computeMergedTags(
   emitTags: string[],
   ownedKeys: ReadonlySet<string>,
 ): string[] {
+  // No owned keys = ADD-ONLY (FL): existing tags are never touched, not even
+  // respelled — FL smart collections match exact spellings like
+  // "Stained Glass", so an emitted "Stained-Glass" is skipped, not swapped in.
+  if (ownedKeys.size === 0) {
+    const have = new Set(current.map(normalizeTagKey));
+    const added: string[] = [];
+    for (const t of emitTags) {
+      const k = normalizeTagKey(t);
+      if (have.has(k)) continue;
+      have.add(k);
+      added.push(t);
+    }
+    return [...current, ...added].sort();
+  }
   const emit: string[] = [];
   const emitKeys = new Set<string>();
   for (const t of emitTags) {

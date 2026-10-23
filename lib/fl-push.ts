@@ -9,12 +9,11 @@
  *   1. Load every design with status='updated' (live on JF) and build a
  *      SKU → design map from designs.variant_skus.
  *   2. Page through the FL catalog (active + draft). For each FL product whose
- *      variant SKU matches a design, compute the merged tag set with the same
- *      T7 merge rule as the JF push:
- *        next = (current − owned) ∪ approved_tags ∪ facets(FL product_type)
- *      Owned = taxonomy Search Terms + size/material facet slugs. Everything
- *      else on the FL product (Product Hub label tags like
- *      "Seasonal: Easter: Easter Eggs", Solo, in-stock, brand tags…) is kept.
+ *      variant SKU matches a design, compute the merged tag set:
+ *        next = current ∪ approved_tags ∪ facets(FL product_type)
+ *      FL is ADD-ONLY (FL_OWNED_KEYS is empty): nothing on the FL product is
+ *      removed, because FL smart collections key on legacy slug tags that
+ *      collide with taxonomy terms (see lib/push-design.ts).
  *   3. Only products whose tag set actually changes are PUT. That makes the
  *      push idempotent and resumable: re-running after a timeout skips the
  *      products already done.
@@ -22,16 +21,10 @@
  * Dry run (apply=false) does steps 1–2 and reports what WOULD change.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import {
-  computeMergedTags,
-  listProducts,
-  normalizeTagKey,
-  sameTagSet,
-  updateProductTags,
-} from "./shopify";
-import { getOwnedTaxonomyKeys } from "./taxonomy-source";
+import { computeMergedTags, listProducts, sameTagSet, updateProductTags } from "./shopify";
 import { isIgnoredFlProduct } from "./fl-sync";
-import { featureTags, OWNED_FACET_KEYS, sizeMaterialTags, type FacetFlags } from "./facet-tags";
+import { FL_OWNED_KEYS } from "./push-design";
+import { featureTags, sizeMaterialTags, type FacetFlags } from "./facet-tags";
 
 interface FlDesign extends FacetFlags {
   design_family: string;
@@ -52,6 +45,10 @@ export type FlPushEvent =
       family: string;
       product_id: number;
       title: string;
+      product_type: string;
+      vendor: string;
+      /** Live FL tags before the push (audits evaluate collection rules). */
+      before: string[];
       added: string[];
       removed: string[];
       pushed: boolean;
@@ -76,6 +73,8 @@ export interface FlPushOptions {
   maxChanges?: number;
   /** Only these design families. */
   families?: string[];
+  /** Audit only: compute with these owned keys instead of FL add-only. */
+  ownedKeysOverride?: ReadonlySet<string>;
 }
 
 async function loadDesigns(sb: SupabaseClient, families?: string[]): Promise<FlDesign[]> {
@@ -114,10 +113,8 @@ export async function* runFlPush(
     }
   }
 
-  const ownedKeys: ReadonlySet<string> = new Set([
-    ...(await getOwnedTaxonomyKeys(normalizeTagKey)),
-    ...OWNED_FACET_KEYS,
-  ]);
+  // FL is add-only (see FL_OWNED_KEYS): curated tags are added, nothing removed.
+  const ownedKeys = opts.ownedKeysOverride ?? FL_OWNED_KEYS;
 
   yield { type: "start", designs: designs.length, skus: bySku.size, apply: opts.apply };
 
@@ -193,6 +190,9 @@ export async function* runFlPush(
       family: design.design_family,
       product_id: p.id,
       title: p.title,
+      product_type: p.product_type ?? "",
+      vendor: p.vendor ?? "",
+      before: current,
       added,
       removed,
       pushed: didPush,
