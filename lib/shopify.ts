@@ -316,7 +316,8 @@ export function skuToAfDesignFamily(sku: string | null | undefined): string | nu
   if (!sku) return null;
   const m = sku
     .toUpperCase()
-    .match(/^AF(GF|HF|GB|DR|MC)([A-Z]{2}\d{4})(-[A-Z]{1,3}|[A-Z]{1,2})?$/);
+    // `WH-CF` (personalized preprint, seen on FL drafts) = WH + -CF together.
+    .match(/^AF(GF|HF|GB|DR|MC)([A-Z]{2}\d{4})((?:WH)?-[A-Z]{1,3}|[A-Z]{1,2})?$/);
   if (!m) return null;
   const code = m[1];
   const body = m[2];

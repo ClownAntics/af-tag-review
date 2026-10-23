@@ -5,11 +5,12 @@
  * Settings → "Sync FL catalog").
  *
  * Usage:
- *   npx tsx scripts/fl-pull.ts          # dry run — counts + sample new designs
+ *   npx tsx scripts/fl-pull.ts          # dry run — counts + fl_pull_new.csv of FL-only designs
  *   npx tsx scripts/fl-pull.ts --apply  # write to Supabase
  *
  * Needs SHOPIFY_FL_STORE + SHOPIFY_FL_ADMIN_TOKEN in .env.local.
  */
+import { writeFileSync } from "node:fs";
 import { getAdminClient } from "./_supabase-admin";
 import { runFlSync } from "../lib/fl-sync";
 
@@ -30,6 +31,15 @@ async function main() {
     console.log("[fl-pull] sample FL-only designs:");
     for (const s of r.newSamples) console.log(`    ${s}`);
   }
+  const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const lines = ["design_family,manufacturer,design_name,fl_status,product_types,skus"];
+  for (const d of r.newDesigns) {
+    lines.push(
+      [d.design_family, esc(d.manufacturer), esc(d.design_name), d.fl_statuses.join("|"), esc(d.product_types.join(" | ")), esc(d.skus.join(" "))].join(","),
+    );
+  }
+  writeFileSync("fl_pull_new.csv", lines.join("\n"), "utf8");
+  console.log(`[fl-pull] wrote fl_pull_new.csv (${r.newDesigns.length} FL-only designs)`);
   console.log(`[fl-pull] ${Math.round(r.durationMs / 1000)}s`);
 }
 

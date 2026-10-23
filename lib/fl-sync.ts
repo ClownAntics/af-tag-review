@@ -47,6 +47,7 @@ interface Aggregated {
   productTypes: Set<string>;
   variantSkus: Set<string>;
   imageUrl: string | null;
+  statuses: Set<string>;
 }
 
 export interface FlSyncOptions {
@@ -67,6 +68,15 @@ export interface FlSyncResult {
   unlinkSkippedSafety: string | null;
   /** A few new FL-only families, for eyeballing a dry run. */
   newSamples: string[];
+  /** Every new FL-only family (CLI writes these to a CSV). */
+  newDesigns: Array<{
+    design_family: string;
+    manufacturer: string;
+    design_name: string;
+    product_types: string[];
+    fl_statuses: string[];
+    skus: string[];
+  }>;
   durationMs: number;
 }
 
@@ -163,6 +173,7 @@ export async function runFlSync(sb: SupabaseClient, opts: FlSyncOptions): Promis
       if (pt) a.productTypes.add(pt);
       for (const s of skus) a.variantSkus.add(s);
       if (!a.imageUrl && img) a.imageUrl = img;
+      a.statuses.add(p.status);
     } else {
       agg.set(family, {
         design_family: family,
@@ -173,6 +184,7 @@ export async function runFlSync(sb: SupabaseClient, opts: FlSyncOptions): Promis
         productTypes: pt ? new Set([pt]) : new Set(),
         variantSkus: new Set(skus),
         imageUrl: img,
+        statuses: new Set([p.status]),
       });
     }
   }
@@ -248,6 +260,17 @@ export async function runFlSync(sb: SupabaseClient, opts: FlSyncOptions): Promis
     newSamples: inserts
       .slice(0, 10)
       .map((r) => `${r.design_family} · ${r.manufacturer} · ${r.design_name}`),
+    newDesigns: inserts.map((r) => {
+      const a = agg.get(r.design_family as string)!;
+      return {
+        design_family: a.design_family,
+        manufacturer: a.manufacturer,
+        design_name: a.design_name,
+        product_types: sortStrs([...a.productTypes]),
+        fl_statuses: sortStrs([...a.statuses]),
+        skus: sortStrs([...a.variantSkus]),
+      };
+    }),
     durationMs: 0,
   };
   if (!opts.apply) {

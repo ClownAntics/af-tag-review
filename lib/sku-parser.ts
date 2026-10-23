@@ -68,6 +68,8 @@ export function parseSku(rawSku: string): ParsedSku | null {
     // garden). Strip so they collapse onto the base design.
     variant = "personalized";
     body = body.slice(0, -3);
+    // WH-CF: personalized preprint — strip the WH too.
+    if (body.endsWith("WH")) body = body.slice(0, -2);
   } else if (body.endsWith("WH")) {
     variant = "preprint";
     body = body.slice(0, -2);
