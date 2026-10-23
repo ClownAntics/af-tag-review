@@ -25,6 +25,7 @@ interface NewRow {
   design_name: string | null;
   first_seen_at: string | null;
   shopify_product_ids: number[] | null;
+  fl_product_ids: number[] | null;
 }
 
 function parseDays(req: NextRequest): number {
@@ -42,7 +43,7 @@ async function loadNew(days: number): Promise<NewRow[]> {
   for (let offset = 0; ; offset += PAGE) {
     const { data, error } = await sb
       .from("designs")
-      .select("design_family,design_name,first_seen_at,shopify_product_ids")
+      .select("design_family,design_name,first_seen_at,shopify_product_ids,fl_product_ids")
       .eq("status", "novision")
       .gte("first_seen_at", since)
       .order("first_seen_at", { ascending: false })
@@ -98,11 +99,11 @@ export async function POST(req: NextRequest): Promise<Response> {
     return Response.json({ flagged: 0, days });
   }
 
-  // Skip designs with no shopify_product_ids — they can't ever be pushed
+  // Skip designs with no JF or FL products — they can't ever be pushed
   // and vision would 404 on the image too. Leave them in novision; the
   // user can exclude them manually if they want.
   const candidates = rows.filter(
-    (r) => (r.shopify_product_ids ?? []).length > 0,
+    (r) => (r.shopify_product_ids ?? []).length + (r.fl_product_ids ?? []).length > 0,
   );
   const skipped = rows.length - candidates.length;
 

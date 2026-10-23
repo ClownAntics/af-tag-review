@@ -6,6 +6,19 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Loosely versio
 
 ---
 
+## 2026-10 — Flag Tag Review: one Push updates JF and FL
+
+### Changed
+- **Renamed to Flag Tag Review.** The app now curates tags for both stores: JF (justforfunflags) and FL (flagsrus). Repo, URL and Vercel project are unchanged.
+- **Push goes to both stores.** Ready-to-send → Push now merge-pushes each design to its JF products *and* its FL products in one action (shared logic in `lib/push-design.ts`, used by the button and `scripts/shopify-push.ts`). A design only moves to Updated when every product on both stores succeeds. Products whose tags are already correct are skipped (no PUT), so re-pushes are cheaper.
+
+### Added
+- **Sync FL catalog** (Settings). Links each design to its Flagsrus products by SKU (new `fl_product_ids` / `fl_product_types` / `fl_tags` / `fl_last_pushed_at` columns, migration 013) and imports products that are only on FL as new No-vision designs. FL-only designs are reviewed like any other and push to FL only. Dry run first. CLI: `scripts/fl-pull.ts`.
+- **FL ↗ link** in the design popup opens the SKU in the FL Shopify admin.
+- The old "Push tags to FL" section is now **Backfill FL tags** — catches FL up for designs pushed before this change.
+
+---
+
 ## 2026-06 — Staff Picks report + per-user attribution
 
 ### Added

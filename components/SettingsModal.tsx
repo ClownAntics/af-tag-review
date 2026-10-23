@@ -116,6 +116,17 @@ interface ShopifySyncSummary {
   durationMs: number;
 }
 
+interface FlSyncSummary {
+  apply: boolean;
+  productsSeen: number;
+  families: number;
+  linked: number;
+  inserted: number;
+  unlinked: number;
+  unlinkSkippedSafety: string | null;
+  newSamples: string[];
+}
+
 interface LastShopifySync {
   finished_at: string;
   trigger: string | null;
@@ -153,6 +164,9 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
   const [flStatus, setFlStatus] = useState<string | null>(null);
   const [flError, setFlError] = useState<string | null>(null);
   const [flSamples, setFlSamples] = useState<string[]>([]);
+  const [flSyncRunning, setFlSyncRunning] = useState<null | "dry" | "apply">(null);
+  const [flSyncResult, setFlSyncResult] = useState<FlSyncSummary | null>(null);
+  const [flSyncError, setFlSyncError] = useState<string | null>(null);
   const [mistagCount, setMistagCount] = useState(20);
   const [mistagRunning, setMistagRunning] = useState(false);
   const [mistagProgress, setMistagProgress] = useState<MistagProgress | null>(null);
@@ -488,6 +502,33 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
       setSyncing(false);
     }
   }, [syncing, onResetComplete]);
+
+  // FL catalog sync: link designs to FL products + import FL-only products.
+  // Dry run first (counts only), then apply.
+  const runFlSync = useCallback(
+    async (apply: boolean) => {
+      if (flSyncRunning) return;
+      setFlSyncRunning(apply ? "apply" : "dry");
+      setFlSyncError(null);
+      setFlSyncResult(null);
+      try {
+        const r = await fetch("/api/review/sync-fl", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ apply }),
+        });
+        const body = (await r.json()) as FlSyncSummary & { ok?: boolean; error?: string };
+        if (!r.ok || !body.ok) throw new Error(body.error ?? `HTTP ${r.status}`);
+        setFlSyncResult(body);
+        if (apply) onResetComplete?.();
+      } catch (e) {
+        setFlSyncError((e as Error).message);
+      } finally {
+        setFlSyncRunning(null);
+      }
+    },
+    [flSyncRunning, onResetComplete],
+  );
 
   // Push curated tags to FL (Flagsrus), matched by SKU. Streams NDJSON from
   // /api/review/push-fl. Dry run first; apply is resumable (re-click).
@@ -889,12 +930,69 @@ export function SettingsModal({ open, onClose, onResetComplete }: Props) {
 
           <div className="border-t border-border -mx-6" />
 
-          {/* ─── Push tags to FL (Flagsrus) ───────────────────────────── */}
+          {/* ─── Sync FL (Flagsrus) catalog ───────────────────────────── */}
           <section className="space-y-3">
-            <h3 className="text-sm font-medium">Push tags to FL</h3>
+            <h3 className="text-sm font-medium">Sync FL catalog</h3>
             <p className="text-xs text-muted">
-              Copy curated tags from every <em>Updated</em> design to the
-              matching Flagsrus products (matched by SKU). Only theme tags and
+              Link each design to its Flagsrus products (matched by SKU) so
+              Push updates JF and FL together, and import products that are
+              only on FL as new <em>No vision</em> designs. Non-destructive —
+              review state is preserved. Run a dry run first to see the counts.
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => runFlSync(false)}
+                disabled={!!flSyncRunning}
+                className="flex-1 text-sm px-3.5 py-2 rounded-md border border-border hover:bg-zinc-50 disabled:opacity-60"
+              >
+                {flSyncRunning === "dry" ? "Checking… (few min)" : "Dry run"}
+              </button>
+              <button
+                type="button"
+                onClick={() => runFlSync(true)}
+                disabled={!!flSyncRunning}
+                className="flex-1 text-sm px-3.5 py-2 rounded-md bg-foreground text-background hover:bg-zinc-800 disabled:opacity-60"
+              >
+                {flSyncRunning === "apply" ? "Syncing… (keep open)" : "↻ Sync FL"}
+              </button>
+            </div>
+            {flSyncResult && (
+              <div className="text-xs bg-[#E8F5EE] border border-[#0F6E56]/30 text-[#0F6E56] px-3 py-2 rounded-md">
+                {flSyncResult.apply
+                  ? `✓ Synced ${flSyncResult.productsSeen.toLocaleString()} FL products → ${flSyncResult.families.toLocaleString()} designs · linked ${flSyncResult.linked} · +${flSyncResult.inserted} FL-only · ${flSyncResult.unlinked} unlinked`
+                  : `Dry run: ${flSyncResult.productsSeen.toLocaleString()} FL products → ${flSyncResult.families.toLocaleString()} designs · would link ${flSyncResult.linked} · add ${flSyncResult.inserted} FL-only · unlink ${flSyncResult.unlinked}`}
+                {flSyncResult.unlinkSkippedSafety && (
+                  <div className="mt-1 text-[10px] text-[#A32D2D]">
+                    Note: {flSyncResult.unlinkSkippedSafety}
+                  </div>
+                )}
+                {flSyncResult.newSamples.length > 0 && (
+                  <ul className="mt-1 text-[11px] font-mono space-y-0.5">
+                    {flSyncResult.newSamples.map((s) => (
+                      <li key={s} className="truncate">{s}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+            {flSyncError && (
+              <div className="text-xs bg-[#FDECEC] border border-[#A32D2D]/30 text-[#A32D2D] px-3 py-2 rounded-md">
+                ✗ {flSyncError}
+              </div>
+            )}
+          </section>
+
+          <div className="border-t border-border -mx-6" />
+
+          {/* ─── Backfill FL tags (Flagsrus) ──────────────────────────── */}
+          <section className="space-y-3">
+            <h3 className="text-sm font-medium">Backfill FL tags</h3>
+            <p className="text-xs text-muted">
+              Push already pushes each design to JF and FL together. This
+              catches FL up for designs pushed <em>before</em> that: copies
+              curated tags from every <em>Updated</em> design to the matching
+              Flagsrus products (matched by SKU). Only theme tags and
               size/material tags are replaced; everything else on the FL
               product is kept. Run a dry run first. Safe to re-run — products
               already correct are skipped, so a second click resumes.

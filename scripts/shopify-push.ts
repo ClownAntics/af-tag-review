@@ -1,5 +1,8 @@
 /**
- * Push curated tags back to JFF Shopify.
+ * Push curated tags to BOTH stores — JF (shopify_product_ids) and FL
+ * (fl_product_ids). Per-design logic: lib/push-design.ts (shared with the
+ * Push button). FL is skipped (and reported) if SHOPIFY_FL_ADMIN_TOKEN isn't
+ * in .env.local.
  *
  * Usage:
  *   npx tsx scripts/shopify-push.ts              # dry-run CSV, no writes
@@ -17,16 +20,17 @@
  *
  * Dry-run writes shopify_push_diff.csv summarizing old vs new tags per
  * product. --apply then:
- *   1. PUTs each product /admin/api/2025-01/products/{id}.json
- *   2. On success for ALL of a family's products: status → updated,
- *      last_pushed_at → now, events row logged
+ *   1. Merge-pushes each JF and FL product (already-correct ones skipped)
+ *   2. On success for ALL of a family's products on both stores: status →
+ *      updated, last_pushed_at → now, events row logged
  *   3. On partial failure: status stays readytosend, an error event is logged
  */
 import { writeFileSync } from "node:fs";
 import { getAdminClient } from "./_supabase-admin";
-import { mergeProductTags, normalizeTagKey } from "../lib/shopify";
+import { isStoreConfigured, normalizeTagKey } from "../lib/shopify";
 import { getOwnedTaxonomyKeys } from "../lib/taxonomy-source";
-import { featureTags, sizeMaterialTags, OWNED_FACET_KEYS, type FacetFlags } from "../lib/facet-tags";
+import { OWNED_FACET_KEYS } from "../lib/facet-tags";
+import { designEmitTags, pushDesign, PUSH_COLUMNS, type PushableDesign } from "../lib/push-design";
 
 interface Args {
   limit: number | null;
@@ -45,14 +49,10 @@ function parseArgs(): Args {
   return out;
 }
 
-interface ReadyDesign extends FacetFlags {
-  design_family: string;
+interface ReadyDesign extends PushableDesign {
   design_name: string;
   manufacturer: string | null;
-  approved_tags: string[];
-  shopify_product_ids: number[] | null;
   shopify_tags: string[] | null;
-  shopify_product_types: string[] | null;
 }
 
 async function main() {
@@ -62,11 +62,7 @@ async function main() {
   console.log("[push] loading ready-to-send designs…");
   let q = sb
     .from("designs")
-    .select(
-      "design_family,design_name,manufacturer,approved_tags,shopify_product_ids,shopify_tags," +
-        "shopify_product_types,is_double_sided,is_reversible,is_premiersoft," +
-        "is_suede_reflections,is_glittertrends,is_printed_in_usa,is_envirofriendly",
-    )
+    .select(`${PUSH_COLUMNS},design_name,manufacturer,shopify_tags`)
     .eq("status", "readytosend")
     .order("design_family");
   if (args.limit) q = q.limit(args.limit);
@@ -83,20 +79,23 @@ async function main() {
     name: string;
     manufacturer: string | null;
     productIds: number[];
+    flProductIds: number[];
     newTags: string[];
     oldTags: string[];
+    design: ReadyDesign;
   }> = [];
 
   for (const d of designs) {
     const productIds = d.shopify_product_ids ?? [];
-    if (productIds.length === 0) {
-      skipped.push({ family: d.design_family, reason: "no shopify_product_ids — re-run shopify-pull" });
+    const flProductIds = d.fl_product_ids ?? [];
+    if (productIds.length === 0 && flProductIds.length === 0) {
+      skipped.push({ family: d.design_family, reason: "not linked to JF or FL — re-run the catalog syncs" });
       continue;
     }
     // T5: curated theme tags ∪ family-level feature tags. Size/material are
     // per-product — computed inside mergeProductTags from each product's own
     // product_type (a family spans garden/house/mailbox types).
-    const newTags = [...new Set([...(d.approved_tags ?? []), ...featureTags(d)])].sort();
+    const newTags = designEmitTags(d);
     if ((d.approved_tags ?? []).length === 0) {
       skipped.push({ family: d.design_family, reason: "approved_tags empty — won't push a blank tag set" });
       continue;
@@ -106,15 +105,21 @@ async function main() {
       name: d.design_name,
       manufacturer: d.manufacturer,
       productIds,
+      flProductIds,
       newTags,
       oldTags: (d.shopify_tags ?? []).slice().sort(),
+      design: d,
     });
   }
 
   const totalProducts = plans.reduce((n, p) => n + p.productIds.length, 0);
+  const totalFl = plans.reduce((n, p) => n + p.flProductIds.length, 0);
   console.log(
-    `[push] plan: ${plans.length} families → ${totalProducts} Shopify products. ${skipped.length} skipped.`,
+    `[push] plan: ${plans.length} families → ${totalProducts} JF + ${totalFl} FL products. ${skipped.length} skipped.`,
   );
+  if (totalFl > 0 && !isStoreConfigured("fl")) {
+    console.warn("[push] SHOPIFY_FL_ADMIN_TOKEN not set — FL products will be SKIPPED (FL-only designs won't push).");
+  }
   if (skipped.length > 0) {
     console.log("[push] skipped:");
     for (const s of skipped.slice(0, 10)) console.log(`    ${s.family}: ${s.reason}`);
@@ -123,14 +128,19 @@ async function main() {
 
   // Dry-run CSV: one row per product.
   const csvPath = "shopify_push_diff.csv";
-  const lines = ["design_family,manufacturer,product_id,design_name,old_tags,new_tags"];
+  const lines = ["design_family,manufacturer,store,product_id,design_name,old_tags,new_tags"];
   for (const p of plans) {
     const esc = (s: string) => `"${s.replace(/"/g, '""')}"`;
-    for (const id of p.productIds) {
+    const targets = [
+      ...p.productIds.map((id) => ["JF", id] as const),
+      ...p.flProductIds.map((id) => ["FL", id] as const),
+    ];
+    for (const [store, id] of targets) {
       lines.push(
         [
           p.family,
           esc(p.manufacturer ?? ""),
+          store,
           String(id),
           esc(p.name),
           esc(p.oldTags.join(" | ")),
@@ -162,70 +172,23 @@ async function main() {
   ]);
 
   for (const plan of plans) {
-    const results = await Promise.all(
-      plan.productIds.map(async (id) => {
-        try {
-          const stored = await mergeProductTags(id, plan.newTags, ownedKeys, (type) =>
-            sizeMaterialTags([type]),
-          );
-          return { id, ok: true as const, storedTags: stored.tags };
-        } catch (e) {
-          return { id, ok: false as const, error: (e as Error).message };
-        }
-      }),
-    );
-    const failed = results.filter((r) => !r.ok);
-    productsWritten += results.length - failed.length;
-    productsFailed += failed.length;
-
-    if (failed.length > 0) {
-      console.log(
-        `  ✗ ${plan.family}: ${failed.length}/${plan.productIds.length} products failed`,
-      );
-      for (const f of failed) console.log(`      product ${f.id}: ${f.error}`);
-      await sb.from("events").insert({
-        design_family: plan.family,
-        event_type: "push_failed",
-        actor: "system",
-        payload: {
-          failed_product_ids: failed.map((f) => f.id),
-          errors: failed.map((f) => f.error),
-        },
-      });
+    const outcome = await pushDesign(sb, plan.design, ownedKeys, "blake");
+    if (outcome.kind === "skipped") {
+      console.log(`  - ${plan.family}: skipped — ${outcome.reason}`);
       continue;
     }
-
-    // All products for this family succeeded. Mirror what Shopify ACTUALLY
-    // stored (union across products) — includes preserved non-taxonomy tags.
-    const storedUnion = [
-      ...new Set(
-        results
-          .flatMap((r) => (r.ok ? r.storedTags.split(",") : []))
-          .map((t) => t.trim())
-          .filter(Boolean),
-      ),
-    ].sort();
-    const { error: updErr } = await sb
-      .from("designs")
-      .update({
-        status: "updated",
-        last_pushed_at: new Date().toISOString(),
-        shopify_tags: storedUnion,
-      })
-      .eq("design_family", plan.family);
-    if (updErr) {
-      console.log(`  ! ${plan.family}: Shopify OK but Supabase status update failed: ${updErr.message}`);
+    if (outcome.kind === "failed") {
+      productsFailed += outcome.failed.length;
+      productsWritten += outcome.total - outcome.failed.length;
+      console.log(`  ✗ ${plan.family}: ${outcome.failed.length}/${outcome.total} products failed`);
+      for (const f of outcome.failed) console.log(`      ${f.store} product ${f.id}: ${f.error}`);
       continue;
     }
-    await sb.from("events").insert({
-      design_family: plan.family,
-      event_type: "pushed",
-      actor: "blake",
-      payload: {
-        product_ids: plan.productIds,
-        tag_count: plan.newTags.length,
-      },
-    });
+    if (outcome.kind === "db_error") {
+      console.log(`  ! ${plan.family}: ${outcome.error}`);
+      continue;
+    }
+    productsWritten += outcome.jfIds.length + outcome.flIds.length;
     familiesUpdated++;
     if (familiesUpdated % 25 === 0) {
       console.log(`  … ${familiesUpdated}/${plans.length} families pushed`);

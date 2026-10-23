@@ -1,9 +1,12 @@
 /**
- * Push curated tags to JFF Shopify for ready-to-send designs.
+ * Push curated tags for ready-to-send designs to BOTH stores: JF
+ * (shopify_product_ids) and FL (fl_product_ids, linked by the FL catalog
+ * sync). FL-only designs push to FL only. Per-design logic lives in
+ * lib/push-design.ts (shared with scripts/shopify-push.ts).
  *
- * MERGE-PUSH (T7): only canonical taxonomy terms are owned by the pipeline —
- * they're synced to approved_tags; all other live tags (brand, functional,
- * size/material, app tags) are preserved. See mergeProductTags in lib/shopify.
+ * MERGE-PUSH (T7): only canonical taxonomy terms + size/material facets are
+ * owned by the pipeline — they're synced to approved_tags; all other live
+ * tags (brand, functional, app tags) are preserved. See mergeProductTags.
  *
  * Request: POST /api/review/push?<filter params>
  *   body: optional { design_families?: string[] }
@@ -18,21 +21,22 @@
  * when filters are active.
  *
  * Response: chunked NDJSON stream, one JSON object per line:
- *   { "type": "start",   "family": "AFSP0106", "product_ids": [...] }
- *   { "type": "ok",      "family": "AFSP0106" }
+ *   { "type": "start",   "family": "AFSP0106", "product_ids": [...], "fl_product_ids": [...] }
+ *   { "type": "ok",      "family": "AFSP0106", "product_ids": [...], "fl_product_ids": [...] }
  *   { "type": "error",   "family": "AFSP0106", "error": "…" }
  *   { "type": "skipped", "family": "AFSP0106", "reason": "…" }
  *   { "type": "done",    "families_pushed": N, "products_failed": M }
  *
- * Shopify REST is rate-limited (~2 req/sec). We push sequentially per family
- * but in parallel across a family's products (2-5 at most for AF).
+ * Shopify REST is rate-limited (~2 req/sec per store). We push sequentially
+ * per family; a family's products run in parallel, JF and FL side by side.
  */
 import type { NextRequest } from "next/server";
 import { getAdminSupabase } from "@/lib/supabase-admin";
 import { getActor } from "@/lib/auth";
-import { mergeProductTags, normalizeTagKey } from "@/lib/shopify";
+import { normalizeTagKey } from "@/lib/shopify";
 import { getOwnedTaxonomyKeys } from "@/lib/taxonomy-source";
-import { featureTags, sizeMaterialTags, OWNED_FACET_KEYS, type FacetFlags } from "@/lib/facet-tags";
+import { OWNED_FACET_KEYS } from "@/lib/facet-tags";
+import { pushDesign, PUSH_COLUMNS, type PushableDesign } from "@/lib/push-design";
 import {
   applyReviewFilters,
   parseFiltersFromSearch,
@@ -44,18 +48,6 @@ export const dynamic = "force-dynamic";
 // ~300 at the old 300s cap. For the whole readytosend queue in one shot,
 // use the CLI: `npx tsx scripts/shopify-push.ts --apply` (no timeout).
 export const maxDuration = 800;
-
-interface ReadyDesign extends FacetFlags {
-  design_family: string;
-  approved_tags: string[];
-  shopify_product_ids: number[] | null;
-  shopify_product_types: string[] | null;
-}
-
-const PUSH_COLUMNS =
-  "design_family,approved_tags,shopify_product_ids,shopify_product_types," +
-  "is_double_sided,is_reversible,is_premiersoft,is_suede_reflections," +
-  "is_glittertrends,is_printed_in_usa,is_envirofriendly";
 
 export async function POST(req: NextRequest): Promise<Response> {
   if (!process.env.SHOPIFY_ADMIN_TOKEN || !process.env.SHOPIFY_STORE) {
@@ -103,7 +95,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   if (requestedFamilies) q2 = q2.in("design_family", requestedFamilies);
   const { data, error } = await q2.order("design_family");
   if (error) return errorResponse(500, `select: ${error.message}`);
-  const designs = (data ?? []) as ReadyDesign[];
+  const designs = (data ?? []) as PushableDesign[];
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -143,104 +135,40 @@ export async function POST(req: NextRequest): Promise<Response> {
       ]);
 
       for (const d of designs) {
-        const productIds = d.shopify_product_ids ?? [];
-        // T5: emit storefront facet tags with the curated theme tags.
-        // Features are family-level (flag columns); size/material are
-        // PER-PRODUCT (a family spans garden/house/mailbox types) — computed
-        // inside mergeProductTags from each product's own product_type, so a
-        // house flag in a mixed family doesn't inherit the garden size tag.
-        const newTags = [...new Set([...(d.approved_tags ?? []), ...featureTags(d)])].sort();
-        if (productIds.length === 0) {
-          emit({
-            type: "skipped",
-            family: d.design_family,
-            reason: "no shopify_product_ids — re-run shopify-pull",
-          });
-          continue;
-        }
-        if (newTags.length === 0) {
-          emit({
-            type: "skipped",
-            family: d.design_family,
-            reason: "approved_tags empty",
-          });
-          continue;
-        }
-
-        emit({ type: "start", family: d.design_family, product_ids: productIds });
-
-        const results = await Promise.all(
-          productIds.map(async (id) => {
-            try {
-              const stored = await mergeProductTags(id, newTags, ownedKeys, (type) =>
-                sizeMaterialTags([type]),
-              );
-              return { id, ok: true as const, storedTags: stored.tags };
-            } catch (e) {
-              return { id, ok: false as const, error: (e as Error).message };
-            }
-          }),
-        );
-        const failed = results.filter((r) => !r.ok);
-
-        if (failed.length > 0) {
-          productsFailed += failed.length;
-          emit({
-            type: "error",
-            family: d.design_family,
-            error: `${failed.length}/${productIds.length} products failed`,
-            failed_product_ids: failed.map((f) => f.id),
-          });
-          await sb.from("events").insert({
-            design_family: d.design_family,
-            event_type: "push_failed",
-            actor: "system",
-            payload: {
-              failed_product_ids: failed.map((f) => f.id),
-              errors: failed.map((f) => f.error),
-            },
-          });
-          continue;
-        }
-
-        // Mirror what Shopify ACTUALLY stored (union across the family's
-        // products) — with merge-push this includes preserved non-taxonomy
-        // tags, not just approved_tags.
-        const storedUnion = [
-          ...new Set(
-            results
-              .flatMap((r) => (r.ok ? r.storedTags.split(",") : []))
-              .map((t) => t.trim())
-              .filter(Boolean),
-          ),
-        ].sort();
-        const { error: updErr } = await sb
-          .from("designs")
-          .update({
-            status: "updated",
-            last_pushed_at: new Date().toISOString(),
-            shopify_tags: storedUnion,
-          })
-          .eq("design_family", d.design_family);
-        if (updErr) {
-          emit({
-            type: "error",
-            family: d.design_family,
-            error: `Shopify OK but DB update failed: ${updErr.message}`,
-          });
-          continue;
-        }
-        await sb.from("events").insert({
-          design_family: d.design_family,
-          event_type: "pushed",
-          actor,
-          payload: {
-            product_ids: productIds,
-            tag_count: newTags.length,
-          },
+        emit({
+          type: "start",
+          family: d.design_family,
+          product_ids: d.shopify_product_ids ?? [],
+          fl_product_ids: d.fl_product_ids ?? [],
         });
+        const outcome = await pushDesign(sb, d, ownedKeys, actor);
+        if (outcome.kind === "skipped") {
+          emit({ type: "skipped", family: d.design_family, reason: outcome.reason });
+          continue;
+        }
+        if (outcome.kind === "failed") {
+          productsFailed += outcome.failed.length;
+          emit({
+            type: "error",
+            family: d.design_family,
+            error: `${outcome.failed.length}/${outcome.total} products failed (${[
+              ...new Set(outcome.failed.map((f) => f.store.toUpperCase())),
+            ].join(" + ")})`,
+            failed_product_ids: outcome.failed.map((f) => f.id),
+          });
+          continue;
+        }
+        if (outcome.kind === "db_error") {
+          emit({ type: "error", family: d.design_family, error: outcome.error });
+          continue;
+        }
         familiesPushed++;
-        emit({ type: "ok", family: d.design_family });
+        emit({
+          type: "ok",
+          family: d.design_family,
+          product_ids: outcome.jfIds,
+          fl_product_ids: outcome.flIds,
+        });
       }
 
       emit({ type: "done", families_pushed: familiesPushed, products_failed: productsFailed });

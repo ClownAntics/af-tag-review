@@ -607,7 +607,7 @@ export function TileGrid({
         : `all ${pushCount} ready-to-send design${pushCount === 1 ? "" : "s"}${filterNote}`;
     if (
       !confirm(
-        `Push ${label} to JFF Shopify?\n\nThis REPLACES each product's tags with its approved_tags — anything not in FL Themes will be removed.`,
+        `Push ${label} to JF + FL?\n\nEach product's theme tags are replaced with its approved tags on both stores — stale theme tags are removed, all other tags are kept.`,
       )
     ) {
       return;

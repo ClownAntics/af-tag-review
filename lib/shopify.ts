@@ -167,18 +167,21 @@ export function normalizeTagKey(tag: string): string {
  * product_type — size/material facet tags differ across a family's garden /
  * house / mailbox products, so they cannot come from the family-level union
  * (that put `standard-garden` on house flags — the 2026-07-03 backfill bug).
+ *
+ * `target` picks the store: the same rule runs on JF and FL product IDs.
  */
 export async function mergeProductTags(
   productId: number,
   approvedTags: string[],
   ownedKeys: ReadonlySet<string>,
   perProductTags?: (productType: string) => string[],
+  target: StoreTarget = "jf",
 ): Promise<{ id: number; tags: string }> {
-  const url = `${baseUrl()}/products/${productId}.json?fields=id,tags,product_type`;
+  const url = `${baseUrl(target)}/products/${productId}.json?fields=id,tags,product_type`;
   let current: string[] = [];
   let productType = "";
   for (let attempt = 0; ; attempt++) {
-    const res = await fetch(url, { headers: authHeader() });
+    const res = await fetch(url, { headers: authHeader(target) });
     if (res.status === 429 && attempt < 5) {
       const retry = Number(res.headers.get("Retry-After") ?? "2");
       await sleep((retry + attempt) * 1000);
@@ -198,7 +201,9 @@ export async function mergeProductTags(
     [...approvedTags, ...(perProductTags ? perProductTags(productType) : [])],
     ownedKeys,
   );
-  return updateProductTags(productId, next);
+  // Already correct → skip the PUT (halves rate-limit use on re-pushes).
+  if (sameTagSet(current, next)) return { id: productId, tags: current.join(", ") };
+  return updateProductTags(productId, next, target);
 }
 
 /**

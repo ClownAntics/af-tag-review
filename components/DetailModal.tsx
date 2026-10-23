@@ -87,6 +87,8 @@ export function DetailModal({ design, onClose, onFlag }: Props) {
   const imgUrl = variants[0].imageUrl;
   const jfAdmin = (sku: string) =>
     `https://admin.shopify.com/store/justforfunflags/products?query=${sku}`;
+  const flAdmin = (sku: string) =>
+    `https://admin.shopify.com/store/flagsrus-org/products?query=${sku}`;
 
   const rate = unitsPerYear(design);
   const status = (design.status || "novision") as ReviewStatus;
@@ -134,6 +136,17 @@ export function DetailModal({ design, onClose, onFlag }: Props) {
                   </a>
                 </span>
               ))}
+              {variants[0]?.sku && (
+                <a
+                  href={flAdmin(variants[0].sku)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 hover:text-foreground hover:underline"
+                  title={`Open ${variants[0].sku} in FL Shopify admin`}
+                >
+                  FL ↗
+                </a>
+              )}
             </p>
           </div>
           <button

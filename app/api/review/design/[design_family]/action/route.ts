@@ -56,12 +56,12 @@ export async function POST(
   const actor = await getActor();
 
   // Load current state — we need it for merge semantics on accept/reject vision.
-  // shopify_product_ids is loaded so mark_fine can refuse to queue a design
-  // that has no JFF products (otherwise push would skip it downstream).
+  // shopify_product_ids + fl_product_ids are loaded so mark_fine can refuse to
+  // queue a design with no products on either store (push would skip it).
   const { data: current, error: loadErr } = await supabase
     .from("designs")
     .select(
-      "design_family,status,approved_tags,vision_tags,shopify_tags,shopify_product_ids",
+      "design_family,status,approved_tags,vision_tags,shopify_tags,shopify_product_ids,fl_product_ids",
     )
     .eq("design_family", design_family)
     .single();
@@ -70,7 +70,7 @@ export async function POST(
   const state = current as Pick<
     Design,
     "design_family" | "status" | "approved_tags" | "vision_tags" | "shopify_tags"
-  > & { shopify_product_ids: number[] | null };
+  > & { shopify_product_ids: number[] | null; fl_product_ids: number[] | null };
 
   const now = new Date().toISOString();
   let patch: Record<string, unknown> = {};
@@ -260,14 +260,15 @@ export async function POST(
       // remain accurate. Snapshot of the tags is captured on the event row
       // so we know what we trusted at the time (Shopify tags can drift).
       //
-      // Guard: refuse to queue a design that has no JFF products. The push
-      // route would silently skip it anyway, but failing loudly here avoids
-      // ever parking it in Ready-to-send where it'd sit indefinitely.
-      const productIds = state.shopify_product_ids ?? [];
-      if (productIds.length === 0) {
+      // Guard: refuse to queue a design that has no JF or FL products. The
+      // push route would silently skip it anyway, but failing loudly here
+      // avoids ever parking it in Ready-to-send where it'd sit indefinitely.
+      const productCount =
+        (state.shopify_product_ids ?? []).length + (state.fl_product_ids ?? []).length;
+      if (productCount === 0) {
         return errorResponse(
           409,
-          `no shopify_product_ids on ${design_family} — can't queue for push (re-run shopify-pull or flag this as an accessory)`,
+          `no JF or FL products linked to ${design_family} — can't queue for push (re-run the catalog syncs or flag this as an accessory)`,
         );
       }
       const snapshot = dedupSort(state.shopify_tags ?? []);
