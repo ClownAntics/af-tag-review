@@ -16,7 +16,7 @@ export default async function LoginPage({
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-sm text-center">
-        <h1 className="text-lg font-medium">Tag Review</h1>
+        <h1 className="text-lg font-medium">Flag Tag Review</h1>
         <p className="text-sm text-muted mt-1 mb-6">
           Sign in with your ClownAntics Google account to continue.
         </p>

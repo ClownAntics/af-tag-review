@@ -1,9 +1,10 @@
 "use client";
 
 /**
- * Tag Review — standalone app for curating product tags against the FL Themes
- * taxonomy, backed by Claude vision suggestions and a flag → pending →
- * ready-to-send → updated review pipeline.
+ * Flag Tag Review — standalone app for curating product tags against the FL
+ * Themes taxonomy, backed by Claude vision suggestions and a flag → pending →
+ * ready-to-send → updated review pipeline. Curated tags push to both stores:
+ * JF (justforfunflags) and FL (flagsrus).
  *
  * The underlying `designs` table is currently AF garden/house flags, but the
  * UI is written to be brand-agnostic: image URL comes from each design row,
@@ -62,10 +63,10 @@ export default function Home() {
       <header className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-5 flex-wrap">
           <div>
-            <h1 className="text-2xl font-medium tracking-tight">Tag Review</h1>
+            <h1 className="text-2xl font-medium tracking-tight">Flag Tag Review</h1>
             <p className="text-sm text-muted">
-              Claude-vision tag curation for FL designs. Flag what needs fixing,
-              review Pending, push cleaned tags to Shopify.
+              Claude-vision tag curation for flag designs. Flag what needs fixing,
+              review Pending, push cleaned tags to JF and FL.
             </p>
           </div>
           <SkuSearch

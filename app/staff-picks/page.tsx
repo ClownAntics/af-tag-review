@@ -88,7 +88,7 @@ export default async function StaffPicksPage() {
           </p>
         </div>
         <Link href="/" className="text-xs text-muted hover:text-foreground hover:underline">
-          ← Back to Tag Review
+          ← Back to Flag Tag Review
         </Link>
       </header>
 

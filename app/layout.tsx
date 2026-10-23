@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tag Review",
+  title: "Flag Tag Review",
   description:
     "Claude-vision–assisted Shopify tag curation for FL designs.",
 };
