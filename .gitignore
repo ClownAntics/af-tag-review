@@ -61,3 +61,6 @@ fl_pull_new.csv
 fl_push_diff.csv
 fl_collections_audit.json
 fl_nav_audit.json
+fl_tags_live.json
+taxonomy_live.json
+fl_tag_map.json
