@@ -150,6 +150,22 @@ export function normalizeTagKey(tag: string): string {
 }
 
 /**
+ * Shopify's identity for a tag: lowercase, apostrophes dropped, every other
+ * run of non-alphanumerics collapsed to one hyphen. Shopify keeps only one tag
+ * per handle, so pushing `Food-Wine` onto a product that has `Food & Wine`
+ * (or `Valentines-Day` onto `Valentine's Day`) is silently a no-op (seen on
+ * FL 2026-10-24). Compare with this to know what Shopify will store.
+ */
+export function shopifyTagHandle(tag: string): string {
+  return tag
+    .trim()
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
  * Merge-push a product's tags (T7): replace only the tags the curation
  * pipeline OWNS (canonical taxonomy Search Terms — `ownedKeys` holds their
  * normalizeTagKey forms), preserving every other live tag (brand tags like
@@ -220,10 +236,10 @@ export function computeMergedTags(
   // respelled — FL smart collections match exact spellings like
   // "Stained Glass", so an emitted "Stained-Glass" is skipped, not swapped in.
   if (ownedKeys.size === 0) {
-    const have = new Set(current.map(normalizeTagKey));
+    const have = new Set(current.map(shopifyTagHandle));
     const added: string[] = [];
     for (const t of emitTags) {
-      const k = normalizeTagKey(t);
+      const k = shopifyTagHandle(t);
       if (have.has(k)) continue;
       have.add(k);
       added.push(t);
@@ -244,9 +260,9 @@ export function computeMergedTags(
   return [...emit, ...preserved].sort();
 }
 
-/** True when two tag lists hold the same tags (Shopify compares case-insensitively). */
+/** True when Shopify would store the same tags for both lists (one tag per handle). */
 export function sameTagSet(a: string[], b: string[]): boolean {
-  const norm = (xs: string[]) => [...new Set(xs.map((t) => t.trim().toLowerCase()))].sort();
+  const norm = (xs: string[]) => [...new Set(xs.map(shopifyTagHandle))].sort();
   const x = norm(a);
   const y = norm(b);
   return x.length === y.length && x.every((v, i) => v === y[i]);
